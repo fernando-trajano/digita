@@ -26,9 +26,9 @@ nasce pronta para receber todas elas.
 | Decisão | Escolha | Motivo |
 |---|---|---|
 | Organização do JS | **Módulos ES** (`import`/`export`) | Código isolado, sem globais se misturando |
-| Como testar | Claude inicia `python3 -m http.server` e abre no painel de navegador | Módulos ES não funcionam com duplo clique (`file://`) |
+| Como testar | Claude inicia `python3 servidor.py` e abre no painel de navegador | Módulos ES não funcionam com duplo clique (`file://`), e o servidor padrão serve código velho do cache |
 | Escopo v1 | Fluxo completo + fileira base (18 lições) | Ver o site rodando e publicável rápido |
-| Paleta | **Intacta** — nenhuma cor trocada | `#888780` só em fonte grande; legendas usam `#5F5E5A` |
+| Paleta | **Trocada no passo 6** para branco neutro no modo claro; escuro intacto | Ver a seção VISUAL do `CLAUDE.md`, que é a fonte da verdade |
 | Ç na fileira base | **Não entra** | No teclado US essa posição é `;` — Ç vira assunto da trilha de acentos |
 | Publicação | Logo após a tela de entrada (passo 7) | Confirmar o endereço real antes de construir o resto |
 | Safari | Fernando testa à mão em 3 momentos | Simulação não substitui o navegador de verdade |
@@ -373,7 +373,9 @@ real no passo 7.
       inclui o `servidor.py`, que impede o cache do navegador durante o desenvolvimento)
 - [x] **Passo 6** — detecção e tela de entrada · ✅ **testado no Safari pelo Fernando**:
       os dois caminhos de detecção funcionam no navegador de verdade
-- [ ] **Passo 7** — tela sem teclado físico e publicação no GitHub Pages · 🛑 com o Fernando
+- [x] **Passo 7** — tela sem teclado físico e publicação no GitHub Pages ✅ **no ar em
+      https://fernando-trajano.github.io/digita/** (conferido: as 5 folhas de estilo
+      carregam, a detecção funciona no endereço real e o console fica limpo)
 - [ ] **Passo 8** — armazenamento e estado
 - [ ] **Passo 9** — as 18 lições da fileira base · 🛑 revisão do conteúdo
 - [ ] **Passo 10** — motor de digitação e métricas · 🛑 teste no Safari

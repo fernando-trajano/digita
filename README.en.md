@@ -2,6 +2,8 @@
 
 Touch-typing practice for Brazilian Portuguese.
 
+**▶ [fernando-trajano.github.io/digita](https://fernando-trajano.github.io/digita/)**
+
 🇧🇷 [Leia em português](README.md)
 
 ---

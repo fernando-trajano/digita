@@ -2,6 +2,8 @@
 
 Treino de digitação em português do Brasil.
 
+**▶ [fernando-trajano.github.io/digita](https://fernando-trajano.github.io/digita/)**
+
 🇬🇧 [Read this in English](README.en.md)
 
 ---
