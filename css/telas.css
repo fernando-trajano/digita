@@ -135,7 +135,9 @@
    Fica junto das mãos, logo acima delas. */
 .legenda-dedo {
   max-width: none;
-  min-height: 2.6em;
+  /* Uma linha reservada: agora que a legenda é curta, ela nunca quebra — e a
+     altura fixa impede as mãos de subirem e descerem a cada letra. */
+  min-height: 1.6em;
   margin: 0;
   color: var(--cor-texto-secundario);
   font-size: 0.8125rem; /* 13px: pequeno, mas nunca abaixo de 12 */
@@ -365,7 +367,9 @@
    linha do texto, no canto direito. */
 .licao-lado {
   position: absolute;
-  right: 0;
+  /* Um pouco para dentro da borda direita, para as mãos não passarem da
+     ponta do teclado. */
+  right: 5%;
   bottom: 0;
   display: flex;
   flex-direction: column;

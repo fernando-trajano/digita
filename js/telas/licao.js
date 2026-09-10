@@ -187,7 +187,7 @@ function apontarProximaTecla(partes, estado, layout) {
     // quieto em vez de acender a tecla errada.
     limparDestaque(partes.teclado);
     limparDedos(partes.maos);
-    partes.legenda.textContent = nomeDaLetra(letra);
+    escreverLegenda(partes.legenda, nomeDaLetra(letra), null);
     return;
   }
 
@@ -196,9 +196,28 @@ function apontarProximaTecla(partes, estado, layout) {
   const posicao = dedoDaTecla(onde.codigo);
   if (posicao) destacarDedo(partes.maos, posicao.mao, posicao.dedo);
 
-  partes.legenda.textContent =
-    `${t('licao.proxima')}: ${nomeDaLetra(letra)}` +
-    (posicao ? ` · ${nomeDoDedo(posicao.mao, posicao.dedo)}` : '');
+  escreverLegenda(partes.legenda, nomeDaLetra(letra), posicao);
+}
+
+/**
+ * A legenda mostra só a letra — "Próxima: J". Qual dedo usar é o que o
+ * desenho das mãos e a cor da tecla já dizem, e repetir isso em texto polui
+ * a tela.
+ *
+ * Mas o teclado e as mãos são desenhos, invisíveis para quem usa leitor de
+ * tela. Por isso o nome do dedo continua aqui, escondido dos olhos e
+ * disponível para quem ouve a página.
+ */
+function escreverLegenda(destino, letra, posicao) {
+  destino.replaceChildren();
+  destino.append(`${t('licao.proxima')}: ${letra}`);
+
+  if (!posicao) return;
+
+  const paraLeitorDeTela = document.createElement('span');
+  paraLeitorDeTela.className = 'apenas-leitor-de-tela';
+  paraLeitorDeTela.textContent = ` · ${nomeDoDedo(posicao.mao, posicao.dedo)}`;
+  destino.append(paraLeitorDeTela);
 }
 
 /** O espaço precisa ser dito por extenso; as outras letras falam por si. */

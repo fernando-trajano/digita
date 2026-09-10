@@ -127,8 +127,11 @@ Regras válidas para o site inteiro:
    empurrarem o texto para a esquerda: o texto tem de ficar no **mesmo eixo do teclado**. O desenho é o de `js/maos.js` — **não trocar o estilo
    do desenho sem o Fernando pedir**; uma versão em line art chegou a ser feita e foi
    descartada por decisão dele.
-4. **Legenda "Próxima: F · indicador esquerdo":** junto das mãos, logo acima delas e
-   alinhada com elas. No mínimo 12px, na cor de texto secundário.
+4. **Legenda "Próxima: J":** junto das mãos, logo acima delas e alinhada com elas. No
+   mínimo 12px, na cor de texto secundário. **Só a letra** — qual dedo usar é o que o
+   desenho das mãos e a cor da tecla já dizem. O nome do dedo continua no HTML, escondido
+   dos olhos e disponível para leitores de tela, porque para quem ouve a página os
+   desenhos não existem.
 5. **Telas estreitas:** quando não há espaço ao lado do texto, as mãos descem para cima do
    teclado, centralizadas e pequenas. **Nunca sobrepor o texto da lição.**
 6. **Métricas** (PPM, precisão, progresso) numa linha discreta no topo, com o nome da lição
