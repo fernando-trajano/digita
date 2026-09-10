@@ -383,7 +383,9 @@ real no passo 7.
 - [x] **Passo 9** — as 18 lições da fileira base ✅ **conteúdo revisado e aprovado pelo
       Fernando** (36 palavras reais, K só em sílabas por não existir palavra possível,
       frases mantidas apesar do sentido absurdo; as duas conferências passam)
-- [ ] **Passo 10** — motor de digitação e métricas · 🛑 teste no Safari
+- [x] **Passo 10** — motor de digitação e métricas · 🛑 **teste no Safari pendente**
+      (campo invisível, composição de acentos, trava no erro, PPM e precisão;
+      criada a página temporária `teste-motor.html`, que sai no passo 11)
 - [ ] **Passo 11** — tela de lição · 🛑 teste no Safari
 - [ ] **Passo 12** — tela de resultado e progresso
 - [ ] **Passo 13** — trilha de fases

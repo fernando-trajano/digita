@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teste do motor de digitação — digita.</title>
+
+  <!-- PÁGINA TEMPORÁRIA (passo 10 do PLANO.md)
+
+       Serve só para testar o motor de digitação à mão, especialmente os
+       acentos compostos no Safari, antes de a tela de lição existir.
+       Ela é APAGADA no passo 11, quando a tela de verdade chegar. -->
+
+  <script>
+    document.documentElement.dataset.tema =
+      window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+  </script>
+
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/tema.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/componentes.css">
+  <link rel="stylesheet" href="./css/telas.css">
+
+  <style>
+    /* Estilos só desta página de teste. */
+    .teste-medidas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--esp-5);
+      padding: var(--esp-4) 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .teste-medida strong {
+      display: block;
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .teste-medida span {
+      color: var(--cor-texto-discreto);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .teste-escolhas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--esp-3);
+      padding-bottom: var(--esp-4);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="cabecalho">
+    <a class="marca" href="./">digita<span class="marca-ponto">.</span></a>
+    <span class="selo">Página de teste — some no passo 11</span>
+  </header>
+
+  <main class="conteudo">
+    <h1>Teste do motor de digitação</h1>
+    <p class="ajuda">
+      Clique no texto e digite. O cursor trava até você acertar a letra.
+      Escolha um dos textos abaixo — o segundo é o que interessa no Safari,
+      porque tem acentos e Ç.
+    </p>
+
+    <div class="teste-escolhas">
+      <button type="button" class="botao" data-texto="base">Fileira base (sem acentos)</button>
+      <button type="button" class="botao" data-texto="acentos">Acentos e Ç</button>
+      <button type="button" class="botao" data-texto="curto">Texto curto (para terminar rápido)</button>
+    </div>
+
+    <div id="area"></div>
+
+    <p class="legenda-dedo" id="legenda"></p>
+
+    <div class="teste-medidas">
+      <span class="teste-medida"><strong id="ppm">0</strong><span>PPM</span></span>
+      <span class="teste-medida"><strong id="precisao">100</strong><span>% precisão</span></span>
+      <span class="teste-medida"><strong id="progresso">0 / 0</strong><span>letras</span></span>
+      <span class="teste-medida"><strong id="tempo">0</strong><span>segundos</span></span>
+      <span class="teste-medida"><strong id="compondo">—</strong><span>acento pendente</span></span>
+    </div>
+
+    <p class="destaque" id="resultado" hidden></p>
+  </main>
+
+  <script type="module">
+    import { criarMotor, desenharTexto } from './js/motor-digitacao.js';
+
+    const TEXTOS = {
+      base: ['asa ala sala fala', 'a fada afaga as asas', 'salada salgada'],
+      acentos: ['água pão coração', 'você é açúcar', 'não há ação sem coração'],
+      curto: ['asa'],
+    };
+
+    const area = document.querySelector('#area');
+    const legenda = document.querySelector('#legenda');
+    const resultado = document.querySelector('#resultado');
+    let motor = null;
+
+    function comecar(nome) {
+      motor?.destruir();
+      resultado.hidden = true;
+      area.replaceChildren();
+
+      const texto = document.createElement('div');
+      area.append(texto);
+
+      motor = criarMotor({
+        linhas: TEXTOS[nome],
+
+        aoAtualizar(estado) {
+          desenharTexto(texto, estado);
+
+          document.querySelector('#ppm').textContent = estado.ppm;
+          document.querySelector('#precisao').textContent = estado.precisao;
+          document.querySelector('#progresso').textContent =
+            `${estado.feitos} / ${estado.total}`;
+          document.querySelector('#tempo').textContent = estado.segundos;
+          document.querySelector('#compondo').textContent = estado.compondo.trim() || '—';
+
+          legenda.textContent = estado.letraEsperada
+            ? `Próxima letra: ${estado.letraEsperada === ' ' ? 'espaço' : estado.letraEsperada}`
+            : 'Fim!';
+        },
+
+        aoConcluir(resumo) {
+          resultado.hidden = false;
+          resultado.textContent =
+            `Terminou! ${resumo.ppm} PPM · ${resumo.precisao}% de precisão · ` +
+            `${resumo.acertos} acertos, ${resumo.erros} erros em ${resumo.segundos}s. ` +
+            (resumo.errosPorTecla.length
+              ? 'Mais errou: ' +
+                resumo.errosPorTecla
+                  .slice(0, 3)
+                  .map((e) => `"${e.tecla === ' ' ? 'espaço' : e.tecla}" (${e.vezes}x)`)
+                  .join(', ')
+              : 'Sem nenhum erro.');
+        },
+      });
+
+      motor.montar(area);
+    }
+
+    document.querySelectorAll('[data-texto]').forEach((botao) => {
+      botao.addEventListener('click', () => comecar(botao.dataset.texto));
+    });
+
+    comecar('base');
+  </script>
+</body>
+</html>

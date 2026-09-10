@@ -130,6 +130,98 @@
   font-size: 0.9rem;
 }
 
+/* A legenda "Próxima: F · indicador esquerdo" — a versão em texto do que o
+   teclado e as mãos mostram em desenho, e a que os leitores de tela leem. */
+.legenda-dedo {
+  min-height: 1.6em;
+  color: var(--cor-texto-secundario);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+/* ==========================================================================
+   A área de digitação — o texto da lição e o campo invisível
+   ========================================================================== */
+
+.area-digitacao {
+  position: relative;
+  cursor: text;
+}
+
+/* O campo que captura a digitação. Ele cobre toda a área do texto e é
+   transparente: clicar em qualquer lugar do texto coloca o cursor nele, e o
+   teclado do sistema funciona normalmente — com acentos e tudo. */
+.campo-invisivel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  outline: none;
+  font-size: 1rem;
+  resize: none;
+}
+
+.linha-digitacao {
+  max-width: none;
+  margin: 0;
+  font-family: var(--fonte-mono);
+  /* 1.75rem = 28px. A cor das letras que faltam só tem contraste suficiente
+     em texto grande — por isso o tamanho mínimo é regra, não enfeite
+     (ver CLAUDE.md, "Contraste da paleta"). */
+  font-size: 1.75rem;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  white-space: pre-wrap;
+}
+
+/* Letra já digitada corretamente. */
+.letra--certa {
+  color: var(--cor-texto);
+}
+
+/* Letra da vez: sublinhado grosso, sem piscar, para não cansar a vista. */
+.letra--atual {
+  color: var(--cor-texto);
+  box-shadow: inset 0 -3px 0 var(--cor-texto);
+}
+
+/* Letra ainda não digitada. */
+.letra--falta {
+  color: var(--cor-letra-pendente);
+}
+
+/* A letra da vez, depois de um erro. */
+.letra--errada {
+  background-color: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+  border-radius: var(--raio-p);
+}
+
+/* Um espaço em branco não se vê. Quando ele é a letra da vez, ganha uma
+   marca para a pessoa saber que precisa apertar a barra de espaço. */
+.letra--espaco.letra--atual,
+.letra--espaco.letra--errada {
+  background-color: var(--cor-superficie);
+  border-radius: var(--raio-p);
+}
+
+.letra--espaco.letra--errada {
+  background-color: var(--cor-erro-fundo);
+}
+
+/* O acento pendente, enquanto o sistema espera a segunda tecla
+   (´ antes de virar á). */
+.acento-pendente {
+  color: var(--cor-texto-secundario);
+  font-family: var(--fonte-mono);
+  font-size: 0.95rem;
+}
+
 /* ==========================================================================
    Aviso de aparelho sem teclado físico
    ========================================================================== */
