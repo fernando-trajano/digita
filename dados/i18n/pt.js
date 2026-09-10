@@ -29,38 +29,54 @@ export const pt = {
     texto: 'Feito em português, sem depender de nada externo.',
   },
 
-  // Mostruário provisório do passo 2. Sai quando a tela de entrada chegar.
-  mostruario: {
-    selo: 'Versão 1 em construção',
-    titulo: 'Aprenda a digitar sem olhar para o teclado.',
-    subtitulo:
-      'Treino de digitação pensado para quem escreve em português: palavras de verdade, acentos, Ç e ajuda para quem usa teclado americano.',
-    comecar: 'Começar do zero',
-    jaSei: 'Já sei digitar',
-
-    amostraTitulo: 'Amostra do texto de digitação',
-    amostraAjuda:
-      'É assim que a lição vai aparecer: o que você já digitou fica escuro, a letra da vez fica marcada, o que falta fica claro e o erro fica vermelho.',
-
-    dedosTitulo: 'As cores dos dedos',
-    dedosAjuda:
-      'Cada dedo tem a sua cor, e ela é a mesma no teclado da tela e no desenho das mãos.',
-
-    tecladoTitulo: 'O teclado na tela',
-    tecladoAjuda:
-      'Troque o formato e o sistema para ver o teclado mudar. Repare na tecla à direita do L: no brasileiro ela é o Ç, no americano é o ponto e vírgula. No modo "como na lição" o teclado fica cinza e só a próxima tecla acende.',
-  },
 
   teclado: {
     formato: 'Formato do teclado',
     sistema: 'Sistema',
-    modo: 'Modo de exibição',
     abnt2: 'Brasileiro ABNT2',
     us: 'Americano US',
     windows: 'Windows',
     mac: 'Mac',
-    cores: 'Prévia colorida',
-    cinza: 'Como na lição',
+  },
+
+  entrada: {
+    titulo: 'Antes de começar, vamos acertar o seu teclado.',
+    subtitulo:
+      'O digita. mostra qual dedo usar em cada tecla. Para isso acertar, ele precisa saber que teclado está na sua frente.',
+
+    formatoTitulo: 'Qual é o formato do seu teclado?',
+    formatoAjuda:
+      'Olhe a tecla à direita do L. Se ela tem um Ç, o seu teclado é brasileiro. Se tem um ponto e vírgula, é americano.',
+    abnt2Descricao: 'Tem tecla de Ç e teclas próprias de acento (´ ~ ^).',
+    usDescricao: 'À direita do L fica o ponto e vírgula. Não tem tecla de acento.',
+
+    sistemaTitulo: 'Qual sistema você usa?',
+    sistemaAjuda: 'Já deixamos marcado o que o seu navegador informou. Se estiver errado, troque.',
+    windowsDescricao: 'Teclas Ctrl, Alt e AltGr.',
+    macDescricao: 'Teclas ⌘ command, ⌥ option e ⌃ control.',
+
+    detectar: 'Detectar automaticamente',
+    detectarAjuda: 'Se preferir, o site descobre o formato para você.',
+    aperteATecla: 'Aperte a tecla destacada na prévia do teclado, à direita.',
+    aperteATeclaEstreito: 'Aperte a tecla destacada na prévia do teclado, abaixo.',
+    cancelar: 'Cancelar',
+    detectado: 'Detectado: {formato}.',
+    detectadoOutraTecla: 'Essa não é a tecla destacada. Tente de novo, ou escolha na mão.',
+    detectadoNadaFeito: 'Não deu para identificar. Escolha na mão, olhando a tecla à direita do L.',
+
+    previaTitulo: 'Prévia do seu teclado',
+    previaAjuda: 'É este o teclado que vai aparecer nas lições, com uma cor para cada dedo.',
+
+    acentosTitulo: 'Como fazer acentos e Ç',
+    acentosAbnt2:
+      'Seu teclado resolve tudo sozinho: aperte a tecla ´ e depois a vogal (´ e depois a = á). O til fica na tecla ~ e o Ç tem tecla própria, à direita do L.',
+    acentosUsMac:
+      'No Mac, os acentos saem com a tecla ⌥ option: ⌥ + e e depois e = é · ⌥ + n e depois a = ã · ⌥ + c = ç · ⌥ + ` e depois a = à.',
+    acentosUsWindows:
+      'No Windows, ative o layout "Estados Unidos — Internacional" nas configurações de idioma. Com ele, digite \' e depois a vogal (\' e depois a = á), ~ e depois a = ã, e \' e depois c = ç.',
+
+    continuar: 'Começar a treinar',
+    emBreve: 'As lições estão sendo construídas — esta parte chega em breve.',
   },
 
   licao: {

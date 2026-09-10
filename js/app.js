@@ -1,27 +1,26 @@
 /* ==========================================================================
    app.js — ponto de entrada do site.
 
-   Hoje ele cuida do tema (claro/escuro) e do idioma (PT/EN). A cada passo do
-   plano ganha mais responsabilidades: telas (passo 6), estado salvo
-   (passo 8) e sons (passo 16).
+   Ele liga as três coisas que valem para o site inteiro (tema, idioma e a
+   tela que está aparecendo) e sai da frente. Cada tela cuida de si.
+
+   A cada passo do plano ganha mais responsabilidades: estado salvo
+   (passo 8), troca entre várias telas (passo 11) e sons (passo 16).
    ========================================================================== */
 
-import {
-  detectarIdioma,
-  definirIdioma,
-  ligarSeletorDeIdioma,
-  nomeDoDedo,
-  t,
-} from './i18n.js';
-import { desenharTeclado, destacarTecla } from './teclado.js';
-import { desenharMaos, destacarDedo, limparDedos } from './maos.js';
-import { dedoDaTecla } from '../dados/layouts/dedos.js';
+import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
+import { mostrarEntrada } from './telas/entrada.js';
 
 const raiz = document.documentElement;
 const botaoTema = document.querySelector('#botao-tema');
+const tela = document.querySelector('#tela');
 const preferenciaEscura = window.matchMedia('(prefers-color-scheme: dark)');
 
-/* Enquanto o Fernando não clicar no botão, o site segue o tema do sistema.
+/* --------------------------------------------------------------------------
+   Tema
+   -------------------------------------------------------------------------- */
+
+/* Enquanto o usuário não clicar no botão, o site segue o tema do sistema.
    Depois do primeiro clique, a escolha dele manda — igual à regra da tela de
    entrada: escolha manual é sempre a palavra final.
    (No passo 8 essa escolha passa a ser salva em digita:config.) */
@@ -49,8 +48,8 @@ botaoTema.addEventListener('click', () => {
   aplicarTema(raiz.dataset.tema === 'escuro' ? 'claro' : 'escuro');
 });
 
-// Se o Mac trocar de claro para escuro sozinho (ao anoitecer, por exemplo),
-// o site acompanha — a não ser que já tenha havido uma escolha manual.
+// Se o computador trocar de claro para escuro sozinho (ao anoitecer, por
+// exemplo), o site acompanha — a não ser que já tenha havido escolha manual.
 preferenciaEscura.addEventListener('change', () => {
   if (!escolhaManual) aplicarTema(temaDoSistema());
 });
@@ -60,90 +59,6 @@ preferenciaEscura.addEventListener('change', () => {
    -------------------------------------------------------------------------- */
 
 ligarSeletorDeIdioma();
-
-/* --------------------------------------------------------------------------
-   Mostruário do teclado — PROVISÓRIO (passo 4)
-
-   Serve para conferir o teclado nas quatro combinações (ABNT2/US ×
-   Windows/Mac) e nos dois modos. Sai quando a tela de entrada chegar, no
-   passo 6, que é onde essas escolhas passam a valer de verdade.
-   -------------------------------------------------------------------------- */
-
-const demo = { layout: 'abnt2', sistema: 'windows', modo: 'cores' };
-const tecladoDemo = document.querySelector('#teclado-demo');
-const maosDemo = document.querySelector('#maos-demo');
-const legendaDemo = document.querySelector('#legenda-demo');
-
-// Sequência que o destaque percorre no modo "como na lição", só para mostrar
-// o efeito de acender uma tecla de cada vez.
-const PASSEIO = ['KeyF', 'KeyJ', 'KeyD', 'KeyK', 'KeyS', 'KeyL', 'KeyA', 'Semicolon', 'Space'];
-let passeio = null;
-
-/** Acende ao mesmo tempo a tecla, o dedo e a legenda. */
-function apontarTecla(codigo) {
-  destacarTecla(tecladoDemo, codigo);
-
-  const posicao = dedoDaTecla(codigo);
-  if (!posicao) {
-    limparDedos(maosDemo);
-    legendaDemo.textContent = '';
-    return;
-  }
-
-  destacarDedo(maosDemo, posicao.mao, posicao.dedo);
-
-  // A legenda é a versão em texto do que o desenho está mostrando — é ela
-  // que serve a quem usa leitor de tela, já que o teclado e as mãos são
-  // apoios visuais.
-  const tecla = tecladoDemo.querySelector(`[data-codigo="${codigo}"]`);
-  legendaDemo.textContent =
-    `${t('licao.proxima')}: ${tecla?.textContent ?? codigo} · ` +
-    nomeDoDedo(posicao.mao, posicao.dedo);
-}
-
-function desenharDemo() {
-  desenharTeclado(tecladoDemo, demo);
-  desenharMaos(maosDemo);
-
-  clearInterval(passeio);
-  passeio = null;
-
-  if (demo.modo === 'cinza') {
-    let indice = 0;
-    apontarTecla(PASSEIO[0]);
-
-    passeio = setInterval(() => {
-      indice = (indice + 1) % PASSEIO.length;
-      apontarTecla(PASSEIO[indice]);
-    }, 1200);
-  } else {
-    legendaDemo.textContent = '';
-  }
-}
-
-// Os três seletores funcionam igual: o botão clicado vira o ativo e o
-// teclado é redesenhado.
-for (const chave of ['layout', 'sistema', 'modo']) {
-  const botoes = document.querySelectorAll(`[data-demo-${chave}]`);
-
-  botoes.forEach((botao) => {
-    botao.addEventListener('click', () => {
-      demo[chave] = botao.dataset[`demo${chave[0].toUpperCase()}${chave.slice(1)}`];
-
-      botoes.forEach((outro) => {
-        outro.setAttribute('aria-pressed', String(outro === botao));
-      });
-
-      desenharDemo();
-    });
-  });
-}
-
-// Quando o idioma muda, o teclado.js redesenha sozinho (por causa da barra
-// de espaço) — e aí o destaque precisa voltar.
-document.addEventListener('idioma-mudou', () => {
-  if (demo.modo === 'cinza') desenharDemo();
-});
 
 /* --------------------------------------------------------------------------
    Início
@@ -158,4 +73,9 @@ aplicarTema(raiz.dataset.tema || temaDoSistema());
 // (No passo 8 essa escolha passa a ser lembrada em digita:config.)
 definirIdioma(detectarIdioma());
 
-desenharDemo();
+mostrarEntrada(tela);
+
+// As telas são desenhadas em JavaScript, então trocar o idioma pede que a
+// tela seja desenhada de novo. O que o usuário já escolheu não se perde: as
+// escolhas moram no módulo da tela, não no HTML.
+document.addEventListener('idioma-mudou', () => mostrarEntrada(tela));

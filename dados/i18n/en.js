@@ -23,37 +23,55 @@ export const en = {
     texto: 'Built in Portuguese, with no external dependencies.',
   },
 
-  mostruario: {
-    selo: 'Version 1 in progress',
-    titulo: 'Learn to type without looking at the keyboard.',
-    subtitulo:
-      'Typing practice built for people who write in Portuguese: real words, accents, Ç and help for anyone on a US keyboard.',
-    comecar: 'Start from scratch',
-    jaSei: 'I already type',
-
-    amostraTitulo: 'Sample of the typing text',
-    amostraAjuda:
-      'This is how a lesson looks: what you have typed goes dark, the current letter is marked, what is left stays light, and mistakes turn red.',
-
-    dedosTitulo: 'The finger colors',
-    dedosAjuda:
-      'Each finger has its own color, and it is the same on the on-screen keyboard and on the drawing of the hands.',
-
-    tecladoTitulo: 'The on-screen keyboard',
-    tecladoAjuda:
-      'Switch the layout and the system to watch the keyboard change. Look at the key to the right of the L: on the Brazilian layout it is Ç, on the US one it is a semicolon. In "as in a lesson" mode the keyboard goes gray and only the next key lights up.',
-  },
 
   teclado: {
     formato: 'Keyboard layout',
     sistema: 'System',
-    modo: 'Display mode',
     abnt2: 'Brazilian ABNT2',
     us: 'US',
     windows: 'Windows',
     mac: 'Mac',
-    cores: 'Colored preview',
-    cinza: 'As in a lesson',
+  },
+
+  entrada: {
+    titulo: 'First, let us get your keyboard right.',
+    subtitulo:
+      'digita. shows which finger to use for each key. To get that right, it needs to know which keyboard is in front of you.',
+
+    formatoTitulo: 'Which keyboard layout do you have?',
+    formatoAjuda:
+      'Look at the key to the right of the L. If it has a Ç, your keyboard is Brazilian. If it has a semicolon, it is a US one.',
+    abnt2Descricao: 'Has a Ç key and dedicated accent keys (´ ~ ^).',
+    usDescricao: 'The key right of the L is a semicolon. No accent keys.',
+
+    sistemaTitulo: 'Which system do you use?',
+    sistemaAjuda: 'We preselected what your browser reported. Change it if it is wrong.',
+    windowsDescricao: 'Ctrl, Alt and AltGr keys.',
+    macDescricao: '⌘ command, ⌥ option and ⌃ control keys.',
+
+    detectar: 'Detect automatically',
+    detectarAjuda: 'Or let the site figure the layout out for you.',
+    aperteATecla: 'Press the highlighted key on the keyboard preview, to the right.',
+    aperteATeclaEstreito: 'Press the highlighted key on the keyboard preview, below.',
+    cancelar: 'Cancel',
+    detectado: 'Detected: {formato}.',
+    detectadoOutraTecla: 'That is not the highlighted key. Try again, or pick it yourself.',
+    detectadoNadaFeito:
+      'Could not tell. Please pick it yourself, looking at the key to the right of the L.',
+
+    previaTitulo: 'Preview of your keyboard',
+    previaAjuda: 'This is the keyboard the lessons will show, with one color per finger.',
+
+    acentosTitulo: 'How to type accents and Ç',
+    acentosAbnt2:
+      'Your keyboard handles it on its own: press the ´ key and then the vowel (´ then a = á). The tilde is on the ~ key, and Ç has its own key, right of the L.',
+    acentosUsMac:
+      'On a Mac, accents come from the ⌥ option key: ⌥ + e then e = é · ⌥ + n then a = ã · ⌥ + c = ç · ⌥ + ` then a = à.',
+    acentosUsWindows:
+      'On Windows, turn on the "United States — International" layout in the language settings. With it, type \' then the vowel (\' then a = á), ~ then a = ã, and \' then c = ç.',
+
+    continuar: 'Start practising',
+    emBreve: 'The lessons are still being built — this part is coming soon.',
   },
 
   licao: {

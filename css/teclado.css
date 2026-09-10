@@ -209,6 +209,27 @@
   font-weight: 600;
 }
 
+/* --- A tecla que o usuário precisa apertar para a detecção -------------- */
+
+/* Além de pulsar, a tecla ganha borda escura: quem desligou animações no
+   sistema (ou não enxerga bem o movimento) continua achando a tecla. */
+.tecla--pulsando {
+  border-color: var(--cor-texto);
+  border-width: 2px;
+  animation: pulsar 1.4s ease-in-out infinite;
+}
+
+@keyframes pulsar {
+  0%,
+  100% {
+    background-color: var(--dedo-neutro-fundo);
+  }
+  50% {
+    background-color: var(--dedo-minimo-fundo);
+    color: var(--dedo-minimo-texto);
+  }
+}
+
 /* --- Erro --------------------------------------------------------------- */
 
 .tecla--erro {

@@ -1,161 +1,131 @@
 /* ==========================================================================
    telas.css — o que é específico de cada tela.
    Só usa variáveis do tema.css.
-
-   Por enquanto contém apenas o MOSTRUÁRIO provisório do passo 2, usado para
-   conferir as cores. Ele sai quando a tela de entrada chegar (passo 6).
    ========================================================================== */
 
-/* --- Mostruário provisório (passo 2) ----------------------------------- */
+/* ==========================================================================
+   Tela de entrada
 
-.mostruario {
+   Duas colunas em telas largas: escolhas de um lado, prévia do teclado do
+   outro. Em telas estreitas vira uma coluna só, com a prévia embaixo.
+   ========================================================================== */
+
+.entrada {
+  display: grid;
+  gap: var(--esp-7);
+  align-items: start;
+}
+
+@media (min-width: 64rem) {
+  .entrada {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--esp-8);
+  }
+
+  /* A prévia acompanha a rolagem: ela é a referência enquanto o usuário
+     mexe nas escolhas do outro lado. */
+  .entrada-previa {
+    position: sticky;
+    top: var(--esp-6);
+  }
+}
+
+.entrada-escolhas > h1 {
+  margin-bottom: var(--esp-3);
+}
+
+.entrada-previa {
   display: flex;
   flex-direction: column;
-  gap: var(--esp-4);
-}
-
-.mostruario .selo {
-  align-self: flex-start;
-}
-
-.subtitulo {
-  color: var(--cor-texto-secundario);
-  font-size: 1.1rem;
-}
-
-.mostruario-acoes {
-  display: flex;
-  flex-wrap: wrap;
   gap: var(--esp-3);
-  padding-bottom: var(--esp-4);
+
+  /* Transforma a coluna numa "caixa medível": o teclado lá dentro passa a se
+     medir por ela (unidade cqw), e não pela largura da tela. Sem isso, em
+     telas médias o teclado ficaria maior que a coluna. */
+  container-type: inline-size;
 }
 
-.mostruario-ajuda {
-  color: var(--cor-texto-discreto);
-  font-size: 0.9rem;
+.entrada-previa .teclado {
+  /* 15 teclas de largura cabem em ~5,9% da coluna cada uma. */
+  --tecla: clamp(1rem, 5.8cqw, 2.4rem);
 }
 
-/* --- Amostra do texto de digitação ------------------------------------- */
-
-.linha-digitacao {
-  margin-top: var(--esp-2);
-  font-family: var(--fonte-mono);
-  /* 1.75rem = 28px. O cinza discreto das letras que faltam só tem contraste
-     suficiente em texto grande — por isso o tamanho mínimo é regra, não
-     enfeite (ver CLAUDE.md, "Contraste da paleta"). */
-  font-size: 1.75rem;
-  line-height: 1.7;
-  letter-spacing: 0.02em;
-}
-
-/* Letra já digitada corretamente. */
-.letra--certa {
-  color: var(--cor-texto);
-}
-
-/* Letra da vez: sublinhado grosso, sem piscar, para não cansar a vista. */
-.letra--atual {
-  color: var(--cor-texto);
-  border-bottom: 3px solid var(--cor-texto);
-}
-
-/* Letra ainda não digitada. Usa a cor própria --cor-letra-pendente, que só
-   tem contraste suficiente em fonte grande — daí o tamanho mínimo da linha
-   de digitação ser regra, e não enfeite. */
-.letra--falta {
-  color: var(--cor-letra-pendente);
-}
-
-/* Erro. */
-.letra--errada {
-  background-color: var(--cor-erro-fundo);
-  color: var(--cor-erro-texto);
-  border-radius: var(--raio-p);
-}
-
-/* --- Opções do mostruário do teclado ------------------------------------ */
-
-.mostruario-opcoes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--esp-3);
-  margin-block: var(--esp-2);
-}
-
-/* O teclado pode ser mais largo que a tela em celulares: nesse caso ele
-   rola sozinho na horizontal, sem empurrar a página inteira. */
-#teclado-demo {
+/* Rede de segurança: se ainda assim não couber, a prévia rola sozinha em vez
+   de empurrar a página inteira. */
+.entrada-previa > [data-papel='previa'] {
   overflow-x: auto;
   padding-bottom: var(--esp-2);
 }
 
-/* A legenda "Próxima: F · indicador esquerdo" — a versão em texto do que o
-   teclado e as mãos mostram em desenho. */
-.legenda-dedo {
-  min-height: 1.6em;
-  color: var(--cor-texto-secundario);
-  font-size: 0.95rem;
-  text-align: center;
-}
+/* --- Cartões de escolha ------------------------------------------------- */
 
-/* --- Amostra das cores dos dedos --------------------------------------- */
-
-.mostruario-dedos {
-  display: flex;
-  flex-wrap: wrap;
+.opcoes {
+  display: grid;
   gap: var(--esp-3);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
 }
 
-.amostra-tecla {
+/* Estes são controles, não seções: a borda aqui existe para mostrar que dá
+   para clicar, e some no lugar de virar caixa decorativa. */
+.opcao {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: var(--esp-1);
+  padding: var(--esp-4);
 
-  min-width: 4.5rem;
-  padding: var(--esp-3);
-  border: var(--borda);
+  border: 1px solid var(--cor-botao-secundario-borda);
   border-radius: var(--raio-m);
+  background-color: transparent;
+  color: var(--cor-texto);
 
-  font-family: var(--fonte-mono);
-  font-size: 1.1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--transicao), background-color var(--transicao);
 }
 
-.amostra-tecla small {
-  font-family: var(--fonte-texto);
-  font-size: 0.7rem;
-  opacity: 0.8;
+.opcao:hover {
+  border-color: var(--cor-texto-secundario);
 }
 
-.amostra-tecla--minimo {
-  background-color: var(--dedo-minimo-fundo);
-  color: var(--dedo-minimo-texto);
+.opcao[aria-pressed='true'] {
+  border-color: var(--cor-texto);
+  background-color: var(--cor-superficie);
 }
 
-.amostra-tecla--anelar {
-  background-color: var(--dedo-anelar-fundo);
-  color: var(--dedo-anelar-texto);
+.opcao-nome {
+  font-weight: 600;
 }
 
-.amostra-tecla--medio {
-  background-color: var(--dedo-medio-fundo);
-  color: var(--dedo-medio-texto);
+.opcao-descricao {
+  color: var(--cor-texto-secundario);
+  font-size: 0.875rem;
 }
 
-.amostra-tecla--indicador {
-  background-color: var(--dedo-indicador-fundo);
-  color: var(--dedo-indicador-texto);
+/* --- Detecção ----------------------------------------------------------- */
+
+.entrada-deteccao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3);
+  margin-top: var(--esp-2);
 }
 
-.amostra-tecla--neutro {
-  background-color: var(--dedo-neutro-fundo);
-  color: var(--dedo-neutro-texto);
+.entrada-deteccao .ajuda {
+  flex: 1 1 14rem;
+  margin: 0;
 }
 
-.amostra-tecla--erro {
-  background-color: var(--cor-erro-fundo);
-  color: var(--cor-erro-texto);
+/* A resposta da detecção. Fica vazia até haver o que dizer. */
+.aviso:not(:empty) {
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--raio-p);
+  background-color: var(--cor-superficie);
+  color: var(--cor-texto);
+  font-size: 0.9rem;
+}
+
+.ajuda {
+  color: var(--cor-texto-discreto);
+  font-size: 0.9rem;
 }

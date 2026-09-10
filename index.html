@@ -50,83 +50,16 @@
     </nav>
   </header>
 
-  <!-- Todas as telas do site vão aparecer dentro deste <main>, trocadas pelo
-       JavaScript. O conteúdo abaixo é provisório: serve para conferir as
-       cores do tema e será substituído pela tela de entrada no passo 6. -->
+  <!-- Todas as telas do site aparecem dentro deste <main>, trocadas pelo
+       JavaScript. O conteúdo escrito aqui é só o que se vê enquanto o
+       JavaScript não carregou. -->
   <main class="conteudo" id="tela">
 
-    <section class="mostruario">
-      <span class="selo" data-i18n="mostruario.selo">Versão 1 em construção</span>
-
-      <h1 data-i18n="mostruario.titulo">Aprenda a digitar sem olhar para o teclado.</h1>
-
-      <p class="subtitulo" data-i18n="mostruario.subtitulo">
-        Treino de digitação pensado para quem escreve em português: palavras de
-        verdade, acentos, Ç e ajuda para quem usa teclado americano.
-      </p>
-
-      <div class="mostruario-acoes">
-        <button type="button" class="botao botao--principal" data-i18n="mostruario.comecar">Começar do zero</button>
-        <button type="button" class="botao" data-i18n="mostruario.jaSei">Já sei digitar</button>
-      </div>
-
-      <div class="secao">
-        <h2 data-i18n="mostruario.amostraTitulo">Amostra do texto de digitação</h2>
-        <p class="mostruario-ajuda" data-i18n="mostruario.amostraAjuda">
-          É assim que a lição vai aparecer: o que você já digitou fica escuro, a
-          letra da vez fica marcada, o que falta fica claro e o erro fica vermelho.
-        </p>
-
-        <p class="linha-digitacao">
-          <span class="letra letra--certa">sala</span><span class="letra letra--certa"> </span><span class="letra letra--errada">f</span><span class="letra letra--atual">a</span><span class="letra letra--falta">da salada</span>
-        </p>
-      </div>
-
-      <div class="secao">
-        <h2 data-i18n="mostruario.dedosTitulo">As cores dos dedos</h2>
-        <p class="mostruario-ajuda" data-i18n="mostruario.dedosAjuda">
-          Cada dedo tem a sua cor, e ela é a mesma no teclado da tela e no
-          desenho das mãos.
-        </p>
-
-        <ul class="mostruario-dedos">
-          <li class="amostra-tecla amostra-tecla--minimo">A<small data-i18n="dedos.minimo">mínimo</small></li>
-          <li class="amostra-tecla amostra-tecla--anelar">S<small data-i18n="dedos.anelar">anelar</small></li>
-          <li class="amostra-tecla amostra-tecla--medio">D<small data-i18n="dedos.medio">médio</small></li>
-          <li class="amostra-tecla amostra-tecla--indicador">F<small data-i18n="dedos.indicador">indicador</small></li>
-          <li class="amostra-tecla amostra-tecla--neutro"><span data-i18n="teclas.espaco">espaço</span><small data-i18n="dedos.polegar">polegar</small></li>
-          <li class="amostra-tecla amostra-tecla--erro">K<small data-i18n="dedos.erro">erro</small></li>
-        </ul>
-      </div>
-
-      <div class="secao">
-        <h2 data-i18n="mostruario.tecladoTitulo">O teclado na tela</h2>
-        <p class="mostruario-ajuda" data-i18n="mostruario.tecladoAjuda">
-          Troque o formato e o sistema para ver o teclado mudar.
-        </p>
-
-        <div class="mostruario-opcoes">
-          <div class="seletor" role="group" data-i18n-aria="teclado.formato" aria-label="Formato do teclado">
-            <button type="button" class="seletor-opcao" data-demo-layout="abnt2" aria-pressed="true" data-i18n="teclado.abnt2">Brasileiro ABNT2</button>
-            <button type="button" class="seletor-opcao" data-demo-layout="us" aria-pressed="false" data-i18n="teclado.us">Americano US</button>
-          </div>
-
-          <div class="seletor" role="group" data-i18n-aria="teclado.sistema" aria-label="Sistema">
-            <button type="button" class="seletor-opcao" data-demo-sistema="windows" aria-pressed="true" data-i18n="teclado.windows">Windows</button>
-            <button type="button" class="seletor-opcao" data-demo-sistema="mac" aria-pressed="false" data-i18n="teclado.mac">Mac</button>
-          </div>
-
-          <div class="seletor" role="group" data-i18n-aria="teclado.modo" aria-label="Modo de exibição">
-            <button type="button" class="seletor-opcao" data-demo-modo="cores" aria-pressed="true" data-i18n="teclado.cores">Prévia colorida</button>
-            <button type="button" class="seletor-opcao" data-demo-modo="cinza" aria-pressed="false" data-i18n="teclado.cinza">Como na lição</button>
-          </div>
-        </div>
-
-        <div id="maos-demo"></div>
-        <p class="legenda-dedo" id="legenda-demo"></p>
-        <div id="teclado-demo"></div>
-      </div>
-    </section>
+    <!-- Reserva, para quem chega antes do JavaScript carregar. -->
+    <p class="ajuda" data-i18n="entrada.subtitulo">
+      O digita. mostra qual dedo usar em cada tecla. Para isso acertar, ele
+      precisa saber que teclado está na sua frente.
+    </p>
 
   </main>
 
