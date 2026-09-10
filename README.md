@@ -39,10 +39,14 @@ Como o projeto usa módulos ES, o navegador **não** aceita abrir o `index.html`
 clique. É preciso servir a pasta. Com o Python que já vem no macOS:
 
 ```bash
-python3 -m http.server 8000
+python3 servidor.py
 ```
 
-Depois abra **http://localhost:8000** no navegador.
+Depois abra **http://localhost:8010** no navegador.
+
+O `servidor.py` é um servidor local de 40 linhas, sem dependências, que manda o navegador
+não guardar nada em cache — assim uma alteração no código aparece assim que a página é
+recarregada.
 
 ## Estrutura
 

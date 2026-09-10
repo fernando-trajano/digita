@@ -101,6 +101,70 @@
   opacity: 0.7;
 }
 
+/* ==========================================================================
+   As mãos desenhadas acima do teclado.
+   ========================================================================== */
+
+.maos {
+  display: flex;
+  justify-content: center;
+  gap: var(--esp-6);
+}
+
+.mao {
+  width: clamp(5rem, 13vw, 8rem);
+  height: auto;
+  overflow: visible;
+}
+
+/* A mão esquerda é a direita espelhada. O espelhamento é feito aqui, no CSS,
+   e não no SVG, porque assim o desenho não sai da caixa dele. */
+.mao--esquerda {
+  transform: scaleX(-1);
+}
+
+/* O contorno usa a cor de texto discreto, e não a de borda: sobre o fundo
+   branco, uma linha clara demais faria a mão sumir. */
+.mao-palma {
+  fill: var(--dedo-neutro-fundo);
+  stroke: var(--cor-texto-discreto);
+  stroke-width: 1.5;
+}
+
+.mao-dedo {
+  fill: var(--dedo-neutro-fundo);
+  stroke: var(--cor-texto-discreto);
+  stroke-width: 1.5;
+  transition: fill var(--transicao);
+}
+
+/* O dedo aceso ganha a mesma cor que a tecla dele tem no teclado — é o que
+   liga um desenho ao outro na cabeça de quem está aprendendo. */
+.mao-dedo--ativo {
+  stroke: var(--cor-texto);
+  stroke-width: 2;
+}
+
+.mao-dedo--minimo {
+  fill: var(--dedo-minimo-fundo);
+}
+
+.mao-dedo--anelar {
+  fill: var(--dedo-anelar-fundo);
+}
+
+.mao-dedo--medio {
+  fill: var(--dedo-medio-fundo);
+}
+
+.mao-dedo--indicador {
+  fill: var(--dedo-indicador-fundo);
+}
+
+.mao-dedo--polegar {
+  fill: var(--dedo-neutro-fundo);
+}
+
 /* --- Cores dos dedos ---------------------------------------------------- */
 
 .tecla--neutro {

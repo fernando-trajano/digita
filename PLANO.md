@@ -330,10 +330,13 @@ Fernando para clicar em "Push origin".
 ## Como testar (Claude faz, Fernando só olha)
 
 ```bash
-cd /Users/fernando/Documents/ClaudeCode/Digita && python3 -m http.server 8000
+cd /Users/fernando/Documents/ClaudeCode/Digita && python3 servidor.py
 ```
 
-Abrir `http://localhost:8000` no painel de navegador do app e conferir, a cada passo:
+Sempre o `servidor.py`, nunca o `python3 -m http.server`: o servidor padrão deixa o
+navegador guardar os módulos em cache e mostrar a versão antiga do código.
+
+Abrir `http://localhost:8010` no painel de navegador do app e conferir, a cada passo:
 
 1. **Teclado e mãos** — trocar entre ABNT2/US e Windows/Mac muda o desenho e as teclas
    certas mudam de cor.
@@ -366,7 +369,8 @@ real no passo 7.
       cabeçalho; a escolha ainda não é salva — isso é o passo 8)
 - [x] **Passo 4** — layouts de teclado e teclado na tela (ABNT2 × US, Windows × Mac,
       cores por dedo, marcas em F e J, modo cinza com a tecla da vez acesa)
-- [ ] **Passo 5** — desenho das mãos
+- [x] **Passo 5** — desenho das mãos (SVG, dedo aceso na cor do dedo, legenda em texto;
+      inclui o `servidor.py`, que impede o cache do navegador durante o desenvolvimento)
 - [ ] **Passo 6** — detecção e tela de entrada · 🛑 teste no Safari
 - [ ] **Passo 7** — tela sem teclado físico e publicação no GitHub Pages · 🛑 com o Fernando
 - [ ] **Passo 8** — armazenamento e estado

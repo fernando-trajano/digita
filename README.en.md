@@ -40,10 +40,13 @@ The project uses ES modules, so browsers refuse to open `index.html` by double-c
 it. The folder has to be served. Using the Python that ships with macOS:
 
 ```bash
-python3 -m http.server 8000
+python3 servidor.py
 ```
 
-Then open **http://localhost:8000**.
+Then open **http://localhost:8010**.
+
+`servidor.py` is a 40-line dependency-free local server that tells the browser not to
+cache anything, so a code change shows up as soon as the page reloads.
 
 ## Layout
 

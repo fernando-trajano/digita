@@ -56,6 +56,17 @@ export const en = {
     cinza: 'As in a lesson',
   },
 
+  licao: {
+    proxima: 'Next',
+    ordemDoDedo: '{mao} {dedo}',
+    qualquerPolegar: 'either thumb',
+  },
+
+  maos: {
+    esquerda: 'left',
+    direita: 'right',
+  },
+
   dedos: {
     minimo: 'little',
     anelar: 'ring',

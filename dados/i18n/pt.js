@@ -63,6 +63,19 @@ export const pt = {
     cinza: 'Como na lição',
   },
 
+  licao: {
+    proxima: 'Próxima',
+    // Em português o dedo vem antes da mão ("indicador esquerdo"); em inglês
+    // é o contrário ("left index"). Por isso a ordem é uma tradução também.
+    ordemDoDedo: '{dedo} {mao}',
+    qualquerPolegar: 'qualquer polegar',
+  },
+
+  maos: {
+    esquerda: 'esquerdo',
+    direita: 'direito',
+  },
+
   dedos: {
     minimo: 'mínimo',
     anelar: 'anelar',

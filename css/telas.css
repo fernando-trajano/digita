@@ -89,6 +89,15 @@
   padding-bottom: var(--esp-2);
 }
 
+/* A legenda "Próxima: F · indicador esquerdo" — a versão em texto do que o
+   teclado e as mãos mostram em desenho. */
+.legenda-dedo {
+  min-height: 1.6em;
+  color: var(--cor-texto-secundario);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
 /* --- Amostra das cores dos dedos --------------------------------------- */
 
 .mostruario-dedos {

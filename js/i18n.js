@@ -65,6 +65,23 @@ export function t(chave) {
   return typeof reserva === 'string' ? reserva : chave;
 }
 
+/**
+ * Escreve o nome de um dedo do jeito certo em cada idioma.
+ * Em português o dedo vem antes da mão ("indicador esquerdo"); em inglês é o
+ * contrário ("left index"). A ordem vem das traduções, não do código.
+ * @param {string} mao   'esquerda' | 'direita' | 'ambas'
+ * @param {string} dedo  'minimo' | 'anelar' | 'medio' | 'indicador' | 'polegar'
+ * @returns {string}  ex.: 'indicador esquerdo'
+ */
+export function nomeDoDedo(mao, dedo) {
+  // A barra de espaço pode ser apertada com qualquer polegar.
+  if (mao === 'ambas') return t('licao.qualquerPolegar');
+
+  return t('licao.ordemDoDedo')
+    .replace('{dedo}', t(`dedos.${dedo}`))
+    .replace('{mao}', t(`maos.${mao}`));
+}
+
 /** Caminha pelo objeto seguindo os pontos da chave: 'a.b' → objeto.a.b */
 function buscar(objeto, chave) {
   return chave.split('.').reduce((atual, parte) => atual?.[parte], objeto);

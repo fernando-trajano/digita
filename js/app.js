@@ -6,8 +6,16 @@
    (passo 8) e sons (passo 16).
    ========================================================================== */
 
-import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
+import {
+  detectarIdioma,
+  definirIdioma,
+  ligarSeletorDeIdioma,
+  nomeDoDedo,
+  t,
+} from './i18n.js';
 import { desenharTeclado, destacarTecla } from './teclado.js';
+import { desenharMaos, destacarDedo, limparDedos } from './maos.js';
+import { dedoDaTecla } from '../dados/layouts/dedos.js';
 
 const raiz = document.documentElement;
 const botaoTema = document.querySelector('#botao-tema');
@@ -63,26 +71,53 @@ ligarSeletorDeIdioma();
 
 const demo = { layout: 'abnt2', sistema: 'windows', modo: 'cores' };
 const tecladoDemo = document.querySelector('#teclado-demo');
+const maosDemo = document.querySelector('#maos-demo');
+const legendaDemo = document.querySelector('#legenda-demo');
 
 // Sequência que o destaque percorre no modo "como na lição", só para mostrar
 // o efeito de acender uma tecla de cada vez.
 const PASSEIO = ['KeyF', 'KeyJ', 'KeyD', 'KeyK', 'KeyS', 'KeyL', 'KeyA', 'Semicolon', 'Space'];
 let passeio = null;
 
+/** Acende ao mesmo tempo a tecla, o dedo e a legenda. */
+function apontarTecla(codigo) {
+  destacarTecla(tecladoDemo, codigo);
+
+  const posicao = dedoDaTecla(codigo);
+  if (!posicao) {
+    limparDedos(maosDemo);
+    legendaDemo.textContent = '';
+    return;
+  }
+
+  destacarDedo(maosDemo, posicao.mao, posicao.dedo);
+
+  // A legenda é a versão em texto do que o desenho está mostrando — é ela
+  // que serve a quem usa leitor de tela, já que o teclado e as mãos são
+  // apoios visuais.
+  const tecla = tecladoDemo.querySelector(`[data-codigo="${codigo}"]`);
+  legendaDemo.textContent =
+    `${t('licao.proxima')}: ${tecla?.textContent ?? codigo} · ` +
+    nomeDoDedo(posicao.mao, posicao.dedo);
+}
+
 function desenharDemo() {
   desenharTeclado(tecladoDemo, demo);
+  desenharMaos(maosDemo);
 
   clearInterval(passeio);
   passeio = null;
 
   if (demo.modo === 'cinza') {
     let indice = 0;
-    destacarTecla(tecladoDemo, PASSEIO[0]);
+    apontarTecla(PASSEIO[0]);
 
     passeio = setInterval(() => {
       indice = (indice + 1) % PASSEIO.length;
-      destacarTecla(tecladoDemo, PASSEIO[indice]);
+      apontarTecla(PASSEIO[indice]);
     }, 1200);
+  } else {
+    legendaDemo.textContent = '';
   }
 }
 

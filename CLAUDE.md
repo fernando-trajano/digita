@@ -207,8 +207,17 @@ Quando o Fernando pedir para testar, **eu** (Claude) subo o servidor e abro o na
 ele não precisa rodar nada:
 
 ```bash
-cd /Users/fernando/Documents/ClaudeCode/Digita && python3 -m http.server 8000
+cd /Users/fernando/Documents/ClaudeCode/Digita && python3 servidor.py
 ```
+
+Use **sempre o `servidor.py`**, nunca o `python3 -m http.server`. O servidor padrão deixa o
+navegador guardar os módulos JavaScript em cache: depois de editar um arquivo, a página
+continua rodando a versão antiga e o erro parece estar no código. O `servidor.py` manda
+`Cache-Control: no-store` e acaba com isso. Ele só serve para desenvolver — no GitHub
+Pages quem serve é o GitHub.
+
+Se um navegador já tiver guardado a versão velha de um arquivo, trocar a porta
+(`python3 servidor.py 8020`) cria endereços novos e resolve na hora.
 
 Ambiente conferido: `python3` 3.9.6 e `git` 2.39.5. Não há Node nem Homebrew.
 
