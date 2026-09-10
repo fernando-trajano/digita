@@ -196,9 +196,11 @@
   color: var(--cor-texto);
 }
 
-/* Letra da vez: sublinhado grosso, sem piscar, para não cansar a vista. */
+/* Letra da vez: fica na mesma cor clara das que ainda faltam — quem marca
+   onde você está é o sublinhado, não a cor. Assim o tom escuro significa uma
+   coisa só: "isto já foi digitado". */
 .letra--atual {
-  color: var(--cor-texto);
+  color: var(--cor-letra-pendente);
   box-shadow: inset 0 -3px 0 var(--cor-texto);
 }
 
