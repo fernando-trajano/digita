@@ -7,11 +7,21 @@
   <meta name="description" content="Treino de digitação em português do Brasil, com foco em acentos, Ç e nas diferenças entre o teclado ABNT2 e o americano.">
 
   <!-- Escolhe o tema ANTES de a página aparecer, para não piscar branco em
-       quem usa o modo escuro. É a única linha de JavaScript fora da pasta js/.
-       No passo 8 este script também vai ler a escolha salva no localStorage. -->
+       quem usa o modo escuro. É o único JavaScript fora da pasta js/, e ele
+       precisa estar aqui: qualquer coisa carregada depois já seria tarde.
+       Lê o tema salvo; se não houver escolha salva, segue o sistema. -->
   <script>
-    document.documentElement.dataset.tema =
-      window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+    (function () {
+      var tema = null;
+      try {
+        tema = JSON.parse(localStorage.getItem('digita:config') || '{}').tema;
+      } catch (erro) {
+        /* navegador sem localStorage: segue o sistema */
+      }
+      document.documentElement.dataset.tema =
+        tema ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro');
+    })();
   </script>
 
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">

@@ -4,11 +4,12 @@
    Ele liga as três coisas que valem para o site inteiro (tema, idioma e a
    tela que está aparecendo) e sai da frente. Cada tela cuida de si.
 
-   A cada passo do plano ganha mais responsabilidades: estado salvo
-   (passo 8), troca entre várias telas (passo 11) e sons (passo 16).
+   A cada passo do plano ganha mais responsabilidades: troca entre várias
+   telas (passo 11) e sons (passo 16).
    ========================================================================== */
 
 import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
+import { config, definirConfig } from './estado.js';
 import { mostrarEntrada } from './telas/entrada.js';
 import { pareceSemTecladoFisico, mostrarAvisoSemTeclado } from './telas/sem-teclado.js';
 
@@ -19,13 +20,11 @@ const preferenciaEscura = window.matchMedia('(prefers-color-scheme: dark)');
 
 /* --------------------------------------------------------------------------
    Tema
-   -------------------------------------------------------------------------- */
 
-/* Enquanto o usuário não clicar no botão, o site segue o tema do sistema.
-   Depois do primeiro clique, a escolha dele manda — igual à regra da tela de
-   entrada: escolha manual é sempre a palavra final.
-   (No passo 8 essa escolha passa a ser salva em digita:config.) */
-let escolhaManual = false;
+   Enquanto o usuário não clicar no botão, o site segue o tema do sistema.
+   Depois do primeiro clique, a escolha dele fica salva e manda — a mesma
+   regra da tela de entrada.
+   -------------------------------------------------------------------------- */
 
 /**
  * Aplica um tema à página inteira.
@@ -45,14 +44,15 @@ function temaDoSistema() {
 }
 
 botaoTema.addEventListener('click', () => {
-  escolhaManual = true;
-  aplicarTema(raiz.dataset.tema === 'escuro' ? 'claro' : 'escuro');
+  const novo = raiz.dataset.tema === 'escuro' ? 'claro' : 'escuro';
+  definirConfig({ tema: novo });
+  aplicarTema(novo);
 });
 
 // Se o computador trocar de claro para escuro sozinho (ao anoitecer, por
 // exemplo), o site acompanha — a não ser que já tenha havido escolha manual.
 preferenciaEscura.addEventListener('change', () => {
-  if (!escolhaManual) aplicarTema(temaDoSistema());
+  if (!config().tema) aplicarTema(temaDoSistema());
 });
 
 /* --------------------------------------------------------------------------
@@ -61,18 +61,10 @@ preferenciaEscura.addEventListener('change', () => {
 
 ligarSeletorDeIdioma();
 
-/* --------------------------------------------------------------------------
-   Início
-   -------------------------------------------------------------------------- */
-
-// O script no <head> do index.html já definiu o tema antes de a página
-// aparecer; aqui só acertamos o ícone para combinar com ele.
-aplicarTema(raiz.dataset.tema || temaDoSistema());
-
-// O idioma vem do navegador do visitante. A partir do primeiro clique em
-// PT/EN, a escolha dele é que manda.
-// (No passo 8 essa escolha passa a ser lembrada em digita:config.)
-definirIdioma(detectarIdioma());
+// Só o que veio de um clique é salvo: a detecção sugere, não decide.
+document.addEventListener('idioma-mudou', (evento) => {
+  if (evento.detail.manual) definirConfig({ idioma: evento.detail.idioma });
+});
 
 /* --------------------------------------------------------------------------
    Qual tela mostrar
@@ -89,6 +81,17 @@ function irPara(desenhar) {
   desenhar(tela);
 }
 
+/* --------------------------------------------------------------------------
+   Início
+   -------------------------------------------------------------------------- */
+
+// O script no <head> do index.html já definiu o tema antes de a página
+// aparecer; aqui só acertamos o ícone para combinar com ele.
+aplicarTema(config().tema ?? raiz.dataset.tema ?? temaDoSistema());
+
+// Idioma salvo, se houver; senão, o do navegador de quem chegou.
+definirIdioma(config().idioma ?? detectarIdioma());
+
 // Quem chega de celular recebe o aviso primeiro, mas pode entrar assim mesmo:
 // existe tablet com teclado acoplado, e o palpite do navegador pode errar.
 if (pareceSemTecladoFisico()) {
@@ -98,6 +101,5 @@ if (pareceSemTecladoFisico()) {
 }
 
 // As telas são desenhadas em JavaScript, então trocar o idioma pede que a
-// tela seja desenhada de novo. O que o usuário já escolheu não se perde: as
-// escolhas moram no módulo da tela, não no HTML.
+// tela seja desenhada de novo.
 document.addEventListener('idioma-mudou', () => telaAtual(tela));

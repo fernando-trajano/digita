@@ -376,7 +376,8 @@ real no passo 7.
 - [x] **Passo 7** — tela sem teclado físico e publicação no GitHub Pages ✅ **no ar em
       https://fernando-trajano.github.io/digita/** (conferido: as 5 folhas de estilo
       carregam, a detecção funciona no endereço real e o console fica limpo)
-- [ ] **Passo 8** — armazenamento e estado
+- [x] **Passo 8** — armazenamento e estado (idioma, formato, sistema e tema sobrevivem ao
+      recarregar; funciona mesmo em navegador que proíbe salvar)
 - [ ] **Passo 9** — as 18 lições da fileira base · 🛑 revisão do conteúdo
 - [ ] **Passo 10** — motor de digitação e métricas · 🛑 teste no Safari
 - [ ] **Passo 11** — tela de lição · 🛑 teste no Safari

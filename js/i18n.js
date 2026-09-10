@@ -90,8 +90,11 @@ function buscar(objeto, chave) {
 /**
  * Troca o idioma do site inteiro.
  * @param {'pt'|'en'} codigo
+ * @param {boolean} [manual]  true quando veio de um clique do usuário, e não
+ *                            da detecção automática. Só a escolha manual é
+ *                            salva — a detecção não deve virar decisão.
  */
-export function definirIdioma(codigo) {
+export function definirIdioma(codigo, manual = false) {
   idiomaAtual = idiomas[codigo] ? codigo : IDIOMA_PADRAO;
 
   // Avisa o navegador em que idioma a página está.
@@ -103,7 +106,7 @@ export function definirIdioma(codigo) {
   // As telas que forem construídas depois escutam este aviso para se
   // redesenharem no idioma novo.
   document.dispatchEvent(
-    new CustomEvent('idioma-mudou', { detail: { idioma: idiomaAtual } })
+    new CustomEvent('idioma-mudou', { detail: { idioma: idiomaAtual, manual } })
   );
 }
 
@@ -143,12 +146,9 @@ function marcarBotaoDoIdioma() {
   });
 }
 
-/**
- * Liga os botões PT/EN do cabeçalho.
- * (No passo 8 a escolha passa a ser salva em digita:config.)
- */
+/** Liga os botões PT/EN do cabeçalho. */
 export function ligarSeletorDeIdioma() {
   document.querySelectorAll('[data-idioma]').forEach((botao) => {
-    botao.addEventListener('click', () => definirIdioma(botao.dataset.idioma));
+    botao.addEventListener('click', () => definirIdioma(botao.dataset.idioma, true));
   });
 }

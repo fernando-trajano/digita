@@ -14,6 +14,7 @@
 
 import { t, nomeDoDedo } from '../i18n.js';
 import { desenharTeclado } from '../teclado.js';
+import { config, definirConfig } from '../estado.js';
 import {
   detectarSistema,
   detectarLayoutPeloNavegador,
@@ -21,12 +22,12 @@ import {
   TECLA_DE_TESTE,
 } from '../deteccao.js';
 
-/* O que o usuário escolheu. O padrão é o teclado brasileiro, como manda o
-   briefing; o sistema já vem marcado pelo que o navegador informou.
-   (No passo 8 isto passa a ser lido e salvo em digita:config.) */
+/* O que vale agora. O formato vem do que estiver salvo (o padrão é o teclado
+   brasileiro, como manda o briefing). O sistema vem do que o usuário
+   escolheu antes; se ele nunca escolheu, do palpite do navegador. */
 const escolha = {
-  layout: 'abnt2',
-  sistema: detectarSistema(),
+  layout: config().layout,
+  sistema: config().sistema ?? detectarSistema(),
 };
 
 /** Cancela a espera pela tecla, quando há uma em andamento. */
@@ -146,6 +147,9 @@ function ligarEscolhas(destino, grupo) {
 
 function aplicarEscolha(destino, grupo, valor) {
   escolha[grupo] = valor;
+
+  // Fica salvo: na próxima visita o site já sabe qual é o seu teclado.
+  definirConfig({ [grupo]: valor });
 
   destino.querySelectorAll(`[data-grupo="${grupo}"]`).forEach((botao) => {
     botao.setAttribute('aria-pressed', String(botao.dataset.valor === valor));
