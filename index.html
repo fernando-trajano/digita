@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>digita. — treino de digitação em português</title>
+  <meta name="description" content="Treino de digitação em português do Brasil, com foco em acentos, Ç e nas diferenças entre o teclado ABNT2 e o americano.">
+
+  <!-- Escolhe o tema ANTES de a página aparecer, para não piscar branco em
+       quem usa o modo escuro. É a única linha de JavaScript fora da pasta js/.
+       No passo 8 este script também vai ler a escolha salva no localStorage. -->
+  <script>
+    document.documentElement.dataset.tema =
+      window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+  </script>
+
+  <link rel="stylesheet" href="./css/tema.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/componentes.css">
+  <link rel="stylesheet" href="./css/telas.css">
+</head>
+<body>
+
+  <!-- Ícones do site. Ficam aqui dentro, desenhados uma vez, e são reusados
+       com <use href="#icone-x">. Sem arquivo externo: nada a baixar, e
+       funciona igual em qualquer navegador. -->
+  <svg class="sprite-icones" aria-hidden="true" focusable="false">
+    <symbol id="icone-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <circle cx="12" cy="12" r="4"></circle>
+      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+    </symbol>
+    <symbol id="icone-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
+    </symbol>
+  </svg>
+
+  <header class="cabecalho">
+    <a class="marca" href="./">digita<span class="marca-ponto">.</span></a>
+
+    <nav class="cabecalho-acoes">
+      <!-- No passo 3 estes botões passam a trocar os textos de verdade. -->
+      <div class="seletor" role="group" aria-label="Idioma da interface">
+        <button type="button" class="seletor-opcao" data-idioma="pt" aria-pressed="true">PT</button>
+        <button type="button" class="seletor-opcao" data-idioma="en" aria-pressed="false">EN</button>
+      </div>
+
+      <button type="button" class="botao-icone" id="botao-tema" aria-label="Alternar entre modo claro e escuro">
+        <svg aria-hidden="true"><use href="#icone-lua"></use></svg>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Todas as telas do site vão aparecer dentro deste <main>, trocadas pelo
+       JavaScript. O conteúdo abaixo é provisório: serve para conferir as
+       cores do tema e será substituído pela tela de entrada no passo 6. -->
+  <main class="conteudo" id="tela">
+
+    <section class="mostruario">
+      <span class="selo">Versão 1 em construção</span>
+
+      <h1>Aprenda a digitar sem olhar para o teclado.</h1>
+
+      <p class="subtitulo">
+        Treino de digitação pensado para quem escreve em português: palavras de
+        verdade, acentos, Ç e ajuda para quem usa teclado americano.
+      </p>
+
+      <div class="mostruario-acoes">
+        <button type="button" class="botao botao--principal">Começar do zero</button>
+        <button type="button" class="botao">Já sei digitar</button>
+      </div>
+
+      <div class="cartao mostruario-cartao">
+        <h2>Amostra do texto de digitação</h2>
+        <p class="mostruario-ajuda">
+          É assim que a lição vai aparecer: o que você já digitou fica escuro, a
+          letra da vez fica marcada, o que falta fica claro e o erro fica vermelho.
+        </p>
+
+        <p class="linha-digitacao">
+          <span class="letra letra--certa">sala</span><span class="letra letra--certa"> </span><span class="letra letra--errada">f</span><span class="letra letra--atual">a</span><span class="letra letra--falta">da salada</span>
+        </p>
+      </div>
+
+      <div class="cartao mostruario-cartao">
+        <h2>As cores dos dedos</h2>
+        <p class="mostruario-ajuda">
+          Cada dedo tem a sua cor, e ela é a mesma no teclado da tela e no
+          desenho das mãos.
+        </p>
+
+        <ul class="mostruario-dedos">
+          <li class="amostra-tecla amostra-tecla--minimo">A<small>mínimo</small></li>
+          <li class="amostra-tecla amostra-tecla--anelar">S<small>anelar</small></li>
+          <li class="amostra-tecla amostra-tecla--medio">D<small>médio</small></li>
+          <li class="amostra-tecla amostra-tecla--indicador">F<small>indicador</small></li>
+          <li class="amostra-tecla amostra-tecla--neutro">espaço<small>polegar</small></li>
+          <li class="amostra-tecla amostra-tecla--erro">K<small>erro</small></li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="rodape">
+    Feito em português, sem depender de nada externo.
+  </footer>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

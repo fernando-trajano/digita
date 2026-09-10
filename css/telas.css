@@ -1,0 +1,139 @@
+/* ==========================================================================
+   telas.css — o que é específico de cada tela.
+   Só usa variáveis do tema.css.
+
+   Por enquanto contém apenas o MOSTRUÁRIO provisório do passo 2, usado para
+   conferir as cores. Ele sai quando a tela de entrada chegar (passo 6).
+   ========================================================================== */
+
+/* --- Mostruário provisório (passo 2) ----------------------------------- */
+
+.mostruario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+}
+
+.mostruario .selo {
+  align-self: flex-start;
+}
+
+.subtitulo {
+  color: var(--cor-texto-secundario);
+  font-size: 1.1rem;
+}
+
+.mostruario-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+}
+
+.mostruario-cartao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.mostruario-ajuda {
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+/* --- Amostra do texto de digitação ------------------------------------- */
+
+.linha-digitacao {
+  margin-top: var(--esp-2);
+  font-family: var(--fonte-mono);
+  /* 1.75rem = 28px. O cinza discreto das letras que faltam só tem contraste
+     suficiente em texto grande — por isso o tamanho mínimo é regra, não
+     enfeite (ver CLAUDE.md, "Contraste da paleta"). */
+  font-size: 1.75rem;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+}
+
+/* Letra já digitada corretamente. */
+.letra--certa {
+  color: var(--cor-texto);
+}
+
+/* Letra da vez: sublinhado grosso, sem piscar, para não cansar a vista. */
+.letra--atual {
+  color: var(--cor-texto);
+  border-bottom: 3px solid var(--cor-texto);
+}
+
+/* Letra ainda não digitada. */
+.letra--falta {
+  color: var(--cor-texto-discreto);
+}
+
+/* Erro. */
+.letra--errada {
+  background-color: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+  border-radius: var(--raio-p);
+}
+
+/* --- Amostra das cores dos dedos --------------------------------------- */
+
+.mostruario-dedos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.amostra-tecla {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-1);
+
+  min-width: 4.5rem;
+  padding: var(--esp-3);
+  border: var(--borda);
+  border-radius: var(--raio-m);
+
+  font-family: var(--fonte-mono);
+  font-size: 1.1rem;
+}
+
+.amostra-tecla small {
+  font-family: var(--fonte-texto);
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.amostra-tecla--minimo {
+  background-color: var(--dedo-minimo-fundo);
+  color: var(--dedo-minimo-texto);
+}
+
+.amostra-tecla--anelar {
+  background-color: var(--dedo-anelar-fundo);
+  color: var(--dedo-anelar-texto);
+}
+
+.amostra-tecla--medio {
+  background-color: var(--dedo-medio-fundo);
+  color: var(--dedo-medio-texto);
+}
+
+.amostra-tecla--indicador {
+  background-color: var(--dedo-indicador-fundo);
+  color: var(--dedo-indicador-texto);
+}
+
+.amostra-tecla--neutro {
+  background-color: var(--dedo-neutro-fundo);
+  color: var(--dedo-neutro-texto);
+}
+
+.amostra-tecla--erro {
+  background-color: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+}

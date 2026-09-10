@@ -129,9 +129,15 @@ Digita/
 │       ├── fileira-base.js    # 18 lições COM conteúdo (a única na v1)
 │       └── MODELO.md          # esquema de uma lição, para criar as próximas
 │
-└── assets/
-    └── icones.svg             # sprite SVG local (som, idioma, tema, cadeado, estrela)
+└── (os ícones ficam desenhados no topo do index.html, num <svg> de símbolos
+    reusados com <use href="#icone-x"> — ver nota abaixo)
 ```
+
+**Mudança em relação ao plano original:** a pasta `assets/` com um `icones.svg` externo
+foi trocada por um bloco `<svg>` de símbolos no próprio `index.html`. Motivo: referência a
+arquivo SVG externo dentro de `<use>` tem suporte irregular entre navegadores, e são
+poucos ícones — assim não há requisição extra nem risco de o ícone sumir em algum
+navegador.
 
 **Por que uma página só:** o site inteiro vive no `index.html` e o JavaScript troca o
 conteúdo. É o que faz o GitHub Pages funcionar sem servidor e mantém a digitação fluida,
@@ -211,7 +217,7 @@ o Fernando deve testar e o que deve ver. Um commit pequeno e descritivo por pass
 | # | O que | Entrega visível |
 |---|---|---|
 | 1 | `git init`, CLAUDE.md, .gitignore, .nojekyll, README PT + EN, LICENSE | Repositório pronto |
-| 2 | `tema.css` + `base.css` + `index.html` com cabeçalho | Página com as cores certas, claro e escuro |
+| 2 | `tema.css` + `base.css` + `componentes.css` + `telas.css` + `index.html` + `app.js` | Página com as cores certas, claro e escuro |
 | 3 | `i18n.js` + `dados/i18n/*` | Botão PT/EN trocando os textos de verdade |
 | 4 | `dados/layouts/*` + `teclado.js` + `teclado.css` | Teclado desenhado, ABNT2 × US, Win × Mac, cores por dedo, marcas em F e J |
 | 5 | `maos.js` | Duas mãos em SVG com um dedo aceso |
@@ -325,7 +331,8 @@ real no passo 7.
 ## Estado dos passos
 
 - [x] **Passo 1** — repositório, CLAUDE.md, READMEs, LICENSE, .gitignore, .nojekyll
-- [ ] **Passo 2** — `tema.css`, `base.css`, `index.html` com cabeçalho
+- [x] **Passo 2** — `tema.css`, `base.css`, `componentes.css`, `telas.css`, `index.html`,
+      `app.js` (botão de tema claro/escuro; a escolha ainda não é salva — isso é o passo 8)
 - [ ] **Passo 3** — `i18n.js` e traduções PT/EN
 - [ ] **Passo 4** — layouts de teclado e teclado na tela
 - [ ] **Passo 5** — desenho das mãos

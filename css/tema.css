@@ -1,0 +1,147 @@
+/* ==========================================================================
+   tema.css — o único arquivo que conhece cores.
+
+   REGRA DO PROJETO: nenhum outro CSS pode escrever uma cor literal (#F1EFE8).
+   Todo o resto do site usa var(--nome-da-variavel). Assim, para mudar a
+   aparência inteira do digita., basta mexer aqui.
+
+   Como funciona o modo claro/escuro:
+   - :root guarda a paleta CLARA (o padrão).
+   - :root[data-tema="escuro"] regrava só as cores que mudam.
+   - Um script pequeno no <head> do index.html escolhe o tema antes da página
+     aparecer, para não piscar branco em quem usa o modo escuro.
+   ========================================================================== */
+
+:root {
+  /* Avisa ao navegador qual é o tema, para barras de rolagem e campos de
+     formulário combinarem com a página. */
+  color-scheme: light;
+
+  /* --- Superfícies e texto (modo claro) ------------------------------- */
+  --cor-fundo: #F1EFE8;             /* fundo da página */
+  --cor-painel: #FFFFFF;            /* cartões e painéis */
+  --cor-borda: #D3D1C7;             /* bordas */
+  --cor-texto: #2C2C2A;             /* texto principal */
+  --cor-texto-secundario: #5F5E5A;  /* texto secundário */
+  --cor-texto-discreto: #888780;    /* discreto e letras ainda não digitadas */
+
+  --cor-botao-fundo: #2C2C2A;
+  --cor-botao-texto: #FFFFFF;
+
+  /* --- Cores dos dedos (fundo da tecla / texto da tecla) --------------- */
+  --dedo-minimo-fundo: #EEEDFE;     /* mínimo — violeta */
+  --dedo-minimo-texto: #3C3489;
+
+  --dedo-anelar-fundo: #E6F1FB;     /* anelar — azul */
+  --dedo-anelar-texto: #0C447C;
+
+  --dedo-medio-fundo: #E1F5EE;      /* médio — verde-água */
+  --dedo-medio-texto: #085041;
+
+  --dedo-indicador-fundo: #EAF3DE;  /* indicador — verde */
+  --dedo-indicador-texto: #27500A;
+
+  --dedo-neutro-fundo: #F1EFE8;     /* polegar e teclas neutras — cinza */
+  --dedo-neutro-texto: #5F5E5A;
+
+  /* --- Erro ------------------------------------------------------------ */
+  --cor-erro-fundo: #FCEBEB;
+  --cor-erro-texto: #A32D2D;
+
+  /* --- Fontes do sistema (nada é baixado) ------------------------------ */
+  --fonte-titulo: Georgia, "New York", serif;
+  --fonte-texto: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* --- Espaçamentos ---------------------------------------------------- */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+  --esp-8: 4rem;
+
+  /* --- Formas ---------------------------------------------------------- */
+  --raio-p: 6px;
+  --raio-m: 10px;
+  --raio-g: 16px;
+  --borda: 1px solid var(--cor-borda);
+  --largura-max: 62rem;
+
+  /* --- Movimento ------------------------------------------------------- */
+  --transicao: 150ms ease;
+}
+
+/* ==========================================================================
+   Modo escuro — só o que muda em relação ao claro.
+   ========================================================================== */
+
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+
+  --cor-fundo: #1F1F1D;
+  --cor-painel: #2C2C2A;
+  --cor-borda: #444441;
+  --cor-texto: #F1EFE8;
+  --cor-texto-secundario: #B4B2A9;
+  --cor-texto-discreto: #888780;
+
+  --cor-botao-fundo: #F1EFE8;
+  --cor-botao-texto: #2C2C2A;
+
+  --dedo-minimo-fundo: #3C3489;
+  --dedo-minimo-texto: #CECBF6;
+
+  --dedo-anelar-fundo: #0C447C;
+  --dedo-anelar-texto: #B5D4F4;
+
+  --dedo-medio-fundo: #085041;
+  --dedo-medio-texto: #9FE1CB;
+
+  --dedo-indicador-fundo: #27500A;
+  --dedo-indicador-texto: #C0DD97;
+
+  --dedo-neutro-fundo: #444441;
+  --dedo-neutro-texto: #D3D1C7;
+
+  --cor-erro-fundo: #791F1F;
+  --cor-erro-texto: #F7C1C1;
+}
+
+/* Rede de segurança: se o JavaScript não rodar, quem usa o sistema no escuro
+   ainda recebe o tema escuro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema]) {
+    color-scheme: dark;
+
+    --cor-fundo: #1F1F1D;
+    --cor-painel: #2C2C2A;
+    --cor-borda: #444441;
+    --cor-texto: #F1EFE8;
+    --cor-texto-secundario: #B4B2A9;
+    --cor-texto-discreto: #888780;
+
+    --cor-botao-fundo: #F1EFE8;
+    --cor-botao-texto: #2C2C2A;
+
+    --dedo-minimo-fundo: #3C3489;
+    --dedo-minimo-texto: #CECBF6;
+
+    --dedo-anelar-fundo: #0C447C;
+    --dedo-anelar-texto: #B5D4F4;
+
+    --dedo-medio-fundo: #085041;
+    --dedo-medio-texto: #9FE1CB;
+
+    --dedo-indicador-fundo: #27500A;
+    --dedo-indicador-texto: #C0DD97;
+
+    --dedo-neutro-fundo: #444441;
+    --dedo-neutro-texto: #D3D1C7;
+
+    --cor-erro-fundo: #791F1F;
+    --cor-erro-texto: #F7C1C1;
+  }
+}

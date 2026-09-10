@@ -1,0 +1,135 @@
+/* ==========================================================================
+   componentes.css — peças reutilizáveis: botões, cartões, seletores, selos.
+   Só usa variáveis do tema.css.
+   ========================================================================== */
+
+/* --- Cartão ------------------------------------------------------------ */
+
+.cartao {
+  padding: var(--esp-5);
+  border: var(--borda);
+  border-radius: var(--raio-g);
+  background-color: var(--cor-painel);
+}
+
+/* --- Botões ------------------------------------------------------------ */
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+
+  padding: var(--esp-3) var(--esp-5);
+  border: var(--borda);
+  border-radius: var(--raio-p);
+  background-color: transparent;
+  color: var(--cor-texto);
+
+  font-size: 0.95rem;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--transicao), border-color var(--transicao);
+}
+
+.botao:hover {
+  border-color: var(--cor-texto-secundario);
+}
+
+/* Botão principal: a ação mais importante de cada tela. Só um por tela. */
+.botao--principal {
+  border-color: var(--cor-botao-fundo);
+  background-color: var(--cor-botao-fundo);
+  color: var(--cor-botao-texto);
+}
+
+.botao--principal:hover {
+  /* Sem sombra nem gradiente: o realce vem de uma leve transparência. */
+  opacity: 0.88;
+}
+
+.botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Botão de ícone (tema, som) ---------------------------------------- */
+
+.botao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: var(--borda);
+  border-radius: var(--raio-p);
+  background-color: transparent;
+  color: var(--cor-texto-secundario);
+
+  cursor: pointer;
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.botao-icone:hover {
+  color: var(--cor-texto);
+  border-color: var(--cor-texto-secundario);
+}
+
+.botao-icone svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* --- Seletor de duas opções (PT / EN) ---------------------------------- */
+
+.seletor {
+  display: inline-flex;
+  border: var(--borda);
+  border-radius: var(--raio-p);
+  overflow: hidden;
+}
+
+.seletor-opcao {
+  padding: var(--esp-2) var(--esp-3);
+  border: 0;
+  background-color: transparent;
+  color: var(--cor-texto-secundario);
+
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background-color var(--transicao), color var(--transicao);
+}
+
+.seletor-opcao + .seletor-opcao {
+  border-left: var(--borda);
+}
+
+.seletor-opcao:hover {
+  color: var(--cor-texto);
+}
+
+/* aria-pressed="true" marca a opção ativa: o estado visual e o estado que o
+   leitor de tela anuncia são a mesma coisa. */
+.seletor-opcao[aria-pressed="true"] {
+  background-color: var(--cor-botao-fundo);
+  color: var(--cor-botao-texto);
+}
+
+/* --- Selo (etiqueta pequena) ------------------------------------------- */
+
+.selo {
+  display: inline-block;
+  padding: var(--esp-1) var(--esp-3);
+  border-radius: 999px;
+  background-color: var(--dedo-neutro-fundo);
+  color: var(--dedo-neutro-texto);
+
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}

@@ -1,0 +1,182 @@
+/* ==========================================================================
+   base.css — o alicerce: reset, tipografia, layout da página e cabeçalho.
+   Só usa variáveis do tema.css. Nenhuma cor literal aqui.
+   ========================================================================== */
+
+/* --- Reset enxuto ---------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  /* Rolagem suave quando a página pula para uma âncora. */
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-texto);
+  font-size: 1rem;
+  line-height: 1.6;
+
+  /* Deixa as fontes do sistema mais suaves no Mac. */
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Quem prefere menos animação no sistema não vê nenhuma. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --- Tipografia ------------------------------------------------------- */
+
+h1,
+h2,
+h3 {
+  font-family: var(--fonte-titulo);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem);
+}
+
+h2 {
+  font-size: clamp(1.4rem, 1.2rem + 1vw, 1.9rem);
+}
+
+h3 {
+  font-size: 1.15rem;
+}
+
+p {
+  max-width: 62ch; /* linha curta o bastante para ler sem cansar */
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.2em;
+}
+
+/* --- Foco visível: acessibilidade pelo teclado ------------------------ */
+
+:focus-visible {
+  outline: 2px solid var(--cor-texto);
+  outline-offset: 2px;
+  border-radius: var(--raio-p);
+}
+
+/* --- Cabeçalho -------------------------------------------------------- */
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+
+  padding: var(--esp-4) var(--esp-5);
+  border-bottom: var(--borda);
+  background-color: var(--cor-fundo);
+}
+
+.marca {
+  font-family: var(--fonte-titulo);
+  font-size: 1.35rem;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+/* O ponto final do "digita." é a assinatura da marca. */
+.marca-ponto {
+  color: var(--cor-texto-discreto);
+}
+
+.cabecalho-acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+/* --- Área de conteúdo -------------------------------------------------- */
+
+.conteudo {
+  flex: 1;
+  width: 100%;
+  max-width: var(--largura-max);
+  margin-inline: auto;
+  padding: var(--esp-7) var(--esp-5) var(--esp-8);
+}
+
+.rodape {
+  padding: var(--esp-5);
+  border-top: var(--borda);
+  color: var(--cor-texto-secundario);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* --- Utilitários ------------------------------------------------------- */
+
+/* Some da tela, mas continua sendo lido por leitores de tela. */
+.apenas-leitor-de-tela {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* O bloco de ícones SVG no topo do HTML: existe, mas não ocupa espaço. */
+.sprite-icones {
+  display: none;
+}
+
+@media (max-width: 40rem) {
+  .cabecalho {
+    padding: var(--esp-3) var(--esp-4);
+  }
+
+  .conteudo {
+    padding: var(--esp-6) var(--esp-4) var(--esp-7);
+  }
+}
