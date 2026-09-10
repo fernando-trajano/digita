@@ -89,7 +89,8 @@ export const pt = {
   licao: {
     proxima: 'Próxima',
     licao: 'Lição',
-    sair: 'Sair da lição',
+    sair: 'Sair',
+    mostrarMaos: 'Mostrar mãos',
     ppm: 'PPM',
     precisao: 'precisão',
     progresso: 'progresso',

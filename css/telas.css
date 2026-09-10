@@ -133,6 +133,9 @@
 /* A legenda "Próxima: F · indicador esquerdo" — a versão em texto do que o
    teclado e as mãos mostram em desenho, e a que os leitores de tela leem. */
 .legenda-dedo {
+  /* Sem o limite de largura dos parágrafos comuns: esta legenda precisa
+     ficar centralizada no mesmo eixo do texto e do teclado. */
+  max-width: none;
   min-height: 1.6em;
   color: var(--cor-texto-secundario);
   font-size: 0.95rem;
@@ -170,12 +173,13 @@
   max-width: none;
   margin: 0;
   font-family: var(--fonte-mono);
-  /* 1.75rem = 28px. A cor das letras que faltam só tem contraste suficiente
-     em texto grande — por isso o tamanho mínimo é regra, não enfeite
-     (ver CLAUDE.md, "Contraste da paleta"). */
-  font-size: 1.75rem;
-  line-height: 1.8;
+  /* ~32px. A cor das letras que faltam só tem contraste suficiente em texto
+     grande — por isso o tamanho mínimo é regra, não enfeite (ver CLAUDE.md,
+     "Contraste da paleta"). */
+  font-size: var(--tamanho-texto-licao);
+  line-height: 1.45;
   letter-spacing: 0.02em;
+  text-align: center;
   white-space: pre-wrap;
 }
 
@@ -225,55 +229,57 @@
 /* ==========================================================================
    Tela de lição
 
-   Uma coluna centralizada, sem nada nas laterais: quem está treinando
-   precisa olhar para uma coisa só.
+   Regra de ouro: TUDO cabe numa tela de notebook (~800px de altura) sem
+   rolagem — métricas, texto, dica, mãos e teclado. Quem treina não pode
+   rolar a página nem procurar informação fora do campo de visão.
+
+   Texto e teclado ficam centralizados no mesmo eixo e com a mesma largura
+   máxima, para o olho descer em linha reta de um para o outro.
    ========================================================================== */
 
 .licao {
   display: flex;
   flex-direction: column;
-  gap: var(--esp-5);
+  gap: var(--esp-4);
   max-width: var(--largura-teclado-max);
   margin-inline: auto;
+
+  /* "Caixa medível": o texto e o teclado lá dentro se medem por esta coluna
+     (unidade cqw), e não pela largura da janela. É o que mantém os dois com
+     a mesma largura, um debaixo do outro. */
+  container-type: inline-size;
 }
 
-.licao-cabecalho {
+/* --- A linha do topo: nome, medidas e ações ----------------------------- */
+
+.licao-topo {
   display: flex;
-  align-items: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: var(--esp-4);
 }
 
-.licao-cabecalho .ajuda {
-  margin-bottom: var(--esp-1);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.75rem;
-}
-
-.licao-area {
-  position: relative;
-}
-
-/* Quando o campo perde o foco, a lição fica em espera e diz o que fazer. */
-.licao-espera {
-  margin-top: var(--esp-2);
-  color: var(--cor-texto-secundario);
-  font-size: 0.9rem;
-}
-
-.licao-teclado {
-  display: flex;
-  justify-content: center;
-  overflow-x: auto;
-  padding-bottom: var(--esp-2);
-}
-
-.licao-fim {
-  padding: var(--esp-4) var(--esp-5);
-  border-radius: var(--raio-m);
-  background-color: var(--cor-superficie);
+.licao-nome {
+  margin: 0;
   font-weight: 600;
+}
+
+.licao-acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.botao--pequeno {
+  padding: var(--esp-2) var(--esp-4);
+  font-size: 0.85rem;
+}
+
+/* O botão de mostrar as mãos usa o mesmo desenho das opções PT/EN. */
+.licao-alternar {
+  border: 1px solid var(--cor-botao-secundario-borda);
+  border-radius: var(--raio-p);
 }
 
 /* --- Medidas ao vivo ---------------------------------------------------- */
@@ -281,29 +287,27 @@
 .medidas {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--esp-6);
-  /* Números de mesma largura: o valor não "pula" quando muda de 9 para 10. */
+  gap: var(--esp-5);
+  color: var(--cor-texto-discreto);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  /* Números de mesma largura: o valor não "pula" ao mudar de 9 para 10. */
   font-variant-numeric: tabular-nums;
 }
 
 .medida strong {
-  display: block;
-  font-size: 1.8rem;
+  margin-right: var(--esp-1);
+  color: var(--cor-texto);
+  font-size: 1.15rem;
   font-weight: 600;
-  line-height: 1.1;
-}
-
-.medida span {
-  color: var(--cor-texto-discreto);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
 }
 
 /* --- Barra de progresso ------------------------------------------------- */
 
 .barra {
-  height: 4px;
+  height: 3px;
   border-radius: 2px;
   background-color: var(--cor-superficie);
   overflow: hidden;
@@ -315,6 +319,45 @@
   height: 100%;
   background-color: var(--cor-texto);
   transition: width var(--transicao);
+}
+
+/* --- O texto da lição --------------------------------------------------- */
+
+.licao-area {
+  position: relative;
+  /* Três linhas de altura fixa: a caixa não muda de tamanho quando a janela
+     do texto anda, e nada abaixo dela dança na tela. */
+  min-height: calc(3 * 1.45 * var(--tamanho-texto-licao));
+}
+
+.licao-espera {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+/* --- O palco: teclado com as mãos por cima ------------------------------ */
+
+.licao-palco {
+  position: relative;
+  width: 100%;
+}
+
+.licao-teclado {
+  display: flex;
+  justify-content: center;
+}
+
+.licao-palco .teclado {
+  /* O teclado se mede pela largura da coluna, e não pela da tela. */
+  --tecla: clamp(1.5rem, 5.6cqw, 3.4rem);
+}
+
+.licao-fim {
+  padding: var(--esp-4) var(--esp-5);
+  border-radius: var(--raio-m);
+  background-color: var(--cor-superficie);
+  font-weight: 600;
 }
 
 /* ==========================================================================

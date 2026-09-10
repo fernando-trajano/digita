@@ -102,67 +102,75 @@
 }
 
 /* ==========================================================================
-   As mãos desenhadas acima do teclado.
+   As mãos, sobrepostas ao teclado.
+
+   Elas ficam por cima das teclas, em contorno translúcido e sem
+   preenchimento, para não esconder as letras. Não recebem cliques: quem
+   está embaixo é o teclado.
    ========================================================================== */
 
 .maos {
-  display: flex;
-  justify-content: center;
-  gap: var(--esp-6);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
 .mao {
-  width: clamp(5rem, 13vw, 8rem);
-  height: auto;
+  position: absolute;
   overflow: visible;
 }
 
-/* A mão esquerda é a direita espelhada. O espelhamento é feito aqui, no CSS,
-   e não no SVG, porque assim o desenho não sai da caixa dele. */
-.mao--esquerda {
-  transform: scaleX(-1);
+/* O contorno das mãos: fino, contínuo e translúcido. */
+.mao-palma,
+.mao-dedo,
+.mao-punho {
+  fill: none;
+  stroke: var(--cor-texto-secundario);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.55;
+  vector-effect: non-scaling-stroke;
+  transition: fill var(--transicao), opacity var(--transicao);
 }
 
-/* O contorno usa a cor de texto discreto, e não a de borda: sobre o fundo
-   branco, uma linha clara demais faria a mão sumir. */
-.mao-palma {
-  fill: var(--dedo-neutro-fundo);
-  stroke: var(--cor-texto-discreto);
-  stroke-width: 1.5;
+/* As dobras das articulações são mais discretas que o contorno. */
+.mao-dobra {
+  fill: none;
+  stroke: var(--cor-texto-secundario);
+  stroke-width: 0.9;
+  stroke-linecap: round;
+  opacity: 0.3;
+  vector-effect: non-scaling-stroke;
 }
 
-.mao-dedo {
-  fill: var(--dedo-neutro-fundo);
-  stroke: var(--cor-texto-discreto);
-  stroke-width: 1.5;
-  transition: fill var(--transicao);
-}
-
-/* O dedo aceso ganha a mesma cor que a tecla dele tem no teclado — é o que
-   liga um desenho ao outro na cabeça de quem está aprendendo. */
+/* O dedo aceso ganha a mesma cor que a tecla dele no teclado — é o que liga
+   um desenho ao outro na cabeça de quem está aprendendo. O preenchimento é
+   translúcido para a letra da tecla continuar legível por baixo. */
 .mao-dedo--ativo {
+  opacity: 1;
   stroke: var(--cor-texto);
-  stroke-width: 2;
+  stroke-width: 1.6;
 }
 
 .mao-dedo--minimo {
-  fill: var(--dedo-minimo-fundo);
+  fill: color-mix(in srgb, var(--dedo-minimo-fundo) 72%, transparent);
 }
 
 .mao-dedo--anelar {
-  fill: var(--dedo-anelar-fundo);
+  fill: color-mix(in srgb, var(--dedo-anelar-fundo) 72%, transparent);
 }
 
 .mao-dedo--medio {
-  fill: var(--dedo-medio-fundo);
+  fill: color-mix(in srgb, var(--dedo-medio-fundo) 72%, transparent);
 }
 
 .mao-dedo--indicador {
-  fill: var(--dedo-indicador-fundo);
+  fill: color-mix(in srgb, var(--dedo-indicador-fundo) 72%, transparent);
 }
 
 .mao-dedo--polegar {
-  fill: var(--dedo-neutro-fundo);
+  fill: color-mix(in srgb, var(--dedo-neutro-fundo) 72%, transparent);
 }
 
 /* --- Cores dos dedos ---------------------------------------------------- */

@@ -84,7 +84,8 @@ export const en = {
   licao: {
     proxima: 'Next',
     licao: 'Lesson',
-    sair: 'Leave lesson',
+    sair: 'Leave',
+    mostrarMaos: 'Show hands',
     ppm: 'WPM',
     precisao: 'accuracy',
     progresso: 'progress',

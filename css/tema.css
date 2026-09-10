@@ -78,6 +78,10 @@
   --largura-max: 1100px;        /* largura máxima do conteúdo */
   --largura-teclado-max: 900px; /* largura máxima do teclado na lição */
 
+  /* O texto da lição: grande o bastante para as letras que faltam terem
+     contraste, e para se enxergar sem baixar os olhos do teclado. */
+  --tamanho-texto-licao: clamp(1.5rem, 3.4cqw, 2rem);
+
   /* --- Movimento ------------------------------------------------------- */
   --transicao: 150ms ease;
 }

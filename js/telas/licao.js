@@ -23,7 +23,7 @@ import {
   piscarErro,
   teclaDaLetra,
 } from '../teclado.js';
-import { desenharMaos, destacarDedo, limparDedos } from '../maos.js';
+import { desenharMaos, encaixarMaos, destacarDedo, limparDedos } from '../maos.js';
 import { dedoDaTecla } from '../../dados/layouts/dedos.js';
 import { conferirLayout } from '../deteccao.js';
 import { metasDaLicao } from '../../dados/licoes/indice.js';
@@ -46,7 +46,7 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   const layout = config().layout;
 
   destino.replaceChildren();
-  destino.insertAdjacentHTML('beforeend', montarHtml(licao));
+  destino.insertAdjacentHTML('beforeend', montarHtml(licao, config().mostrarMaos));
 
   const partes = {
     texto: destino.querySelector('[data-papel="texto"]'),
@@ -63,7 +63,18 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   };
 
   desenharMaos(partes.maos);
-  desenharTeclado(partes.teclado, { layout, sistema: config().sistema ?? 'windows', modo: 'cinza' });
+  desenharTeclado(partes.teclado, {
+    layout,
+    sistema: config().sistema ?? 'windows',
+    modo: 'cinza',
+  });
+
+  aplicarPreferenciaDasMaos(destino, partes, config().mostrarMaos);
+
+  // As mãos são encaixadas por medição do teclado, então precisam ser
+  // recolocadas sempre que ele mudar de tamanho (janela, zoom, fonte).
+  const observador = new ResizeObserver(() => encaixarMaos(partes.maos, partes.teclado));
+  observador.observe(partes.teclado);
 
   const motor = criarMotor({
     linhas: licao.conteudo,
@@ -106,9 +117,22 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     aoSair?.();
   });
 
+  const botaoMaos = destino.querySelector('[data-acao="maos"]');
+  botaoMaos.addEventListener('click', () => {
+    const mostrar = botaoMaos.getAttribute('aria-pressed') !== 'true';
+
+    definirConfig({ mostrarMaos: mostrar });
+    botaoMaos.setAttribute('aria-pressed', String(mostrar));
+    aplicarPreferenciaDasMaos(destino, partes, mostrar);
+
+    // Sair da lição por causa de um clique num botão seria cruel.
+    motor.focar();
+  });
+
   sessao = {
     encerrar() {
       motor.destruir();
+      observador.disconnect();
       document.removeEventListener('keydown', vigia, true);
     },
   };
@@ -124,32 +148,25 @@ export function encerrarLicao() {
    HTML
    -------------------------------------------------------------------------- */
 
-function montarHtml(licao) {
+function montarHtml(licao, mostrarMaos) {
   const idioma = document.documentElement.lang.startsWith('pt') ? 'pt' : 'en';
 
   return `
     <div class="licao">
-      <div class="licao-cabecalho">
-        <div>
-          <p class="ajuda">${t('licao.licao')}</p>
-          <h1>${licao.titulo[idioma]}</h1>
-        </div>
-        <button type="button" class="botao" data-acao="sair">${t('licao.sair')}</button>
-      </div>
+      <div class="licao-topo">
+        <p class="licao-nome">${licao.titulo[idioma]}</p>
 
-      <div class="medidas">
-        <span class="medida">
-          <strong data-papel="ppm">0</strong>
-          <span>${t('licao.ppm')}</span>
-        </span>
-        <span class="medida">
-          <strong data-papel="precisao">100</strong>
-          <span>${t('licao.precisao')}</span>
-        </span>
-        <span class="medida">
-          <strong data-papel="progresso">0%</strong>
-          <span>${t('licao.progresso')}</span>
-        </span>
+        <div class="medidas">
+          <span class="medida"><strong data-papel="ppm">0</strong> ${t('licao.ppm')}</span>
+          <span class="medida"><strong data-papel="precisao">100%</strong> ${t('licao.precisao')}</span>
+          <span class="medida"><strong data-papel="progresso">0%</strong> ${t('licao.progresso')}</span>
+        </div>
+
+        <div class="licao-acoes">
+          <button type="button" class="seletor-opcao licao-alternar" data-acao="maos"
+                  aria-pressed="${mostrarMaos}">${t('licao.mostrarMaos')}</button>
+          <button type="button" class="botao botao--pequeno" data-acao="sair">${t('licao.sair')}</button>
+        </div>
       </div>
 
       <div class="barra"><span data-papel="barra"></span></div>
@@ -161,13 +178,21 @@ function montarHtml(licao) {
 
       <p class="legenda-dedo" data-papel="legenda"></p>
 
-      <div data-papel="maos"></div>
-      <div class="licao-teclado" data-papel="teclado"></div>
+      <div class="licao-palco">
+        <div class="licao-teclado" data-papel="teclado"></div>
+        <div data-papel="maos"></div>
+      </div>
 
       <p class="aviso" data-papel="aviso-layout" role="status" hidden></p>
       <div class="licao-fim" data-papel="fim" hidden></div>
     </div>
   `;
+}
+
+/** Liga ou desliga o desenho das mãos sobre o teclado. */
+function aplicarPreferenciaDasMaos(destino, partes, mostrar) {
+  partes.maos.hidden = !mostrar;
+  if (mostrar) encaixarMaos(partes.maos, partes.teclado);
 }
 
 /* --------------------------------------------------------------------------

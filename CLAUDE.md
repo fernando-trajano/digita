@@ -109,7 +109,30 @@ Regras válidas para o site inteiro:
 |---|---|
 | **Início** e **Trilha** | Três colunas em telas largas. **Esquerda:** navegação (Início, Trilha, Treino livre, Jogos, Estatísticas, Configurações — o que não existe na v1 aparece como "em breve"). **Centro:** conteúdo principal. **Direita:** painel de progresso com sequência de dias e meta diária, teclas mais lentas (de `digita:estatisticas`) e progresso geral (lições concluídas de 100). |
 | **Entrada** | Duas colunas em telas largas: escolhas de um lado, prévia do teclado do outro. |
-| **Lição** | Centralizada, **sem nada nas laterais**. Texto de digitação e teclado grandes, com o teclado ocupando até cerca de **900px** de largura. |
+| **Lição** | Centralizada, **sem nada nas laterais**. Ver as regras detalhadas logo abaixo. |
+
+### Tela de lição — regras detalhadas
+
+1. **Tudo visível sem rolar a página** numa tela de notebook (~800px de altura): métricas,
+   texto, dica da próxima tecla, mãos e teclado. Quem treina não pode rolar nem procurar
+   informação fora do campo de visão.
+2. **Texto e teclado centralizados no mesmo eixo**, com a mesma largura máxima, para o
+   olho descer em linha reta de um para o outro. Texto em monoespaçada de cerca de
+   **32px**, no máximo **3 linhas visíveis** (uma janela que acompanha o cursor).
+3. **Métricas** (PPM, precisão, progresso) numa linha discreta no topo, com o nome da
+   lição à esquerda e **"Sair"** à direita.
+4. **Teclado** de até cerca de **900px** de largura.
+5. **Mãos sobrepostas ao teclado**: contorno translúcido, sem preenchimento, com as pontas
+   dos dedos nas teclas da fileira base (A S D F · J K L e a tecla à direita do L) e os
+   polegares sobre a barra de espaço. O dedo da próxima tecla acende na cor do dedo, e a
+   tecla correspondente também. **As mãos não podem esconder as letras das teclas.**
+   As mãos são encaixadas medindo as teclas no próprio teclado desenhado, e recolocadas
+   sempre que ele muda de tamanho.
+6. **"Próxima: F · indicador esquerdo"** centralizado logo acima do teclado.
+7. Botão **"Mostrar mãos"**, ligado por padrão e salvo em `digita:config`.
+
+**Alternativa, se a sobreposição ficar ruim de ler em algum tamanho de tela:** mãos
+pequenas logo acima do teclado, cada mão alinhada com a sua metade do teclado.
 
 **Telas estreitas:** as colunas viram uma só, nesta ordem — **conteúdo principal,
 progresso, navegação**. A navegação vira um menu no topo.
