@@ -81,6 +81,35 @@ export const en = {
     continuar: 'Start practising',
   },
 
+  nav: {
+    secoes: 'Site sections',
+    inicio: 'Home',
+    trilha: 'Track',
+    treino: 'Free practice',
+    jogos: 'Games',
+    estatisticas: 'Statistics',
+    configuracoes: 'Settings',
+    emBreve: 'coming soon',
+  },
+
+  painel: {
+    titulo: 'Your progress',
+    dia: 'day in a row',
+    dias: 'days in a row',
+    licoesConcluidas: 'lessons completed',
+    errosTitulo: 'Keys that slip most',
+    semErros: 'No mistakes to show yet.',
+  },
+
+  trilha: {
+    titulo: 'The track',
+    subtitulo:
+      'A programme of seven tracks and around a hundred five-minute lessons. Each lesson opens when the previous one is complete.',
+    trancada: 'Finish the previous one',
+    aberta: 'Lesson open, not completed yet',
+    planejadas: '{quantas} lessons planned.',
+  },
+
   resultado: {
     parabens: 'Lesson complete!',
     quase: 'Almost there.',

@@ -86,6 +86,35 @@ export const pt = {
     continuar: 'Começar a treinar',
   },
 
+  nav: {
+    secoes: 'Seções do site',
+    inicio: 'Início',
+    trilha: 'Trilha',
+    treino: 'Treino livre',
+    jogos: 'Jogos',
+    estatisticas: 'Estatísticas',
+    configuracoes: 'Configurações',
+    emBreve: 'em breve',
+  },
+
+  painel: {
+    titulo: 'Seu progresso',
+    dia: 'dia seguido praticando',
+    dias: 'dias seguidos praticando',
+    licoesConcluidas: 'lições concluídas',
+    errosTitulo: 'Teclas que mais escapam',
+    semErros: 'Ainda não há erros para mostrar.',
+  },
+
+  trilha: {
+    titulo: 'A trilha',
+    subtitulo:
+      'Um programa de sete trilhas e cerca de cem lições de cinco minutos. Cada lição abre quando a anterior é concluída.',
+    trancada: 'Conclua a anterior',
+    aberta: 'Lição aberta, ainda não concluída',
+    planejadas: '{quantas} lições planejadas.',
+  },
+
   resultado: {
     parabens: 'Lição concluída!',
     quase: 'Quase lá.',

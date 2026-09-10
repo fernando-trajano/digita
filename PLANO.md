@@ -391,7 +391,8 @@ real no passo 7.
 - [x] **Passo 12** — tela de resultado e progresso (estrelas, precisão mínima de 90%,
       teclas mais erradas, Repetir e Próxima; desbloqueio da lição seguinte, sequência de
       dias e estatísticas acumuladas)
-- [ ] **Passo 13** — trilha de fases
+- [x] **Passo 13** — trilha de fases (as 7 trilhas, 6 marcadas "em breve", as 18 lições
+      com estrelas e cadeados, moldura de três colunas com navegação e painel de progresso)
 - [ ] **Passo 14** — nivelamento
 - [ ] **Passo 15** — tela inicial
 - [ ] **Passo 16** — sons

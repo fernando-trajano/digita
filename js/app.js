@@ -13,7 +13,8 @@ import { config, definirConfig } from './estado.js';
 import { mostrarEntrada } from './telas/entrada.js';
 import { mostrarLicao, encerrarLicao } from './telas/licao.js';
 import { mostrarResultado } from './telas/resultado.js';
-import { registrarResultado, licaoParaContinuar } from './progresso.js';
+import { mostrarTrilha } from './telas/trilha.js';
+import { registrarResultado } from './progresso.js';
 import { pareceSemTecladoFisico, mostrarAvisoSemTeclado } from './telas/sem-teclado.js';
 import { conferirLicoes } from '../dados/licoes/conferencia.js';
 
@@ -89,11 +90,25 @@ function irPara(desenhar) {
   desenhar(tela);
 }
 
+/**
+ * As seções que já existem. As outras aparecem no menu marcadas como
+ * "em breve"; esta lista cresce a cada passo do plano.
+ */
+const SECOES_DISPONIVEIS = new Set(['trilha']);
+
 /** A tela de entrada, com o botão que leva ao treino. */
 function telaDeEntrada(destino) {
-  // Continua de onde a pessoa parou: a primeira lição ainda não concluída.
-  mostrarEntrada(destino, {
-    aoContinuar: () => abrirLicao(licaoParaContinuar()),
+  mostrarEntrada(destino, { aoContinuar: () => irPara(telaDeTrilha) });
+}
+
+/** O mapa do programa: as sete trilhas e as lições de cada uma. */
+function telaDeTrilha(destino) {
+  mostrarTrilha(destino, {
+    secoesDisponiveis: SECOES_DISPONIVEIS,
+    aoAbrirLicao: abrirLicao,
+    aoNavegar: (secao) => {
+      if (secao === 'trilha') irPara(telaDeTrilha);
+    },
   });
 }
 
@@ -102,7 +117,7 @@ function abrirLicao(licao) {
   irPara((destino) =>
     mostrarLicao(destino, {
       licao,
-      aoSair: () => irPara(telaDeEntrada),
+      aoSair: () => irPara(telaDeTrilha),
 
       aoConcluir(resumo) {
         // O progresso é gravado ANTES de a tela de resultado aparecer: o que
@@ -116,7 +131,7 @@ function abrirLicao(licao) {
             registro,
             aoRepetir: () => abrirLicao(licao),
             aoProxima: () => abrirLicao(registro.proxima),
-            aoSair: () => irPara(telaDeEntrada),
+            aoSair: () => irPara(telaDeTrilha),
           })
         );
       },
