@@ -15,6 +15,16 @@
 const CARACTERES_POR_PALAVRA = 5;
 
 /**
+ * Tempo mínimo antes de mostrar uma velocidade, em segundos.
+ *
+ * PPM é uma divisão pelo tempo decorrido. Na primeira tecla esse tempo é
+ * quase zero, e dividir por quase zero dá um número absurdo — apareceriam
+ * "2.160.000 PPM" no instante em que a pessoa começasse a digitar. Antes de
+ * um segundo, o honesto é não mostrar velocidade nenhuma.
+ */
+const SEGUNDOS_MINIMOS = 1;
+
+/**
  * Cria um contador para uma lição.
  * @returns {object}
  */
@@ -33,10 +43,10 @@ export function criarMetricas() {
   }
 
   function ppm() {
-    const minutos = segundos() / 60;
-    if (minutos <= 0) return 0;
+    const decorridos = segundos();
+    if (decorridos < SEGUNDOS_MINIMOS) return 0;
 
-    return (acertos / CARACTERES_POR_PALAVRA) / minutos;
+    return (acertos / CARACTERES_POR_PALAVRA) / (decorridos / 60);
   }
 
   function precisao() {

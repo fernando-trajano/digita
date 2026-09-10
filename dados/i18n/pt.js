@@ -84,11 +84,23 @@ export const pt = {
       'No Windows, ative o layout "Estados Unidos — Internacional" nas configurações de idioma. Com ele, digite \' e depois a vogal (\' e depois a = á), ~ e depois a = ã, e \' e depois c = ç.',
 
     continuar: 'Começar a treinar',
-    emBreve: 'As lições estão sendo construídas — esta parte chega em breve.',
   },
 
   licao: {
     proxima: 'Próxima',
+    licao: 'Lição',
+    sair: 'Sair da lição',
+    ppm: 'PPM',
+    precisao: 'precisão',
+    progresso: 'progresso',
+    erros: 'erros',
+    campo: 'Área de digitação da lição',
+    clique: 'Clique no texto para continuar digitando.',
+    concluida: 'Lição concluída!',
+    tenteDeNovo: 'Quase! A precisão mínima é 90%.',
+    avisoLayout:
+      'A tecla que você apertou parece ser de um teclado {formato}. Quer trocar?',
+    trocarLayout: 'Trocar',
     // Em português o dedo vem antes da mão ("indicador esquerdo"); em inglês
     // é o contrário ("left index"). Por isso a ordem é uma tradução também.
     ordemDoDedo: '{dedo} {mao}',

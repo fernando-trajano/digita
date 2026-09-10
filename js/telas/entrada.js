@@ -37,7 +37,7 @@ let cancelarEscuta = null;
  * Desenha a tela de entrada dentro de um elemento.
  * @param {HTMLElement} destino
  */
-export function mostrarEntrada(destino) {
+export function mostrarEntrada(destino, { aoContinuar } = {}) {
   pararDeteccao();
 
   destino.replaceChildren();
@@ -46,6 +46,10 @@ export function mostrarEntrada(destino) {
   ligarEscolhas(destino, 'layout');
   ligarEscolhas(destino, 'sistema');
   ligarDeteccao(destino);
+
+  destino
+    .querySelector('[data-acao="continuar"]')
+    .addEventListener('click', () => aoContinuar?.());
 
   atualizarPrevia(destino);
 }
@@ -99,10 +103,9 @@ function montarHtml() {
         </section>
 
         <section class="secao">
-          <button type="button" class="botao botao--principal" disabled>
+          <button type="button" class="botao botao--principal" data-acao="continuar">
             ${t('entrada.continuar')}
           </button>
-          <p class="ajuda">${t('entrada.emBreve')}</p>
         </section>
       </div>
 

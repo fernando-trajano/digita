@@ -11,7 +11,9 @@
 import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
 import { config, definirConfig } from './estado.js';
 import { mostrarEntrada } from './telas/entrada.js';
+import { mostrarLicao, encerrarLicao } from './telas/licao.js';
 import { pareceSemTecladoFisico, mostrarAvisoSemTeclado } from './telas/sem-teclado.js';
+import { todasAsLicoes } from '../dados/licoes/indice.js';
 import { conferirLicoes } from '../dados/licoes/conferencia.js';
 
 const raiz = document.documentElement;
@@ -75,11 +77,34 @@ document.addEventListener('idioma-mudou', (evento) => {
    isto vira o roteador.
    -------------------------------------------------------------------------- */
 
-let telaAtual = mostrarEntrada;
+let telaAtual = telaDeEntrada;
 
 function irPara(desenhar) {
+  // Sair de uma lição precisa desligar os ouvintes dela; as outras telas não
+  // deixam nada para trás.
+  encerrarLicao();
+
   telaAtual = desenhar;
   desenhar(tela);
+}
+
+/** A tela de entrada, com o botão que leva à primeira lição. */
+function telaDeEntrada(destino) {
+  mostrarEntrada(destino, { aoContinuar: () => irPara(telaDeLicao) });
+}
+
+/**
+ * A primeira lição.
+ * No passo 12 isto passa a olhar o progresso salvo e abrir a lição de onde a
+ * pessoa parou; no passo 13, a trilha é que escolhe.
+ */
+function telaDeLicao(destino) {
+  const licao = todasAsLicoes()[0];
+
+  mostrarLicao(destino, {
+    licao,
+    aoSair: () => irPara(telaDeEntrada),
+  });
 }
 
 /* --------------------------------------------------------------------------
@@ -101,9 +126,9 @@ conferirLicoes(config().layout);
 // Quem chega de celular recebe o aviso primeiro, mas pode entrar assim mesmo:
 // existe tablet com teclado acoplado, e o palpite do navegador pode errar.
 if (pareceSemTecladoFisico()) {
-  irPara((destino) => mostrarAvisoSemTeclado(destino, () => irPara(mostrarEntrada)));
+  irPara((destino) => mostrarAvisoSemTeclado(destino, () => irPara(telaDeEntrada)));
 } else {
-  irPara(mostrarEntrada);
+  irPara(telaDeEntrada);
 }
 
 // As telas são desenhadas em JavaScript, então trocar o idioma pede que a

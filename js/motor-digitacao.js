@@ -35,8 +35,10 @@ import { criarMetricas } from './metricas.js';
  * @param {(estado: object) => void} [opcoes.aoAtualizar]  a cada mudança
  * @param {(erro: object) => void} [opcoes.aoErrar]  a cada tecla errada
  * @param {(resumo: object) => void} [opcoes.aoConcluir]  ao fim da lição
+ * @param {(temFoco: boolean) => void} [opcoes.aoMudarFoco]  quando o campo
+ *        ganha ou perde o foco — a lição fica em espera enquanto não o tem
  */
-export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir }) {
+export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFoco }) {
   // O texto vira uma string só, com quebras de linha. As quebras são
   // puladas automaticamente: ninguém precisa apertar Enter no fim da linha.
   const texto = linhas.join('\n');
@@ -154,6 +156,18 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir }) {
     campo.addEventListener('compositionupdate', aoComporAndamento);
     campo.addEventListener('compositionend', aoComporFim);
     campo.addEventListener('keydown', aoTeclar);
+    campo.addEventListener('paste', aoColar);
+    campo.addEventListener('focus', () => aoMudarFoco?.(true));
+    campo.addEventListener('blur', () => aoMudarFoco?.(false));
+
+    // Clicar em qualquer lugar do texto volta o foco para o campo — é o que
+    // faz a área inteira se comportar como um campo de texto.
+    destino.addEventListener('pointerdown', (evento) => {
+      if (evento.target !== campo) {
+        evento.preventDefault();
+        focar();
+      }
+    });
 
     destino.append(campo);
     focar();
@@ -198,6 +212,12 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir }) {
     if (evento.key === 'Backspace') evento.preventDefault();
   }
 
+  /* Colar o texto da lição terminaria a lição sem ninguém ter digitado nada.
+     Não é uma questão de segurança — é que treino colado não treina. */
+  function aoColar(evento) {
+    evento.preventDefault();
+  }
+
   /* ------------------------------------------------------------------------
      Controle
      ------------------------------------------------------------------------ */
@@ -231,29 +251,62 @@ function contarDigitaveis(texto) {
 
 /**
  * Desenha o texto com as letras coloridas conforme o andamento.
+ *
+ * Mostra só uma JANELA de linhas em volta da linha atual, e não a lição
+ * inteira. O motivo é prático: quem treina não pode rolar a página nem
+ * desviar os olhos para longe: texto, mãos e teclado precisam caber juntos
+ * na tela. A barra de progresso é que conta o resto.
+ *
  * @param {HTMLElement} destino
  * @param {object} estado  o que o motor devolve em estado()
+ * @param {number} [linhasVisiveis]  quantas linhas mostrar de uma vez
  */
-export function desenharTexto(destino, estado) {
+export function desenharTexto(destino, estado, linhasVisiveis = 3) {
   const { texto, posicao, errouAqui } = estado;
 
-  destino.replaceChildren();
+  // Apaga só as linhas de texto, e não tudo o que houver dentro: o campo
+  // invisível costuma morar no mesmo elemento, e apagá-lo aqui deixaria a
+  // lição sem quem escute a digitação.
+  destino.querySelectorAll('.linha-digitacao').forEach((linha) => linha.remove());
 
-  let indice = 0;
+  // Onde cada linha começa dentro do texto — é o que permite achar em qual
+  // delas o cursor está.
+  const linhas = [];
+  let inicio = 0;
 
-  for (const linha of texto.split('\n')) {
+  for (const conteudo of texto.split('\n')) {
+    linhas.push({ conteudo, inicio });
+    inicio += conteudo.length + 1; // +1 pela quebra de linha
+  }
+
+  const atual = Math.max(
+    0,
+    linhas.findLastIndex((linha) => linha.inicio <= posicao)
+  );
+
+  // A janela acompanha o cursor, mas nunca passa do fim do texto.
+  const primeira = Math.min(
+    Math.max(0, atual - 1),
+    Math.max(0, linhas.length - linhasVisiveis)
+  );
+
+  const linhasNovas = document.createDocumentFragment();
+
+  for (const linha of linhas.slice(primeira, primeira + linhasVisiveis)) {
     const elementoLinha = document.createElement('p');
     elementoLinha.className = 'linha-digitacao';
 
-    for (const letra of linha) {
+    let indice = linha.inicio;
+    for (const letra of linha.conteudo) {
       elementoLinha.append(criarLetra(letra, indice, posicao, errouAqui));
       indice += 1;
     }
 
-    // A quebra de linha também ocupa uma posição no texto.
-    indice += 1;
-    destino.append(elementoLinha);
+    linhasNovas.append(elementoLinha);
   }
+
+  // As linhas entram antes do campo invisível, que fica sempre por último.
+  destino.prepend(linhasNovas);
 }
 
 function criarLetra(letra, indice, posicao, errouAqui) {

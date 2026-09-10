@@ -168,6 +168,67 @@ function textoDaTecla(tecla, sistema) {
 }
 
 /* --------------------------------------------------------------------------
+   De uma letra para uma tecla
+
+   A lição sabe qual LETRA vem agora ("a", "ç", " "). Para acender a tecla
+   certa é preciso saber em que TECLA aquela letra mora — e isso depende do
+   layout: o ç fica numa tecla própria no brasileiro e não existe no
+   americano.
+
+   A resposta sai dos próprios arquivos de layout, e não de uma segunda
+   lista escrita à mão: assim nunca há duas verdades sobre o mesmo teclado.
+   -------------------------------------------------------------------------- */
+
+/** Um mapa "letra → tecla" por layout, montado na primeira vez que se pede. */
+const mapasDeLetras = new Map();
+
+function mapaDeLetras(layout) {
+  if (mapasDeLetras.has(layout)) return mapasDeLetras.get(layout);
+
+  const mapa = new Map();
+  const desenho = LAYOUTS[layout] ?? LAYOUTS.abnt2;
+
+  for (const fileira of desenho.fileiras) {
+    for (const tecla of fileira) {
+      // O símbolo de baixo sai direto; o de cima precisa de Shift.
+      if (tecla.rotulo) mapa.set(tecla.rotulo.toLowerCase(), {
+        codigo: tecla.codigo,
+        comShift: false,
+      });
+
+      if (tecla.sup) mapa.set(tecla.sup.toLowerCase(), {
+        codigo: tecla.codigo,
+        comShift: true,
+      });
+    }
+  }
+
+  // Letras maiúsculas moram na mesma tecla, com Shift.
+  for (const [letra, onde] of [...mapa]) {
+    const maiuscula = letra.toUpperCase();
+    if (maiuscula !== letra) mapa.set(maiuscula, { ...onde, comShift: true });
+  }
+
+  mapa.set(' ', { codigo: 'Space', comShift: false });
+
+  mapasDeLetras.set(layout, mapa);
+  return mapa;
+}
+
+/**
+ * Em que tecla mora uma letra.
+ * @param {string} letra
+ * @param {'abnt2'|'us'} layout
+ * @returns {{codigo: string, comShift: boolean} | null}  null quando a letra
+ *          não sai de uma tecla só (é o caso das letras acentuadas, que
+ *          precisam do acento antes)
+ */
+export function teclaDaLetra(letra, layout) {
+  if (!letra) return null;
+  return mapaDeLetras(layout).get(letra) ?? null;
+}
+
+/* --------------------------------------------------------------------------
    Destaque da próxima tecla
    -------------------------------------------------------------------------- */
 

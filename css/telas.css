@@ -223,6 +223,101 @@
 }
 
 /* ==========================================================================
+   Tela de lição
+
+   Uma coluna centralizada, sem nada nas laterais: quem está treinando
+   precisa olhar para uma coisa só.
+   ========================================================================== */
+
+.licao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-5);
+  max-width: var(--largura-teclado-max);
+  margin-inline: auto;
+}
+
+.licao-cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--esp-4);
+}
+
+.licao-cabecalho .ajuda {
+  margin-bottom: var(--esp-1);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+}
+
+.licao-area {
+  position: relative;
+}
+
+/* Quando o campo perde o foco, a lição fica em espera e diz o que fazer. */
+.licao-espera {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+.licao-teclado {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding-bottom: var(--esp-2);
+}
+
+.licao-fim {
+  padding: var(--esp-4) var(--esp-5);
+  border-radius: var(--raio-m);
+  background-color: var(--cor-superficie);
+  font-weight: 600;
+}
+
+/* --- Medidas ao vivo ---------------------------------------------------- */
+
+.medidas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-6);
+  /* Números de mesma largura: o valor não "pula" quando muda de 9 para 10. */
+  font-variant-numeric: tabular-nums;
+}
+
+.medida strong {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.medida span {
+  color: var(--cor-texto-discreto);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* --- Barra de progresso ------------------------------------------------- */
+
+.barra {
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--cor-superficie);
+  overflow: hidden;
+}
+
+.barra > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background-color: var(--cor-texto);
+  transition: width var(--transicao);
+}
+
+/* ==========================================================================
    Aviso de aparelho sem teclado físico
    ========================================================================== */
 

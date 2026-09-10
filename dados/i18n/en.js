@@ -79,11 +79,22 @@ export const en = {
       'On Windows, turn on the "United States — International" layout in the language settings. With it, type \' then the vowel (\' then a = á), ~ then a = ã, and \' then c = ç.',
 
     continuar: 'Start practising',
-    emBreve: 'The lessons are still being built — this part is coming soon.',
   },
 
   licao: {
     proxima: 'Next',
+    licao: 'Lesson',
+    sair: 'Leave lesson',
+    ppm: 'WPM',
+    precisao: 'accuracy',
+    progresso: 'progress',
+    erros: 'mistakes',
+    campo: 'Lesson typing area',
+    clique: 'Click the text to keep typing.',
+    concluida: 'Lesson complete!',
+    tenteDeNovo: 'Almost! The minimum accuracy is 90%.',
+    avisoLayout: 'The key you pressed looks like a {formato} keyboard. Switch?',
+    trocarLayout: 'Switch',
     ordemDoDedo: '{mao} {dedo}',
     qualquerPolegar: 'either thumb',
   },
