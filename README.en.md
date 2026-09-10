@@ -56,3 +56,7 @@ assets/  icons
 
 Content and logic are kept apart on purpose: new lessons can be added by editing
 `dados/licoes/` alone, without touching the code.
+
+## License
+
+[MIT](LICENSE) — © 2026 Fernando Rodrigo Trajano da Silva.

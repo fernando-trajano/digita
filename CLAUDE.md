@@ -4,6 +4,17 @@ Este arquivo é a fonte da verdade do projeto. A **Parte 1** é o briefing origi
 foi escrito pelo Fernando. A **Parte 2** são as decisões e convenções combinadas depois.
 A **Parte 3** lista o que **não** deve ser construído na versão 1.
 
+> ## ⚠️ Antes de qualquer trabalho: consulte o [PLANO.md](PLANO.md)
+>
+> O `CLAUDE.md` diz **o quê**; o `PLANO.md` diz **como** e em **que ordem** — a estrutura
+> de arquivos, o formato das lições, as conferências automáticas, as chaves do
+> `localStorage`, os 17 passos, as pausas para teste no Safari e as regras de publicação.
+>
+> **Ao concluir um passo, marcar a caixa correspondente** na seção "Estado dos passos", no
+> fim do `PLANO.md`, dentro do mesmo commit do passo. Se o plano mudar durante a
+> construção, atualizar o `PLANO.md` — ele não pode ficar desatualizado em relação ao
+> código.
+
 ---
 
 # PARTE 1 — BRIEFING DO PROJETO: digita.

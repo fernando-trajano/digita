@@ -55,3 +55,7 @@ assets/  ícones
 
 Conteúdo e lógica ficam separados de propósito: dá para criar lições novas mexendo só em
 `dados/licoes/`, sem tocar no código.
+
+## Licença
+
+[MIT](LICENSE) — © 2026 Fernando Rodrigo Trajano da Silva.
