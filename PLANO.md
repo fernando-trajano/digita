@@ -335,7 +335,8 @@ real no passo 7.
       `app.js` (botão de tema claro/escuro; a escolha ainda não é salva — isso é o passo 8)
 - [x] **Passo 3** — `i18n.js` e traduções PT/EN (detecção pelo navegador, seletor no
       cabeçalho; a escolha ainda não é salva — isso é o passo 8)
-- [ ] **Passo 4** — layouts de teclado e teclado na tela
+- [x] **Passo 4** — layouts de teclado e teclado na tela (ABNT2 × US, Windows × Mac,
+      cores por dedo, marcas em F e J, modo cinza com a tecla da vez acesa)
 - [ ] **Passo 5** — desenho das mãos
 - [ ] **Passo 6** — detecção e tela de entrada · 🛑 teste no Safari
 - [ ] **Passo 7** — tela sem teclado físico e publicação no GitHub Pages · 🛑 com o Fernando

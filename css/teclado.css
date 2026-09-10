@@ -1,0 +1,165 @@
+/* ==========================================================================
+   teclado.css — o teclado desenhado na tela.
+   Só usa variáveis do tema.css.
+
+   O tamanho de tudo vem de uma variável só: --tecla. Mudando ela, o teclado
+   inteiro cresce ou encolhe junto, sem quebrar o alinhamento das fileiras.
+   ========================================================================== */
+
+.teclado {
+  /* clamp = "no mínimo isto, o ideal é aquilo, no máximo aquele outro".
+     Assim o teclado acompanha a largura da tela sem nunca ficar minúsculo
+     nem gigante. */
+  --tecla: clamp(1.5rem, 3.6vw, 2.6rem);
+  --tecla-vao: 0.25rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--tecla-vao);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.teclado-fileira {
+  display: flex;
+  gap: var(--tecla-vao);
+}
+
+/* --- A tecla ----------------------------------------------------------- */
+
+.tecla {
+  /* A largura vem da variável --largura, escrita pelo JavaScript em cada
+     tecla: 1 = tecla comum, 2 = o dobro. Os vãos entre as teclas que ela
+     "engole" também entram na conta, senão as fileiras não alinhariam. */
+  width: calc(
+    var(--largura, 1) * var(--tecla) + (var(--largura, 1) - 1) * var(--tecla-vao)
+  );
+  height: var(--tecla);
+  flex: 0 0 auto;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: var(--borda);
+  border-radius: var(--raio-p);
+
+  font-family: var(--fonte-mono);
+  font-size: calc(var(--tecla) * 0.36);
+  line-height: 1;
+  user-select: none;
+
+  transition: background-color var(--transicao), color var(--transicao);
+}
+
+/* O Enter do teclado brasileiro: aquele "L" deitado, de duas alturas.
+   Ele fica no fim da fileira base e sobe para ocupar o espaço que sobra na
+   fileira de cima — que é exatamente como o teclado de verdade é. */
+.tecla--alta {
+  height: calc(var(--tecla) * 2 + var(--tecla-vao));
+  margin-top: calc(-1 * (var(--tecla) + var(--tecla-vao)));
+  align-self: flex-start;
+}
+
+/* Teclas de comando (Tab, Shift, Ctrl…): texto menor, alinhado à esquerda. */
+.tecla--comando {
+  justify-content: flex-start;
+  padding-inline: calc(var(--tecla) * 0.18);
+  font-family: var(--fonte-texto);
+  font-size: calc(var(--tecla) * 0.28);
+}
+
+/* O segundo símbolo da tecla (o que sai com Shift). */
+.tecla-sup {
+  position: absolute;
+  top: calc(var(--tecla) * 0.1);
+  left: calc(var(--tecla) * 0.16);
+  font-size: calc(var(--tecla) * 0.26);
+  opacity: 0.75;
+}
+
+/* Quando a tecla tem dois símbolos, o de baixo desce um pouco para não
+   encostar no de cima. */
+.tecla:has(.tecla-sup) .tecla-rotulo {
+  margin-top: calc(var(--tecla) * 0.3);
+}
+
+/* O risquinho em relevo do F e do J, que serve para achar a posição de
+   descanso sem olhar para o teclado. */
+.tecla--referencia::after {
+  content: '';
+  position: absolute;
+  bottom: calc(var(--tecla) * 0.12);
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: calc(var(--tecla) * 0.3);
+  height: 2px;
+  border-radius: 2px;
+  background-color: currentColor;
+  opacity: 0.7;
+}
+
+/* --- Cores dos dedos ---------------------------------------------------- */
+
+.tecla--neutro {
+  background-color: var(--dedo-neutro-fundo);
+  color: var(--dedo-neutro-texto);
+}
+
+.tecla--minimo {
+  background-color: var(--dedo-minimo-fundo);
+  color: var(--dedo-minimo-texto);
+}
+
+.tecla--anelar {
+  background-color: var(--dedo-anelar-fundo);
+  color: var(--dedo-anelar-texto);
+}
+
+.tecla--medio {
+  background-color: var(--dedo-medio-fundo);
+  color: var(--dedo-medio-texto);
+}
+
+.tecla--indicador {
+  background-color: var(--dedo-indicador-fundo);
+  color: var(--dedo-indicador-texto);
+}
+
+.tecla--polegar {
+  background-color: var(--dedo-neutro-fundo);
+  color: var(--dedo-neutro-texto);
+}
+
+/* --- A tecla da vez ----------------------------------------------------- */
+
+/* No modo cinza, a cor do dedo aparece só nesta tecla — é ela que puxa o
+   olhar. A borda escura garante que dá para achar a tecla mesmo sem
+   distinguir bem as cores, e funciona igual nas cinco cores de dedo,
+   inclusive no cinza da barra de espaço. */
+.tecla--ativa {
+  border-color: var(--cor-texto);
+  border-width: 2px;
+  font-weight: 600;
+}
+
+/* --- Erro --------------------------------------------------------------- */
+
+.tecla--erro {
+  animation: piscar-erro 400ms ease;
+}
+
+@keyframes piscar-erro {
+  0%,
+  100% {
+    background-color: var(--dedo-neutro-fundo);
+    color: var(--dedo-neutro-texto);
+  }
+  20%,
+  70% {
+    background-color: var(--cor-erro-fundo);
+    color: var(--cor-erro-texto);
+  }
+}

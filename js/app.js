@@ -7,6 +7,7 @@
    ========================================================================== */
 
 import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
+import { desenharTeclado, destacarTecla } from './teclado.js';
 
 const raiz = document.documentElement;
 const botaoTema = document.querySelector('#botao-tema');
@@ -53,6 +54,63 @@ preferenciaEscura.addEventListener('change', () => {
 ligarSeletorDeIdioma();
 
 /* --------------------------------------------------------------------------
+   Mostruário do teclado — PROVISÓRIO (passo 4)
+
+   Serve para conferir o teclado nas quatro combinações (ABNT2/US ×
+   Windows/Mac) e nos dois modos. Sai quando a tela de entrada chegar, no
+   passo 6, que é onde essas escolhas passam a valer de verdade.
+   -------------------------------------------------------------------------- */
+
+const demo = { layout: 'abnt2', sistema: 'windows', modo: 'cores' };
+const tecladoDemo = document.querySelector('#teclado-demo');
+
+// Sequência que o destaque percorre no modo "como na lição", só para mostrar
+// o efeito de acender uma tecla de cada vez.
+const PASSEIO = ['KeyF', 'KeyJ', 'KeyD', 'KeyK', 'KeyS', 'KeyL', 'KeyA', 'Semicolon', 'Space'];
+let passeio = null;
+
+function desenharDemo() {
+  desenharTeclado(tecladoDemo, demo);
+
+  clearInterval(passeio);
+  passeio = null;
+
+  if (demo.modo === 'cinza') {
+    let indice = 0;
+    destacarTecla(tecladoDemo, PASSEIO[0]);
+
+    passeio = setInterval(() => {
+      indice = (indice + 1) % PASSEIO.length;
+      destacarTecla(tecladoDemo, PASSEIO[indice]);
+    }, 1200);
+  }
+}
+
+// Os três seletores funcionam igual: o botão clicado vira o ativo e o
+// teclado é redesenhado.
+for (const chave of ['layout', 'sistema', 'modo']) {
+  const botoes = document.querySelectorAll(`[data-demo-${chave}]`);
+
+  botoes.forEach((botao) => {
+    botao.addEventListener('click', () => {
+      demo[chave] = botao.dataset[`demo${chave[0].toUpperCase()}${chave.slice(1)}`];
+
+      botoes.forEach((outro) => {
+        outro.setAttribute('aria-pressed', String(outro === botao));
+      });
+
+      desenharDemo();
+    });
+  });
+}
+
+// Quando o idioma muda, o teclado.js redesenha sozinho (por causa da barra
+// de espaço) — e aí o destaque precisa voltar.
+document.addEventListener('idioma-mudou', () => {
+  if (demo.modo === 'cinza') desenharDemo();
+});
+
+/* --------------------------------------------------------------------------
    Início
    -------------------------------------------------------------------------- */
 
@@ -64,3 +122,5 @@ aplicarTema(raiz.dataset.tema || temaDoSistema());
 // PT/EN, a escolha dele é que manda.
 // (No passo 8 essa escolha passa a ser lembrada em digita:config.)
 definirIdioma(detectarIdioma());
+
+desenharDemo();

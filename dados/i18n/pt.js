@@ -45,6 +45,22 @@ export const pt = {
     dedosTitulo: 'As cores dos dedos',
     dedosAjuda:
       'Cada dedo tem a sua cor, e ela é a mesma no teclado da tela e no desenho das mãos.',
+
+    tecladoTitulo: 'O teclado na tela',
+    tecladoAjuda:
+      'Troque o formato e o sistema para ver o teclado mudar. Repare na tecla à direita do L: no brasileiro ela é o Ç, no americano é o ponto e vírgula. No modo "como na lição" o teclado fica cinza e só a próxima tecla acende.',
+  },
+
+  teclado: {
+    formato: 'Formato do teclado',
+    sistema: 'Sistema',
+    modo: 'Modo de exibição',
+    abnt2: 'Brasileiro ABNT2',
+    us: 'Americano US',
+    windows: 'Windows',
+    mac: 'Mac',
+    cores: 'Prévia colorida',
+    cinza: 'Como na lição',
   },
 
   dedos: {

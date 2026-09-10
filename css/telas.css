@@ -76,6 +76,22 @@
   border-radius: var(--raio-p);
 }
 
+/* --- Opções do mostruário do teclado ------------------------------------ */
+
+.mostruario-opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-block: var(--esp-2);
+}
+
+/* O teclado pode ser mais largo que a tela em celulares: nesse caso ele
+   rola sozinho na horizontal, sem empurrar a página inteira. */
+#teclado-demo {
+  overflow-x: auto;
+  padding-bottom: var(--esp-2);
+}
+
 /* --- Amostra das cores dos dedos --------------------------------------- */
 
 .mostruario-dedos {

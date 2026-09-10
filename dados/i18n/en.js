@@ -38,6 +38,22 @@ export const en = {
     dedosTitulo: 'The finger colors',
     dedosAjuda:
       'Each finger has its own color, and it is the same on the on-screen keyboard and on the drawing of the hands.',
+
+    tecladoTitulo: 'The on-screen keyboard',
+    tecladoAjuda:
+      'Switch the layout and the system to watch the keyboard change. Look at the key to the right of the L: on the Brazilian layout it is Ç, on the US one it is a semicolon. In "as in a lesson" mode the keyboard goes gray and only the next key lights up.',
+  },
+
+  teclado: {
+    formato: 'Keyboard layout',
+    sistema: 'System',
+    modo: 'Display mode',
+    abnt2: 'Brazilian ABNT2',
+    us: 'US',
+    windows: 'Windows',
+    mac: 'Mac',
+    cores: 'Colored preview',
+    cinza: 'As in a lesson',
   },
 
   dedos: {
