@@ -365,12 +365,13 @@
 
 /* As mãos: legenda em cima, desenho embaixo, encostados na altura da última
    linha do texto, no canto direito. */
-/* A legenda anda para dentro e para baixo em relação às mãos: 20% da largura
-   da coluna e 10% da altura do bloco (~10px). É um deslocamento visual, não
-   uma mudança de fluxo — as mãos não se mexem.
-   O 20% já é a largura da coluna, porque a legenda ocupa a coluna inteira. */
+/* A legenda anda para dentro e para baixo em relação às mãos: 15% da largura
+   da coluna (20% menos 5%) e 10% da altura do bloco (~10px). É um
+   deslocamento visual, não uma mudança de fluxo — as mãos não se mexem.
+   A porcentagem já é a largura da coluna, porque a legenda ocupa a coluna
+   inteira. */
 .licao-lado .legenda-dedo {
-  transform: translate(20%, 10px);
+  transform: translate(15%, 10px);
 }
 
 .licao-lado {
