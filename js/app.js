@@ -12,6 +12,7 @@ import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
 import { config, definirConfig } from './estado.js';
 import { mostrarEntrada } from './telas/entrada.js';
 import { pareceSemTecladoFisico, mostrarAvisoSemTeclado } from './telas/sem-teclado.js';
+import { conferirLicoes } from '../dados/licoes/conferencia.js';
 
 const raiz = document.documentElement;
 const botaoTema = document.querySelector('#botao-tema');
@@ -91,6 +92,11 @@ aplicarTema(config().tema ?? raiz.dataset.tema ?? temaDoSistema());
 
 // Idioma salvo, se houver; senão, o do navegador de quem chegou.
 definirIdioma(config().idioma ?? detectarIdioma());
+
+// Confere o conteúdo das lições contra o teclado escolhido e contra a ordem
+// em que as teclas são ensinadas. Só avisa no console — quem precisa ver
+// isso é quem escreve as lições, não quem está treinando.
+conferirLicoes(config().layout);
 
 // Quem chega de celular recebe o aviso primeiro, mas pode entrar assim mesmo:
 // existe tablet com teclado acoplado, e o palpite do navegador pode errar.

@@ -214,7 +214,9 @@ física, letras diferentes**. Por isso:
 Rodam sobre todas as lições e avisam no console:
 
 1. **Layout** — nenhuma lição pode pedir uma tecla que o layout escolhido não tem
-   (ex.: Ç no teclado americano). Cada lição declara `teclasNecessarias`.
+   (ex.: Ç no teclado americano). As teclas necessárias são **deduzidas do próprio
+   conteúdo**, e não declaradas à mão: assim é impossível a declaração ficar
+   desatualizada em relação ao texto da lição.
 2. **Letras já ensinadas** — o conteúdo de uma lição só pode usar as letras de
    `teclasNovas` dela **somadas às de todas as lições anteriores da mesma trilha**.
    Assim o aluno nunca encontra uma letra que ainda não aprendeu.
@@ -378,7 +380,9 @@ real no passo 7.
       carregam, a detecção funciona no endereço real e o console fica limpo)
 - [x] **Passo 8** — armazenamento e estado (idioma, formato, sistema e tema sobrevivem ao
       recarregar; funciona mesmo em navegador que proíbe salvar)
-- [ ] **Passo 9** — as 18 lições da fileira base · 🛑 revisão do conteúdo
+- [x] **Passo 9** — as 18 lições da fileira base ✅ **conteúdo revisado e aprovado pelo
+      Fernando** (36 palavras reais, K só em sílabas por não existir palavra possível,
+      frases mantidas apesar do sentido absurdo; as duas conferências passam)
 - [ ] **Passo 10** — motor de digitação e métricas · 🛑 teste no Safari
 - [ ] **Passo 11** — tela de lição · 🛑 teste no Safari
 - [ ] **Passo 12** — tela de resultado e progresso
