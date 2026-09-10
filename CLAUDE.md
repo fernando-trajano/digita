@@ -156,6 +156,22 @@ mudo sempre visível e controle de volume. Nunca tocar som antes da primeira int
 - Caminhos **relativos** em todos os `href`/`src`/`import` — o GitHub Pages publica o
   projeto numa subpasta (`usuario.github.io/digita/`).
 
+## Textos e tradução
+
+Nenhum texto visível fica escrito direto no HTML ou no JavaScript. Todos moram em
+`dados/i18n/pt.js` e `dados/i18n/en.js`, com **exatamente as mesmas chaves** nos dois
+arquivos, e são aplicados por marcadores no HTML:
+
+| Marcador | Troca |
+|---|---|
+| `data-i18n="secao.chave"` | o texto de dentro do elemento |
+| `data-i18n-aria="secao.chave"` | o atributo `aria-label` |
+| `data-i18n-titulo="secao.chave"` | o atributo `title` |
+
+O texto em português fica escrito no HTML como reserva, para a página não aparecer vazia
+antes de o JavaScript rodar. Chave faltando não quebra a tela: o site cai no português e
+avisa no console.
+
 ## Como testar
 
 Quando o Fernando pedir para testar, **eu** (Claude) subo o servidor e abro o navegador —

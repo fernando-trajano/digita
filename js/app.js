@@ -1,10 +1,12 @@
 /* ==========================================================================
    app.js — ponto de entrada do site.
 
-   Por enquanto ele só cuida do botão de tema (claro/escuro). A cada passo do
-   plano ele vai ganhar mais responsabilidades: idioma (passo 3), telas
-   (passo 6), estado salvo (passo 8) e sons (passo 16).
+   Hoje ele cuida do tema (claro/escuro) e do idioma (PT/EN). A cada passo do
+   plano ganha mais responsabilidades: telas (passo 6), estado salvo
+   (passo 8) e sons (passo 16).
    ========================================================================== */
+
+import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
 
 const raiz = document.documentElement;
 const botaoTema = document.querySelector('#botao-tema');
@@ -44,6 +46,21 @@ preferenciaEscura.addEventListener('change', () => {
   if (!escolhaManual) aplicarTema(temaDoSistema());
 });
 
+/* --------------------------------------------------------------------------
+   Idioma
+   -------------------------------------------------------------------------- */
+
+ligarSeletorDeIdioma();
+
+/* --------------------------------------------------------------------------
+   Início
+   -------------------------------------------------------------------------- */
+
 // O script no <head> do index.html já definiu o tema antes de a página
 // aparecer; aqui só acertamos o ícone para combinar com ele.
 aplicarTema(raiz.dataset.tema || temaDoSistema());
+
+// O idioma vem do navegador do visitante. A partir do primeiro clique em
+// PT/EN, a escolha dele é que manda.
+// (No passo 8 essa escolha passa a ser lembrada em digita:config.)
+definirIdioma(detectarIdioma());

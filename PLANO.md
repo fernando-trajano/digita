@@ -333,7 +333,8 @@ real no passo 7.
 - [x] **Passo 1** — repositório, CLAUDE.md, READMEs, LICENSE, .gitignore, .nojekyll
 - [x] **Passo 2** — `tema.css`, `base.css`, `componentes.css`, `telas.css`, `index.html`,
       `app.js` (botão de tema claro/escuro; a escolha ainda não é salva — isso é o passo 8)
-- [ ] **Passo 3** — `i18n.js` e traduções PT/EN
+- [x] **Passo 3** — `i18n.js` e traduções PT/EN (detecção pelo navegador, seletor no
+      cabeçalho; a escolha ainda não é salva — isso é o passo 8)
 - [ ] **Passo 4** — layouts de teclado e teclado na tela
 - [ ] **Passo 5** — desenho das mãos
 - [ ] **Passo 6** — detecção e tela de entrada · 🛑 teste no Safari

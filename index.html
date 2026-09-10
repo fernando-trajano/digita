@@ -38,13 +38,12 @@
     <a class="marca" href="./">digita<span class="marca-ponto">.</span></a>
 
     <nav class="cabecalho-acoes">
-      <!-- No passo 3 estes botões passam a trocar os textos de verdade. -->
-      <div class="seletor" role="group" aria-label="Idioma da interface">
+      <div class="seletor" role="group" data-i18n-aria="cabecalho.idioma" aria-label="Idioma da interface">
         <button type="button" class="seletor-opcao" data-idioma="pt" aria-pressed="true">PT</button>
         <button type="button" class="seletor-opcao" data-idioma="en" aria-pressed="false">EN</button>
       </div>
 
-      <button type="button" class="botao-icone" id="botao-tema" aria-label="Alternar entre modo claro e escuro">
+      <button type="button" class="botao-icone" id="botao-tema" data-i18n-aria="cabecalho.alternarTema" aria-label="Alternar entre modo claro e escuro">
         <svg aria-hidden="true"><use href="#icone-lua"></use></svg>
       </button>
     </nav>
@@ -56,23 +55,23 @@
   <main class="conteudo" id="tela">
 
     <section class="mostruario">
-      <span class="selo">Versão 1 em construção</span>
+      <span class="selo" data-i18n="mostruario.selo">Versão 1 em construção</span>
 
-      <h1>Aprenda a digitar sem olhar para o teclado.</h1>
+      <h1 data-i18n="mostruario.titulo">Aprenda a digitar sem olhar para o teclado.</h1>
 
-      <p class="subtitulo">
+      <p class="subtitulo" data-i18n="mostruario.subtitulo">
         Treino de digitação pensado para quem escreve em português: palavras de
         verdade, acentos, Ç e ajuda para quem usa teclado americano.
       </p>
 
       <div class="mostruario-acoes">
-        <button type="button" class="botao botao--principal">Começar do zero</button>
-        <button type="button" class="botao">Já sei digitar</button>
+        <button type="button" class="botao botao--principal" data-i18n="mostruario.comecar">Começar do zero</button>
+        <button type="button" class="botao" data-i18n="mostruario.jaSei">Já sei digitar</button>
       </div>
 
       <div class="cartao mostruario-cartao">
-        <h2>Amostra do texto de digitação</h2>
-        <p class="mostruario-ajuda">
+        <h2 data-i18n="mostruario.amostraTitulo">Amostra do texto de digitação</h2>
+        <p class="mostruario-ajuda" data-i18n="mostruario.amostraAjuda">
           É assim que a lição vai aparecer: o que você já digitou fica escuro, a
           letra da vez fica marcada, o que falta fica claro e o erro fica vermelho.
         </p>
@@ -83,26 +82,26 @@
       </div>
 
       <div class="cartao mostruario-cartao">
-        <h2>As cores dos dedos</h2>
-        <p class="mostruario-ajuda">
+        <h2 data-i18n="mostruario.dedosTitulo">As cores dos dedos</h2>
+        <p class="mostruario-ajuda" data-i18n="mostruario.dedosAjuda">
           Cada dedo tem a sua cor, e ela é a mesma no teclado da tela e no
           desenho das mãos.
         </p>
 
         <ul class="mostruario-dedos">
-          <li class="amostra-tecla amostra-tecla--minimo">A<small>mínimo</small></li>
-          <li class="amostra-tecla amostra-tecla--anelar">S<small>anelar</small></li>
-          <li class="amostra-tecla amostra-tecla--medio">D<small>médio</small></li>
-          <li class="amostra-tecla amostra-tecla--indicador">F<small>indicador</small></li>
-          <li class="amostra-tecla amostra-tecla--neutro">espaço<small>polegar</small></li>
-          <li class="amostra-tecla amostra-tecla--erro">K<small>erro</small></li>
+          <li class="amostra-tecla amostra-tecla--minimo">A<small data-i18n="dedos.minimo">mínimo</small></li>
+          <li class="amostra-tecla amostra-tecla--anelar">S<small data-i18n="dedos.anelar">anelar</small></li>
+          <li class="amostra-tecla amostra-tecla--medio">D<small data-i18n="dedos.medio">médio</small></li>
+          <li class="amostra-tecla amostra-tecla--indicador">F<small data-i18n="dedos.indicador">indicador</small></li>
+          <li class="amostra-tecla amostra-tecla--neutro"><span data-i18n="teclas.espaco">espaço</span><small data-i18n="dedos.polegar">polegar</small></li>
+          <li class="amostra-tecla amostra-tecla--erro">K<small data-i18n="dedos.erro">erro</small></li>
         </ul>
       </div>
     </section>
 
   </main>
 
-  <footer class="rodape">
+  <footer class="rodape" data-i18n="rodape.texto">
     Feito em português, sem depender de nada externo.
   </footer>
 
