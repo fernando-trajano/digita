@@ -33,6 +33,14 @@ export const en = {
     mac: 'Mac',
   },
 
+  semTeclado: {
+    titulo: 'digita. was made for a computer with a keyboard.',
+    texto:
+      'It teaches touch typing by showing which finger to use for each key. On a phone or a tablet without a keyboard, there is nothing to practise.',
+    dica: 'Open this address on your computer to get started.',
+    continuar: 'I have a keyboard attached — let me in anyway',
+  },
+
   entrada: {
     titulo: 'First, let us get your keyboard right.',
     subtitulo:

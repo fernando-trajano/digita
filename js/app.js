@@ -10,6 +10,7 @@
 
 import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
 import { mostrarEntrada } from './telas/entrada.js';
+import { pareceSemTecladoFisico, mostrarAvisoSemTeclado } from './telas/sem-teclado.js';
 
 const raiz = document.documentElement;
 const botaoTema = document.querySelector('#botao-tema');
@@ -73,9 +74,30 @@ aplicarTema(raiz.dataset.tema || temaDoSistema());
 // (No passo 8 essa escolha passa a ser lembrada em digita:config.)
 definirIdioma(detectarIdioma());
 
-mostrarEntrada(tela);
+/* --------------------------------------------------------------------------
+   Qual tela mostrar
+
+   Guardar QUAL tela está aberta (e não só desenhá-la) é o que permite
+   redesenhar quando o idioma muda. No passo 11, quando houver várias telas,
+   isto vira o roteador.
+   -------------------------------------------------------------------------- */
+
+let telaAtual = mostrarEntrada;
+
+function irPara(desenhar) {
+  telaAtual = desenhar;
+  desenhar(tela);
+}
+
+// Quem chega de celular recebe o aviso primeiro, mas pode entrar assim mesmo:
+// existe tablet com teclado acoplado, e o palpite do navegador pode errar.
+if (pareceSemTecladoFisico()) {
+  irPara((destino) => mostrarAvisoSemTeclado(destino, () => irPara(mostrarEntrada)));
+} else {
+  irPara(mostrarEntrada);
+}
 
 // As telas são desenhadas em JavaScript, então trocar o idioma pede que a
 // tela seja desenhada de novo. O que o usuário já escolheu não se perde: as
 // escolhas moram no módulo da tela, não no HTML.
-document.addEventListener('idioma-mudou', () => mostrarEntrada(tela));
+document.addEventListener('idioma-mudou', () => telaAtual(tela));

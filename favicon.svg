@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="digita.">
+  <!-- O ícone da aba do navegador: uma tecla com o "d" da marca.
+       É o único arquivo do projeto com cores escritas fora do tema.css —
+       um favicon não tem como usar variáveis de CSS. As cores aqui são as
+       mesmas do botão principal no modo claro. -->
+  <rect width="32" height="32" rx="7" fill="#18181B"/>
+  <text x="16" y="23.5" text-anchor="middle"
+        font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+        font-size="20" font-weight="600" fill="#FFFFFF">d</text>
+</svg>

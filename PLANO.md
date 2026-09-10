@@ -371,9 +371,8 @@ real no passo 7.
       cores por dedo, marcas em F e J, modo cinza com a tecla da vez acesa)
 - [x] **Passo 5** — desenho das mãos (SVG, dedo aceso na cor do dedo, legenda em texto;
       inclui o `servidor.py`, que impede o cache do navegador durante o desenvolvimento)
-- [x] **Passo 6** — detecção e tela de entrada · 🛑 **teste no Safari pendente**
-      (os dois caminhos de detecção funcionam; o do Safari foi conferido por simulação
-      e precisa da confirmação no navegador de verdade)
+- [x] **Passo 6** — detecção e tela de entrada · ✅ **testado no Safari pelo Fernando**:
+      os dois caminhos de detecção funcionam no navegador de verdade
 - [ ] **Passo 7** — tela sem teclado físico e publicação no GitHub Pages · 🛑 com o Fernando
 - [ ] **Passo 8** — armazenamento e estado
 - [ ] **Passo 9** — as 18 lições da fileira base · 🛑 revisão do conteúdo

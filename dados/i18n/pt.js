@@ -39,6 +39,14 @@ export const pt = {
     mac: 'Mac',
   },
 
+  semTeclado: {
+    titulo: 'O digita. foi feito para computador com teclado.',
+    texto:
+      'Ele ensina a digitar com os dez dedos, mostrando qual dedo usar em cada tecla. Num celular ou tablet sem teclado, não há o que treinar.',
+    dica: 'Abra este endereço no seu computador para começar.',
+    continuar: 'Tenho um teclado conectado — quero entrar assim mesmo',
+  },
+
   entrada: {
     titulo: 'Antes de começar, vamos acertar o seu teclado.',
     subtitulo:
