@@ -123,7 +123,9 @@ Regras válidas para o site inteiro:
    logo abaixo do texto, discreta.
 3. **Mãos:** pequenas, cerca de **165px de largura no total** (as duas juntas), no canto
    **direito**, acima da ponta direita do teclado, na mesma altura da última linha do
-   texto. Nunca no centro da tela.
+   texto. Nunca no centro da tela. O desenho é o de `js/maos.js` — **não trocar o estilo
+   do desenho sem o Fernando pedir**; uma versão em line art chegou a ser feita e foi
+   descartada por decisão dele.
 4. **Legenda "Próxima: F · indicador esquerdo":** junto das mãos, logo acima delas e
    alinhada com elas. No mínimo 12px, na cor de texto secundário.
 5. **Telas estreitas:** quando não há espaço ao lado do texto, as mãos descem para cima do

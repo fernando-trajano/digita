@@ -102,10 +102,7 @@
 }
 
 /* ==========================================================================
-   As mãos.
-
-   Um desenho pequeno, ao lado do texto da lição: mostra qual dedo usar sem
-   roubar o espaço de quem está lendo o que precisa digitar.
+   As mãos desenhadas acima do teclado.
    ========================================================================== */
 
 .maos {
@@ -116,40 +113,38 @@
   width: 100%;
 }
 
+/* As duas mãos dividem a largura da coluna reservada a elas (--largura-maos),
+   descontado o vão entre as duas. */
 .mao {
   width: calc((100% - var(--esp-2)) / 2);
   height: auto;
   overflow: visible;
 }
 
-/* O contorno das mãos: fino, contínuo e translúcido. */
-.mao-palma,
-.mao-dedo,
-.mao-punho {
-  fill: none;
-  stroke: var(--cor-texto-secundario);
-  stroke-width: 1.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  opacity: 0.7;
-  vector-effect: non-scaling-stroke;
-  transition: fill var(--transicao), opacity var(--transicao);
+/* A mão esquerda é a direita espelhada. O espelhamento é feito aqui, no CSS,
+   e não no SVG, porque assim o desenho não sai da caixa dele. */
+.mao--esquerda {
+  transform: scaleX(-1);
 }
 
-/* As dobras das articulações são mais discretas que o contorno. */
-.mao-dobra {
-  fill: none;
-  stroke: var(--cor-texto-secundario);
-  stroke-width: 0.9;
-  stroke-linecap: round;
-  opacity: 0.3;
-  vector-effect: non-scaling-stroke;
+/* O contorno usa a cor de texto discreto, e não a de borda: sobre o fundo
+   branco, uma linha clara demais faria a mão sumir. */
+.mao-palma {
+  fill: var(--dedo-neutro-fundo);
+  stroke: var(--cor-texto-discreto);
+  stroke-width: 1.5;
 }
 
-/* O dedo aceso ganha a mesma cor que a tecla dele no teclado — é o que liga
-   um desenho ao outro na cabeça de quem está aprendendo. */
+.mao-dedo {
+  fill: var(--dedo-neutro-fundo);
+  stroke: var(--cor-texto-discreto);
+  stroke-width: 1.5;
+  transition: fill var(--transicao);
+}
+
+/* O dedo aceso ganha a mesma cor que a tecla dele tem no teclado — é o que
+   liga um desenho ao outro na cabeça de quem está aprendendo. */
 .mao-dedo--ativo {
-  opacity: 1;
   stroke: var(--cor-texto);
   stroke-width: 2;
 }
