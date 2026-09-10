@@ -14,7 +14,8 @@ import { mostrarEntrada } from './telas/entrada.js';
 import { mostrarLicao, encerrarLicao } from './telas/licao.js';
 import { mostrarResultado } from './telas/resultado.js';
 import { mostrarTrilha } from './telas/trilha.js';
-import { registrarResultado } from './progresso.js';
+import { mostrarNivelamento, encerrarNivelamento } from './telas/nivelamento.js';
+import { registrarResultado, licaoParaContinuar, nivelamento } from './progresso.js';
 import { pareceSemTecladoFisico, mostrarAvisoSemTeclado } from './telas/sem-teclado.js';
 import { conferirLicoes } from '../dados/licoes/conferencia.js';
 
@@ -82,9 +83,10 @@ document.addEventListener('idioma-mudou', (evento) => {
 let telaAtual = telaDeEntrada;
 
 function irPara(desenhar) {
-  // Sair de uma lição precisa desligar os ouvintes dela; as outras telas não
-  // deixam nada para trás.
+  // Sair de uma lição ou de um teste precisa desligar os ouvintes e o
+  // relógio deles; as outras telas não deixam nada para trás.
   encerrarLicao();
+  encerrarNivelamento();
 
   telaAtual = desenhar;
   desenhar(tela);
@@ -98,7 +100,19 @@ const SECOES_DISPONIVEIS = new Set(['trilha']);
 
 /** A tela de entrada, com o botão que leva ao treino. */
 function telaDeEntrada(destino) {
-  mostrarEntrada(destino, { aoContinuar: () => irPara(telaDeTrilha) });
+  mostrarEntrada(destino, {
+    // O nivelamento é uma pergunta que só se faz uma vez: quem já respondeu
+    // vai direto para a trilha.
+    aoContinuar: () => irPara(nivelamento() ? telaDeTrilha : telaDeNivelamento),
+  });
+}
+
+/** A pergunta "você já digita sem olhar?" e o teste de um minuto. */
+function telaDeNivelamento(destino) {
+  mostrarNivelamento(destino, {
+    aoComecarDoZero: () => abrirLicao(licaoParaContinuar()),
+    aoTerminar: () => irPara(telaDeTrilha),
+  });
 }
 
 /** O mapa do programa: as sete trilhas e as lições de cada uma. */

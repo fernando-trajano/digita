@@ -779,3 +779,30 @@
   width: 0.9rem;
   height: 0.9rem;
 }
+
+/* ==========================================================================
+   Tela de nivelamento
+   ========================================================================== */
+
+.nivelamento {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  max-width: 44rem;
+  margin-inline: auto;
+  padding-block: var(--esp-5);
+}
+
+/* Durante o teste a tela fica larga como a de lição: o texto precisa do
+   mesmo espaço para respirar. */
+.nivelamento--teste {
+  max-width: var(--largura-teclado-max);
+  container-type: inline-size;
+}
+
+.nivelamento-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  padding-top: var(--esp-2);
+}

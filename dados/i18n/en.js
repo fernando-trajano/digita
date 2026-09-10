@@ -81,6 +81,28 @@ export const en = {
     continuar: 'Start practising',
   },
 
+  nivelamento: {
+    pergunta: 'Can you already type without looking at the keyboard?',
+    explica:
+      'If you can, there is no point starting from "fff jjj". A one-minute test shows where you should come in.',
+    naoSei: 'No, I want to start from scratch',
+    jaSei: 'Yes, let me take the test',
+    aviso: 'You can retake the test later, or ignore the result and practise everything anyway.',
+
+    tituloTeste: 'One-minute test',
+    segundos: 'seconds',
+    comoFunciona:
+      'Just type. The clock starts on your first key and the test ends on its own. This text has no accents or Ç, so the result measures you and not your keyboard.',
+
+    dispensado: 'You already have this part down.',
+    doComeco: 'Let us start from the beginning.',
+    explicaDispensado:
+      'With that result, the {trilhas} track is unlocked — go straight to it, or take the lessons anyway if you want the practice.',
+    explicaDoComeco:
+      'Skipping the home row takes at least 90% accuracy and 25 WPM. Falling short is not bad news: it is exactly what the lessons are for.',
+    verTrilha: 'See the track',
+  },
+
   nav: {
     secoes: 'Site sections',
     inicio: 'Home',

@@ -393,7 +393,8 @@ real no passo 7.
       dias e estatísticas acumuladas)
 - [x] **Passo 13** — trilha de fases (as 7 trilhas, 6 marcadas "em breve", as 18 lições
       com estrelas e cadeados, moldura de três colunas com navegação e painel de progresso)
-- [ ] **Passo 14** — nivelamento
+- [x] **Passo 14** — nivelamento (a pergunta, o teste de 1 minuto com relógio que só
+      começa na primeira tecla, e a liberação da trilha para quem passa de 90% e 25 PPM)
 - [ ] **Passo 15** — tela inicial
 - [ ] **Passo 16** — sons
 - [ ] **Passo 17** — exportar/importar, responsivo e polimento

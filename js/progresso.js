@@ -14,7 +14,13 @@
 
 import { CHAVES, ler, gravar } from './armazenamento.js';
 import { contarEstrelas } from './metricas.js';
-import { todasAsLicoes, licaoPorId, proximaLicao, metasDaLicao } from '../dados/licoes/indice.js';
+import {
+  TRILHAS,
+  todasAsLicoes,
+  licaoPorId,
+  proximaLicao,
+  metasDaLicao,
+} from '../dados/licoes/indice.js';
 
 /* --------------------------------------------------------------------------
    Leitura
@@ -40,19 +46,72 @@ export function estatisticas() {
   return ler(CHAVES.estatisticas, { errosPorTecla: {} });
 }
 
+/** O resultado do teste de nivelamento, se ele já foi feito. */
+export function nivelamento() {
+  return ler(CHAVES.nivelamento, null);
+}
+
+/** As trilhas que o teste de nivelamento liberou de uma vez. */
+function trilhasLiberadasPeloTeste() {
+  return new Set(nivelamento()?.trilhasLiberadas ?? []);
+}
+
 /**
  * Uma lição está liberada?
- * A primeira de todas sempre está; as outras, quando a anterior foi
- * concluída.
+ *
+ * Três caminhos levam a sim:
+ *   - é a primeira de todas;
+ *   - a lição anterior foi concluída;
+ *   - o teste de nivelamento liberou a trilha inteira dela.
+ *
  * @param {string} id
  */
 export function licaoLiberada(id) {
   const todas = todasAsLicoes();
   const posicao = todas.findIndex((licao) => licao.id === id);
 
-  if (posicao <= 0) return posicao === 0;
+  if (posicao < 0) return false;
+  if (posicao === 0) return true;
+
+  if (trilhasLiberadasPeloTeste().has(todas[posicao].trilha)) return true;
 
   return Boolean(progressoDaLicao(todas[posicao - 1].id)?.concluida);
+}
+
+/**
+ * Guarda o resultado do teste de nivelamento.
+ *
+ * @param {{ppm: number, precisao: number}} resultado
+ * @returns {string[]}  os ids das trilhas liberadas
+ */
+export function registrarNivelamento(resultado) {
+  const trilhasLiberadas = trilhasDominadas(resultado);
+
+  gravar(CHAVES.nivelamento, {
+    ppm: resultado.ppm,
+    precisao: resultado.precisao,
+    trilhasLiberadas,
+    data: new Date().toISOString(),
+  });
+
+  return trilhasLiberadas;
+}
+
+/**
+ * Que trilhas o resultado do teste dispensa.
+ *
+ * A precisão vem primeiro, como em todo o resto do site: quem digita rápido
+ * e errado não domina a fileira base — está justamente na hora de aprendê-la
+ * direito. Passando disso, 25 PPM é o patamar de quem já tem as mãos na
+ * posição certa e não precisa começar do "fff jjj".
+ *
+ * Só a fileira base entra na conta porque é a única trilha com conteúdo. As
+ * outras vão entrando aqui conforme forem escritas.
+ */
+function trilhasDominadas({ ppm, precisao }) {
+  if (precisao < 90 || ppm < 25) return [];
+
+  return [TRILHAS[0].id];
 }
 
 /**
@@ -61,8 +120,15 @@ export function licaoLiberada(id) {
  */
 export function licaoParaContinuar() {
   const todas = todasAsLicoes();
+  const dispensadas = trilhasLiberadasPeloTeste();
 
-  return todas.find((licao) => !progressoDaLicao(licao.id)?.concluida) ?? todas[0];
+  // Quem passou no nivelamento não deve ser mandado de volta para a trilha
+  // que o teste já dispensou.
+  const proxima = todas.find(
+    (licao) => !progressoDaLicao(licao.id)?.concluida && !dispensadas.has(licao.trilha)
+  );
+
+  return proxima ?? todas.find((licao) => !progressoDaLicao(licao.id)?.concluida) ?? todas[0];
 }
 
 /** Quantas lições já foram concluídas. */

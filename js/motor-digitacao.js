@@ -226,13 +226,23 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
     campo?.focus({ preventScroll: true });
   }
 
+  /**
+   * Os números de agora, como se a pessoa tivesse parado neste instante.
+   * O teste de nivelamento usa isto ao acabar o minuto, já que ali o fim é
+   * o relógio, e não o fim do texto.
+   */
+  function resumo() {
+    metricas.encerrar();
+    return metricas.resumo();
+  }
+
   function destruir() {
     campo?.remove();
     campo = null;
     destino?.classList.remove('area-digitacao');
   }
 
-  return { montar, focar, destruir, estado, processar };
+  return { montar, focar, destruir, estado, processar, resumo };
 }
 
 /** Conta só o que a pessoa realmente digita (quebras de linha não contam). */

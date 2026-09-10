@@ -86,6 +86,28 @@ export const pt = {
     continuar: 'Começar a treinar',
   },
 
+  nivelamento: {
+    pergunta: 'Você já digita sem olhar para o teclado?',
+    explica:
+      'Se já digita, não faz sentido recomeçar do "fff jjj". Um teste de um minuto mostra por onde você deve entrar.',
+    naoSei: 'Não, quero começar do zero',
+    jaSei: 'Sim, quero fazer o teste',
+    aviso: 'Você pode refazer o teste depois, ou ignorar o resultado e treinar tudo mesmo assim.',
+
+    tituloTeste: 'Teste de um minuto',
+    segundos: 'segundos',
+    comoFunciona:
+      'Digite normalmente. O relógio começa na primeira tecla e o teste acaba sozinho. Não há acentos nem Ç neste texto, para o resultado medir você, e não o seu teclado.',
+
+    dispensado: 'Você já domina esta parte.',
+    doComeco: 'Vamos começar do começo.',
+    explicaDispensado:
+      'Com esse resultado, a trilha {trilhas} fica liberada — você pode ir direto para ela ou fazer as lições assim mesmo, se quiser treinar.',
+    explicaDoComeco:
+      'Para pular a fileira base é preciso pelo menos 90% de precisão e 25 PPM. Não é ruim ter ficado abaixo disso: é exatamente para isso que as lições existem.',
+    verTrilha: 'Ver a trilha',
+  },
+
   nav: {
     secoes: 'Seções do site',
     inicio: 'Início',
