@@ -46,7 +46,7 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   const layout = config().layout;
 
   destino.replaceChildren();
-  destino.insertAdjacentHTML('beforeend', montarHtml(licao, config().mostrarMaos));
+  destino.insertAdjacentHTML('beforeend', montarHtml(licao));
 
   const partes = {
     texto: destino.querySelector('[data-papel="texto"]'),
@@ -65,7 +65,6 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   desenharMaos(partes.maos);
   desenharTeclado(partes.teclado, { layout, sistema: sistemaAtual(), modo: 'cinza' });
 
-  aplicarPreferenciaDasMaos(partes, config().mostrarMaos);
 
   const motor = criarMotor({
     linhas: licao.conteudo,
@@ -108,18 +107,6 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     aoSair?.();
   });
 
-  const botaoMaos = destino.querySelector('[data-acao="maos"]');
-  botaoMaos.addEventListener('click', () => {
-    const mostrar = botaoMaos.getAttribute('aria-pressed') !== 'true';
-
-    definirConfig({ mostrarMaos: mostrar });
-    botaoMaos.setAttribute('aria-pressed', String(mostrar));
-    aplicarPreferenciaDasMaos(partes, mostrar);
-
-    // Sair da lição por causa de um clique num botão seria cruel.
-    motor.focar();
-  });
-
   sessao = {
     encerrar() {
       motor.destruir();
@@ -138,7 +125,7 @@ export function encerrarLicao() {
    HTML
    -------------------------------------------------------------------------- */
 
-function montarHtml(licao, mostrarMaos) {
+function montarHtml(licao) {
   const idioma = document.documentElement.lang.startsWith('pt') ? 'pt' : 'en';
 
   return `
@@ -152,11 +139,7 @@ function montarHtml(licao, mostrarMaos) {
           <span class="medida"><strong data-papel="progresso">0%</strong> ${t('licao.progresso')}</span>
         </div>
 
-        <div class="licao-acoes">
-          <button type="button" class="seletor-opcao licao-alternar" data-acao="maos"
-                  aria-pressed="${mostrarMaos}">${t('licao.mostrarMaos')}</button>
-          <button type="button" class="botao botao--pequeno" data-acao="sair">${t('licao.sair')}</button>
-        </div>
+        <button type="button" class="botao botao--pequeno" data-acao="sair">${t('licao.sair')}</button>
       </div>
 
       <div class="barra"><span data-papel="barra"></span></div>
@@ -181,11 +164,6 @@ function montarHtml(licao, mostrarMaos) {
       <div class="licao-fim" data-papel="fim" hidden></div>
     </div>
   `;
-}
-
-/** Liga ou desliga o desenho das mãos. */
-function aplicarPreferenciaDasMaos(partes, mostrar) {
-  partes.maos.hidden = !mostrar;
 }
 
 /* --------------------------------------------------------------------------

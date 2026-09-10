@@ -22,7 +22,6 @@ const PADRAO = {
   tema: null, // null = acompanhar o modo claro/escuro do sistema
   som: false, // o clique de tecla nasce desligado
   volume: 0.5,
-  mostrarMaos: true, // o desenho das mãos sobre o teclado, na lição
 };
 
 let configuracao = ler(CHAVES.config, PADRAO);

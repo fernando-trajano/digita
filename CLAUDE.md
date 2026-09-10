@@ -121,9 +121,10 @@ Regras válidas para o site inteiro:
    (~38px), com espaçamento folgado entre as linhas. No máximo **3 linhas visíveis**, numa
    janela que acompanha o cursor. A frase *"Clique no texto para continuar digitando"* fica
    logo abaixo do texto, discreta.
-3. **Mãos:** pequenas, cerca de **165px de largura no total** (as duas juntas), no canto
+3. **Mãos:** pequenas, cerca de **107px de largura no total** (as duas juntas), no canto
    **direito**, acima da ponta direita do teclado, na mesma altura da última linha do
-   texto. Nunca no centro da tela. O desenho é o de `js/maos.js` — **não trocar o estilo
+   texto. Nunca no centro da tela. Elas ficam **fora do fluxo** (posicionadas), para não
+   empurrarem o texto para a esquerda: o texto tem de ficar no **mesmo eixo do teclado**. O desenho é o de `js/maos.js` — **não trocar o estilo
    do desenho sem o Fernando pedir**; uma versão em line art chegou a ser feita e foi
    descartada por decisão dele.
 4. **Legenda "Próxima: F · indicador esquerdo":** junto das mãos, logo acima delas e
@@ -131,11 +132,10 @@ Regras válidas para o site inteiro:
 5. **Telas estreitas:** quando não há espaço ao lado do texto, as mãos descem para cima do
    teclado, centralizadas e pequenas. **Nunca sobrepor o texto da lição.**
 6. **Métricas** (PPM, precisão, progresso) numa linha discreta no topo, com o nome da lição
-   à esquerda e **"Sair"** à direita.
-7. Botão **"Mostrar mãos"**, ligado por padrão e salvo em `digita:config`.
-8. **Tudo visível sem rolar a página** numa tela de notebook (~800px de altura). Quem
+   à esquerda e **"Sair"** à direita. Nada de outros botões nessa linha.
+7. **Tudo visível sem rolar a página** numa tela de notebook (~800px de altura). Quem
    treina não pode rolar nem procurar informação fora do campo de visão.
-9. O teclado desenhado segue **sempre** o formato e o sistema de `digita:config` — com a
+8. O teclado desenhado segue **sempre** o formato e o sistema de `digita:config` — com a
    mesma regra de fallback em todas as telas (`sistemaAtual()`, em `js/estado.js`): o que
    o usuário escolheu ou, enquanto ele não escolheu, o que o navegador informou.
 

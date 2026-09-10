@@ -83,7 +83,7 @@
   --tamanho-texto-licao: clamp(1.6rem, 4cqw, 2.4rem);
 
   /* As duas mãos juntas, ao lado do texto da lição. */
-  --largura-maos: 165px;
+  --largura-maos: 107px;
 
   /* --- Movimento ------------------------------------------------------- */
   --transicao: 150ms ease;

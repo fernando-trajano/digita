@@ -85,7 +85,6 @@ export const en = {
     proxima: 'Next',
     licao: 'Lesson',
     sair: 'Leave',
-    mostrarMaos: 'Show hands',
     ppm: 'WPM',
     precisao: 'accuracy',
     progresso: 'progress',

@@ -110,7 +110,8 @@
   align-items: flex-end;
   justify-content: center;
   gap: var(--esp-2);
-  width: 100%;
+  width: var(--largura-maos, 100%);
+  margin-left: auto;
 }
 
 /* As duas mãos dividem a largura da coluna reservada a elas (--largura-maos),

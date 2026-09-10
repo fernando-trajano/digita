@@ -277,22 +277,12 @@
   font-weight: 600;
 }
 
-.licao-acoes {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-3);
-}
 
 .botao--pequeno {
   padding: var(--esp-2) var(--esp-4);
   font-size: 0.85rem;
 }
 
-/* O botão de mostrar as mãos usa o mesmo desenho das opções PT/EN. */
-.licao-alternar {
-  border: 1px solid var(--cor-botao-secundario-borda);
-  border-radius: var(--raio-p);
-}
 
 /* --- Medidas ao vivo ---------------------------------------------------- */
 
@@ -335,18 +325,22 @@
 
 /* --- O corpo: texto à esquerda, mãos no canto direito ------------------- */
 
+/* O texto ocupa a largura toda e se centraliza nela; as mãos flutuam no
+   canto direito, FORA do fluxo. É isso que mantém o texto no mesmo eixo do
+   teclado — se as mãos ocupassem uma coluna, empurrariam o texto para a
+   esquerda. */
 .licao-corpo {
+  position: relative;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: var(--esp-5);
+  flex-direction: column;
+  align-items: center;
 }
 
 .licao-texto {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1 1 auto;
+  width: 100%;
   min-width: 0;
 }
 
@@ -367,26 +361,27 @@
   font-size: 0.9rem;
 }
 
-/* A coluna das mãos: legenda em cima, mãos embaixo, encostadas na altura da
-   última linha do texto. */
+/* As mãos: legenda em cima, desenho embaixo, encostados na altura da última
+   linha do texto, no canto direito. */
 .licao-lado {
+  position: absolute;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   gap: var(--esp-2);
-  flex: 0 0 var(--largura-maos);
-  width: var(--largura-maos);
+  /* Um pouco mais larga que as mãos: a legenda precisa de espaço para caber
+     em duas linhas em vez de três. As mãos continuam encostadas à direita. */
+  width: 9.5rem;
 }
 
-/* Em telas estreitas não há espaço ao lado do texto: as mãos descem para
-   cima do teclado, centralizadas — nunca por cima do texto. */
+/* Em telas estreitas não há espaço ao lado do texto: as mãos voltam ao
+   fluxo e descem para cima do teclado, centralizadas — nunca por cima do
+   texto. */
 @media (max-width: 56rem) {
-  .licao-corpo {
-    flex-direction: column;
-    align-items: center;
-  }
-
   .licao-lado {
-    flex: 0 0 auto;
+    position: static;
+    margin-top: var(--esp-3);
   }
 }
 
