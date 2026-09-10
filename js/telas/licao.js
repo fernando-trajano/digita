@@ -14,7 +14,7 @@
    ========================================================================== */
 
 import { t, nomeDoDedo } from '../i18n.js';
-import { config, definirConfig } from '../estado.js';
+import { config, definirConfig, sistemaAtual } from '../estado.js';
 import { criarMotor, desenharTexto } from '../motor-digitacao.js';
 import {
   desenharTeclado,
@@ -23,7 +23,7 @@ import {
   piscarErro,
   teclaDaLetra,
 } from '../teclado.js';
-import { desenharMaos, encaixarMaos, destacarDedo, limparDedos } from '../maos.js';
+import { desenharMaos, destacarDedo, limparDedos } from '../maos.js';
 import { dedoDaTecla } from '../../dados/layouts/dedos.js';
 import { conferirLayout } from '../deteccao.js';
 import { metasDaLicao } from '../../dados/licoes/indice.js';
@@ -63,18 +63,9 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   };
 
   desenharMaos(partes.maos);
-  desenharTeclado(partes.teclado, {
-    layout,
-    sistema: config().sistema ?? 'windows',
-    modo: 'cinza',
-  });
+  desenharTeclado(partes.teclado, { layout, sistema: sistemaAtual(), modo: 'cinza' });
 
-  aplicarPreferenciaDasMaos(destino, partes, config().mostrarMaos);
-
-  // As mãos são encaixadas por medição do teclado, então precisam ser
-  // recolocadas sempre que ele mudar de tamanho (janela, zoom, fonte).
-  const observador = new ResizeObserver(() => encaixarMaos(partes.maos, partes.teclado));
-  observador.observe(partes.teclado);
+  aplicarPreferenciaDasMaos(partes, config().mostrarMaos);
 
   const motor = criarMotor({
     linhas: licao.conteudo,
@@ -123,7 +114,7 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
 
     definirConfig({ mostrarMaos: mostrar });
     botaoMaos.setAttribute('aria-pressed', String(mostrar));
-    aplicarPreferenciaDasMaos(destino, partes, mostrar);
+    aplicarPreferenciaDasMaos(partes, mostrar);
 
     // Sair da lição por causa de um clique num botão seria cruel.
     motor.focar();
@@ -132,7 +123,6 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   sessao = {
     encerrar() {
       motor.destruir();
-      observador.disconnect();
       document.removeEventListener('keydown', vigia, true);
     },
   };
@@ -171,16 +161,20 @@ function montarHtml(licao, mostrarMaos) {
 
       <div class="barra"><span data-papel="barra"></span></div>
 
-      <div class="licao-area">
-        <div data-papel="texto" data-rotulo="${t('licao.campo')}"></div>
-        <p class="licao-espera" data-papel="espera" hidden>${t('licao.clique')}</p>
+      <div class="licao-corpo">
+        <div class="licao-texto">
+          <div data-papel="texto" data-rotulo="${t('licao.campo')}"></div>
+          <p class="licao-espera" data-papel="espera" hidden>${t('licao.clique')}</p>
+        </div>
+
+        <div class="licao-lado">
+          <p class="legenda-dedo" data-papel="legenda"></p>
+          <div data-papel="maos"></div>
+        </div>
       </div>
 
-      <p class="legenda-dedo" data-papel="legenda"></p>
-
-      <div class="licao-palco">
-        <div class="licao-teclado" data-papel="teclado"></div>
-        <div data-papel="maos"></div>
+      <div class="licao-teclado">
+        <div data-papel="teclado"></div>
       </div>
 
       <p class="aviso" data-papel="aviso-layout" role="status" hidden></p>
@@ -189,10 +183,9 @@ function montarHtml(licao, mostrarMaos) {
   `;
 }
 
-/** Liga ou desliga o desenho das mãos sobre o teclado. */
-function aplicarPreferenciaDasMaos(destino, partes, mostrar) {
+/** Liga ou desliga o desenho das mãos. */
+function aplicarPreferenciaDasMaos(partes, mostrar) {
   partes.maos.hidden = !mostrar;
-  if (mostrar) encaixarMaos(partes.maos, partes.teclado);
 }
 
 /* --------------------------------------------------------------------------

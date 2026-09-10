@@ -14,9 +14,8 @@
 
 import { t, nomeDoDedo } from '../i18n.js';
 import { desenharTeclado } from '../teclado.js';
-import { config, definirConfig } from '../estado.js';
+import { config, definirConfig, sistemaAtual } from '../estado.js';
 import {
-  detectarSistema,
   detectarLayoutPeloNavegador,
   escutarTeclaDeTeste,
   TECLA_DE_TESTE,
@@ -27,7 +26,7 @@ import {
    escolheu antes; se ele nunca escolheu, do palpite do navegador. */
 const escolha = {
   layout: config().layout,
-  sistema: config().sistema ?? detectarSistema(),
+  sistema: sistemaAtual(),
 };
 
 /** Cancela a espera pela tecla, quando há uma em andamento. */

@@ -113,26 +113,29 @@ Regras válidas para o site inteiro:
 
 ### Tela de lição — regras detalhadas
 
-1. **Tudo visível sem rolar a página** numa tela de notebook (~800px de altura): métricas,
-   texto, dica da próxima tecla, mãos e teclado. Quem treina não pode rolar nem procurar
-   informação fora do campo de visão.
-2. **Texto e teclado centralizados no mesmo eixo**, com a mesma largura máxima, para o
-   olho descer em linha reta de um para o outro. Texto em monoespaçada de cerca de
-   **32px**, no máximo **3 linhas visíveis** (uma janela que acompanha o cursor).
-3. **Métricas** (PPM, precisão, progresso) numa linha discreta no topo, com o nome da
-   lição à esquerda e **"Sair"** à direita.
-4. **Teclado** de até cerca de **900px** de largura.
-5. **Mãos sobrepostas ao teclado**: contorno translúcido, sem preenchimento, com as pontas
-   dos dedos nas teclas da fileira base (A S D F · J K L e a tecla à direita do L) e os
-   polegares sobre a barra de espaço. O dedo da próxima tecla acende na cor do dedo, e a
-   tecla correspondente também. **As mãos não podem esconder as letras das teclas.**
-   As mãos são encaixadas medindo as teclas no próprio teclado desenhado, e recolocadas
-   sempre que ele muda de tamanho.
-6. **"Próxima: F · indicador esquerdo"** centralizado logo acima do teclado.
+1. **Tudo no mesmo eixo central da página.** O teclado é grande, ocupa a largura útil do
+   conteúdo (até cerca de **960px**) e é ele que define a largura da área da lição.
+2. **Texto da lição:** bloco centralizado horizontalmente, logo acima do teclado. Dentro
+   do bloco, as linhas ficam **alinhadas à esquerda entre si** — centralizar linha a linha
+   faria o começo de cada uma dançar. Fonte monoespaçada grande, proporcional ao teclado
+   (~38px), com espaçamento folgado entre as linhas. No máximo **3 linhas visíveis**, numa
+   janela que acompanha o cursor. A frase *"Clique no texto para continuar digitando"* fica
+   logo abaixo do texto, discreta.
+3. **Mãos:** pequenas, cerca de **165px de largura no total** (as duas juntas), no canto
+   **direito**, acima da ponta direita do teclado, na mesma altura da última linha do
+   texto. Nunca no centro da tela.
+4. **Legenda "Próxima: F · indicador esquerdo":** junto das mãos, logo acima delas e
+   alinhada com elas. No mínimo 12px, na cor de texto secundário.
+5. **Telas estreitas:** quando não há espaço ao lado do texto, as mãos descem para cima do
+   teclado, centralizadas e pequenas. **Nunca sobrepor o texto da lição.**
+6. **Métricas** (PPM, precisão, progresso) numa linha discreta no topo, com o nome da lição
+   à esquerda e **"Sair"** à direita.
 7. Botão **"Mostrar mãos"**, ligado por padrão e salvo em `digita:config`.
-
-**Alternativa, se a sobreposição ficar ruim de ler em algum tamanho de tela:** mãos
-pequenas logo acima do teclado, cada mão alinhada com a sua metade do teclado.
+8. **Tudo visível sem rolar a página** numa tela de notebook (~800px de altura). Quem
+   treina não pode rolar nem procurar informação fora do campo de visão.
+9. O teclado desenhado segue **sempre** o formato e o sistema de `digita:config` — com a
+   mesma regra de fallback em todas as telas (`sistemaAtual()`, em `js/estado.js`): o que
+   o usuário escolheu ou, enquanto ele não escolheu, o que o navegador informou.
 
 **Telas estreitas:** as colunas viram uma só, nesta ordem — **conteúdo principal,
 progresso, navegação**. A navegação vira um menu no topo.

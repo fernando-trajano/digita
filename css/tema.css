@@ -76,11 +76,14 @@
   --raio-g: 16px;
   --borda: 1px solid var(--cor-borda);
   --largura-max: 1100px;        /* largura máxima do conteúdo */
-  --largura-teclado-max: 900px; /* largura máxima do teclado na lição */
+  --largura-teclado-max: 960px; /* largura máxima do teclado na lição */
 
   /* O texto da lição: grande o bastante para as letras que faltam terem
      contraste, e para se enxergar sem baixar os olhos do teclado. */
-  --tamanho-texto-licao: clamp(1.5rem, 3.4cqw, 2rem);
+  --tamanho-texto-licao: clamp(1.6rem, 4cqw, 2.4rem);
+
+  /* As duas mãos juntas, ao lado do texto da lição. */
+  --largura-maos: 165px;
 
   /* --- Movimento ------------------------------------------------------- */
   --transicao: 150ms ease;

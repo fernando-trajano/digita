@@ -12,6 +12,7 @@
    ========================================================================== */
 
 import { CHAVES, ler, gravar } from './armazenamento.js';
+import { detectarSistema } from './deteccao.js';
 
 /** Como o site começa, para quem nunca esteve aqui. */
 const PADRAO = {
@@ -36,6 +37,20 @@ const ouvintes = new Set();
  */
 export function config() {
   return { ...configuracao };
+}
+
+/**
+ * O sistema que vale AGORA: o escolhido pelo usuário ou, enquanto ele não
+ * escolheu, o que o navegador informou.
+ *
+ * Existe para que todas as telas respondam a mesma coisa. Antes, a tela de
+ * entrada usava a detecção e a tela de lição caía num "windows" fixo — o
+ * teclado da lição aparecia com Ctrl e AltGr para quem estava num Mac.
+ *
+ * @returns {'windows'|'mac'}
+ */
+export function sistemaAtual() {
+  return config().sistema ?? detectarSistema();
 }
 
 /**

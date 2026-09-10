@@ -102,21 +102,23 @@
 }
 
 /* ==========================================================================
-   As mãos, sobrepostas ao teclado.
+   As mãos.
 
-   Elas ficam por cima das teclas, em contorno translúcido e sem
-   preenchimento, para não esconder as letras. Não recebem cliques: quem
-   está embaixo é o teclado.
+   Um desenho pequeno, ao lado do texto da lição: mostra qual dedo usar sem
+   roubar o espaço de quem está lendo o que precisa digitar.
    ========================================================================== */
 
 .maos {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--esp-2);
+  width: 100%;
 }
 
 .mao {
-  position: absolute;
+  width: calc((100% - var(--esp-2)) / 2);
+  height: auto;
   overflow: visible;
 }
 
@@ -126,10 +128,10 @@
 .mao-punho {
   fill: none;
   stroke: var(--cor-texto-secundario);
-  stroke-width: 1.1;
+  stroke-width: 1.4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.55;
+  opacity: 0.7;
   vector-effect: non-scaling-stroke;
   transition: fill var(--transicao), opacity var(--transicao);
 }
@@ -145,32 +147,31 @@
 }
 
 /* O dedo aceso ganha a mesma cor que a tecla dele no teclado — é o que liga
-   um desenho ao outro na cabeça de quem está aprendendo. O preenchimento é
-   translúcido para a letra da tecla continuar legível por baixo. */
+   um desenho ao outro na cabeça de quem está aprendendo. */
 .mao-dedo--ativo {
   opacity: 1;
   stroke: var(--cor-texto);
-  stroke-width: 1.6;
+  stroke-width: 2;
 }
 
 .mao-dedo--minimo {
-  fill: color-mix(in srgb, var(--dedo-minimo-fundo) 72%, transparent);
+  fill: var(--dedo-minimo-fundo);
 }
 
 .mao-dedo--anelar {
-  fill: color-mix(in srgb, var(--dedo-anelar-fundo) 72%, transparent);
+  fill: var(--dedo-anelar-fundo);
 }
 
 .mao-dedo--medio {
-  fill: color-mix(in srgb, var(--dedo-medio-fundo) 72%, transparent);
+  fill: var(--dedo-medio-fundo);
 }
 
 .mao-dedo--indicador {
-  fill: color-mix(in srgb, var(--dedo-indicador-fundo) 72%, transparent);
+  fill: var(--dedo-indicador-fundo);
 }
 
 .mao-dedo--polegar {
-  fill: color-mix(in srgb, var(--dedo-neutro-fundo) 72%, transparent);
+  fill: var(--dedo-neutro-fundo);
 }
 
 /* --- Cores dos dedos ---------------------------------------------------- */

@@ -6,27 +6,20 @@
    fino e contínuo, sem preenchimento, para não esconder as letras das
    teclas por baixo.
 
-   COMO AS MÃOS FICAM NO LUGAR CERTO
+   As mãos são vistas de cima, como quem olha para as próprias mãos pousadas
+   no teclado: as pontas dos quatro dedos na fileira base, o polegar deitado
+   em direção à barra de espaço, e o punho saindo pela borda de baixo do
+   desenho, como se o braço continuasse fora do quadro.
 
-   O teclado muda de tamanho conforme a tela, então as mãos não podem ter
-   posição fixa. O que se faz é medir, no próprio teclado desenhado, onde
-   estão as teclas da fileira base — A S D F para a mão esquerda, J K L e a
-   tecla à direita do L para a direita — e encaixar cada mão sobre elas.
-
-   Dentro do SVG, o eixo x de 0 a 100 corresponde exatamente ao trecho
-   dessas quatro teclas, e as pontas dos dedos ficam em 12,5 / 37,5 / 62,5 /
-   87,5 — os centros das quatro colunas. O y começa no topo da fileira base,
-   e cresce para baixo, na direção do punho.
+   Dentro do SVG, o eixo x de 0 a 100 é o vão das quatro teclas de descanso,
+   com as pontas dos dedos em 12,5 / 37,5 / 62,5 / 87,5 — os centros das
+   quatro colunas. O y começa no topo da fileira base e cresce na direção do
+   punho. Essas medidas vêm do teclado de verdade, e é isso que faz a mão ter
+   proporção de mão.
 
    A mão esquerda é a direita espelhada: o mesmo desenho dentro de um
    transform, para não haver dois desenhos que possam discordar um do outro.
    ========================================================================== */
-
-/** As teclas onde cada mão descansa. */
-const TECLAS_DE_DESCANSO = {
-  esquerda: ['KeyA', 'KeyS', 'KeyD', 'KeyF'],
-  direita: ['KeyJ', 'KeyK', 'KeyL', 'Semicolon'],
-};
 
 /**
  * Os quatro dedos, na ordem em que aparecem no desenho da MÃO DIREITA, da
@@ -193,47 +186,6 @@ function criar(tipo, atributos) {
   }
 
   return elemento;
-}
-
-/* --------------------------------------------------------------------------
-   Encaixe sobre o teclado
-   -------------------------------------------------------------------------- */
-
-/**
- * Põe cada mão em cima das suas teclas de descanso.
- *
- * Precisa ser chamada depois de o teclado estar desenhado na tela, e de
- * novo sempre que ele mudar de tamanho.
- *
- * @param {HTMLElement} destinoMaos  o elemento com as duas mãos
- * @param {HTMLElement} teclado  o teclado desenhado
- */
-export function encaixarMaos(destinoMaos, teclado) {
-  const caixaTeclado = teclado.getBoundingClientRect();
-  if (!caixaTeclado.width) return;
-
-  for (const [mao, codigos] of Object.entries(TECLAS_DE_DESCANSO)) {
-    const svg = destinoMaos.querySelector(`[data-mao="${mao}"]`);
-    const teclas = codigos.map((codigo) =>
-      teclado.querySelector(`[data-codigo="${codigo}"]`)
-    );
-
-    if (!svg || teclas.some((tecla) => !tecla)) continue;
-
-    const primeira = teclas[0].getBoundingClientRect();
-    const ultima = teclas[3].getBoundingClientRect();
-
-    const esquerda = primeira.left - caixaTeclado.left;
-    const largura = ultima.right - primeira.left;
-    const topo = primeira.top - caixaTeclado.top;
-
-    // O SVG é 30% mais largo que as quatro teclas: a sobra é o espaço do
-    // polegar, que fica do lado de dentro de cada mão.
-    svg.style.width = `${largura * 1.3}px`;
-    svg.style.top = `${topo}px`;
-    svg.style.left =
-      mao === 'direita' ? `${esquerda - largura * 0.3}px` : `${esquerda}px`;
-  }
 }
 
 /* --------------------------------------------------------------------------
