@@ -26,7 +26,6 @@ import {
 import { desenharMaos, destacarDedo, limparDedos } from '../maos.js';
 import { dedoDaTecla } from '../../dados/layouts/dedos.js';
 import { conferirLayout } from '../deteccao.js';
-import { metasDaLicao } from '../../dados/licoes/indice.js';
 
 /** A lição aberta agora, para poder desmontá-la ao sair. */
 let sessao = null;
@@ -59,7 +58,6 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     barra: destino.querySelector('[data-papel="barra"]'),
     espera: destino.querySelector('[data-papel="espera"]'),
     avisoLayout: destino.querySelector('[data-papel="aviso-layout"]'),
-    fim: destino.querySelector('[data-papel="fim"]'),
   };
 
   desenharMaos(partes.maos);
@@ -90,7 +88,6 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     },
 
     aoConcluir(resumo) {
-      mostrarFim(partes, licao, resumo);
       aoConcluir?.(resumo);
     },
   });
@@ -161,7 +158,6 @@ function montarHtml(licao) {
       </div>
 
       <p class="aviso" data-papel="aviso-layout" role="status" hidden></p>
-      <div class="licao-fim" data-papel="fim" hidden></div>
     </div>
   `;
 }
@@ -260,22 +256,4 @@ function vigiarLayout(evento, partes, layoutEscolhido) {
   });
 
   partes.avisoLayout.append(trocar);
-}
-
-/* --------------------------------------------------------------------------
-   Fim da lição
-
-   Um resumo curto, aqui mesmo. A tela de resultado completa — com estrelas,
-   teclas mais erradas e o botão de próxima fase — é o passo 12.
-   -------------------------------------------------------------------------- */
-
-function mostrarFim(partes, licao, resumo) {
-  const metas = metasDaLicao(licao);
-  const passou = resumo.precisao >= metas.precisaoMinima;
-
-  partes.fim.hidden = false;
-  partes.fim.textContent =
-    `${passou ? t('licao.concluida') : t('licao.tenteDeNovo')} ` +
-    `${resumo.ppm} ${t('licao.ppm')} · ${resumo.precisao}% · ` +
-    `${resumo.erros} ${t('licao.erros')}`;
 }

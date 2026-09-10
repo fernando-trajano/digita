@@ -385,10 +385,12 @@ real no passo 7.
       frases mantidas apesar do sentido absurdo; as duas conferências passam)
 - [x] **Passo 10** — motor de digitação e métricas · ✅ **testado no Safari pelo Fernando**
       (campo invisível, composição de acentos, trava no erro, PPM e precisão)
-- [x] **Passo 11** — tela de lição · 🛑 **teste no Safari pendente**
+- [x] **Passo 11** — tela de lição · ✅ **testado no Safari pelo Fernando**
       (texto em janela de 3 linhas, teclado cinza com a tecla da vez acesa, mãos,
       legenda, métricas ao vivo e a rede de segurança do layout)
-- [ ] **Passo 12** — tela de resultado e progresso
+- [x] **Passo 12** — tela de resultado e progresso (estrelas, precisão mínima de 90%,
+      teclas mais erradas, Repetir e Próxima; desbloqueio da lição seguinte, sequência de
+      dias e estatísticas acumuladas)
 - [ ] **Passo 13** — trilha de fases
 - [ ] **Passo 14** — nivelamento
 - [ ] **Passo 15** — tela inicial

@@ -12,8 +12,9 @@ import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
 import { config, definirConfig } from './estado.js';
 import { mostrarEntrada } from './telas/entrada.js';
 import { mostrarLicao, encerrarLicao } from './telas/licao.js';
+import { mostrarResultado } from './telas/resultado.js';
+import { registrarResultado, licaoParaContinuar } from './progresso.js';
 import { pareceSemTecladoFisico, mostrarAvisoSemTeclado } from './telas/sem-teclado.js';
-import { todasAsLicoes } from '../dados/licoes/indice.js';
 import { conferirLicoes } from '../dados/licoes/conferencia.js';
 
 const raiz = document.documentElement;
@@ -88,23 +89,39 @@ function irPara(desenhar) {
   desenhar(tela);
 }
 
-/** A tela de entrada, com o botão que leva à primeira lição. */
+/** A tela de entrada, com o botão que leva ao treino. */
 function telaDeEntrada(destino) {
-  mostrarEntrada(destino, { aoContinuar: () => irPara(telaDeLicao) });
+  // Continua de onde a pessoa parou: a primeira lição ainda não concluída.
+  mostrarEntrada(destino, {
+    aoContinuar: () => abrirLicao(licaoParaContinuar()),
+  });
 }
 
-/**
- * A primeira lição.
- * No passo 12 isto passa a olhar o progresso salvo e abrir a lição de onde a
- * pessoa parou; no passo 13, a trilha é que escolhe.
- */
-function telaDeLicao(destino) {
-  const licao = todasAsLicoes()[0];
+/** Abre uma lição e cuida do que acontece quando ela termina. */
+function abrirLicao(licao) {
+  irPara((destino) =>
+    mostrarLicao(destino, {
+      licao,
+      aoSair: () => irPara(telaDeEntrada),
 
-  mostrarLicao(destino, {
-    licao,
-    aoSair: () => irPara(telaDeEntrada),
-  });
+      aoConcluir(resumo) {
+        // O progresso é gravado ANTES de a tela de resultado aparecer: o que
+        // ela mostra é o que ficou salvo, e não uma promessa.
+        const registro = registrarResultado(licao, resumo);
+
+        irPara((tela) =>
+          mostrarResultado(tela, {
+            licao,
+            resumo,
+            registro,
+            aoRepetir: () => abrirLicao(licao),
+            aoProxima: () => abrirLicao(registro.proxima),
+            aoSair: () => irPara(telaDeEntrada),
+          })
+        );
+      },
+    })
+  );
 }
 
 /* --------------------------------------------------------------------------

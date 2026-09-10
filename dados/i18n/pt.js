@@ -86,6 +86,23 @@ export const pt = {
     continuar: 'Começar a treinar',
   },
 
+  resultado: {
+    parabens: 'Lição concluída!',
+    quase: 'Quase lá.',
+    explicaReprovado:
+      'Para concluir a lição, é preciso {minima}% de precisão. Velocidade vem depois — primeiro os dedos aprendem o caminho.',
+    recorde: 'É a sua melhor velocidade nesta lição até agora.',
+    faltaPara: 'Chegue a {ppm} PPM mantendo a precisão para ganhar a {quantas}ª estrela.',
+    tudoQueDava: 'Três estrelas: não dá para ir melhor nesta lição.',
+    tempo: 'tempo',
+    estrelas: '{quantas} de {total} estrelas',
+    errosTitulo: 'Teclas em que você mais tropeçou',
+    semErros: 'Nenhum erro. Limpo do começo ao fim.',
+    repetir: 'Repetir a lição',
+    proxima: 'Próxima lição',
+    sair: 'Sair',
+  },
+
   licao: {
     proxima: 'Próxima',
     licao: 'Lição',

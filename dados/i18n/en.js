@@ -81,6 +81,23 @@ export const en = {
     continuar: 'Start practising',
   },
 
+  resultado: {
+    parabens: 'Lesson complete!',
+    quase: 'Almost there.',
+    explicaReprovado:
+      'Finishing a lesson takes {minima}% accuracy. Speed comes later — first your fingers learn the way.',
+    recorde: 'That is your best speed on this lesson so far.',
+    faltaPara: 'Reach {ppm} WPM while keeping your accuracy to earn star {quantas}.',
+    tudoQueDava: 'Three stars: this lesson cannot go any better.',
+    tempo: 'time',
+    estrelas: '{quantas} of {total} stars',
+    errosTitulo: 'Keys you stumbled on most',
+    semErros: 'No mistakes. Clean from start to finish.',
+    repetir: 'Repeat the lesson',
+    proxima: 'Next lesson',
+    sair: 'Leave',
+  },
+
   licao: {
     proxima: 'Next',
     licao: 'Lesson',

@@ -412,11 +412,114 @@
   --tecla: clamp(1.5rem, 5.7cqw, 3.6rem);
 }
 
-.licao-fim {
-  padding: var(--esp-4) var(--esp-5);
-  border-radius: var(--raio-m);
-  background-color: var(--cor-superficie);
+/* ==========================================================================
+   Tela de resultado
+   ========================================================================== */
+
+.resultado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  max-width: 34rem;
+  margin-inline: auto;
+  padding-block: var(--esp-5);
+}
+
+.resultado > .ajuda {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+}
+
+.resultado .secao {
+  padding-block: var(--esp-5) 0;
+}
+
+/* --- Estrelas ----------------------------------------------------------- */
+
+.estrelas {
+  display: flex;
+  gap: var(--esp-2);
+  padding-block: var(--esp-3);
+}
+
+.estrela {
+  width: 2.5rem;
+  height: 2.5rem;
+  /* Apagada: só o contorno, na cor discreta. */
+  fill: none;
+  color: var(--cor-texto-discreto);
+}
+
+/* Acesa: preenchida na cor do texto principal. Sem cor especial de
+   "premiação" — a paleta do site não tem dourado, e inventar uma cor só
+   para isso quebraria a unidade do resto. */
+.estrela--acesa {
+  fill: var(--cor-texto);
+  color: var(--cor-texto);
+}
+
+/* --- Números ------------------------------------------------------------ */
+
+.resultado-numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-5);
+  padding-block: var(--esp-2);
+  color: var(--cor-texto-discreto);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.resultado-numeros strong {
+  margin-right: var(--esp-1);
+  color: var(--cor-texto);
+  font-size: 1.6rem;
   font-weight: 600;
+  letter-spacing: 0;
+}
+
+/* --- Teclas erradas ----------------------------------------------------- */
+
+.erros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.erro {
+  display: flex;
+  align-items: baseline;
+  gap: var(--esp-2);
+  padding: var(--esp-2) var(--esp-3);
+  border-radius: var(--raio-p);
+  background-color: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+}
+
+.erro-tecla {
+  font-family: var(--fonte-mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.erro-vezes {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/* --- Ações -------------------------------------------------------------- */
+
+.resultado-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  padding-top: var(--esp-5);
 }
 
 /* ==========================================================================
