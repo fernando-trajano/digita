@@ -37,26 +37,33 @@ PT-BR, treino de Ç e acentos, e um módulo de acentuação para quem usa teclad
 
 ## VISUAL
 
-Minimalista e elegante, sem gradientes nem sombras pesadas. Crie um arquivo `tema.css`
-com todas as cores em variáveis CSS e use apenas essas variáveis no resto do site.
+> **Atenção:** esta seção foi **atualizada depois do briefing original**. A paleta clara
+> bege foi substituída por uma paleta branca neutra, e a Georgia saiu. O modo escuro
+> continua exatamente igual ao original. Não volte ao bege.
+
+Minimalista e elegante, sem gradientes nem sombras. Crie um arquivo `tema.css` com todas
+as cores em variáveis CSS e use apenas essas variáveis no resto do site.
 
 Fontes (do sistema, sem baixar nada):
 
-- Títulos: `Georgia, "New York", serif`
+- Títulos: `system-ui, -apple-system, "Segoe UI", sans-serif`, **peso 600**,
+  `letter-spacing: -0.02em`
 - Texto: `system-ui, -apple-system, "Segoe UI", sans-serif`
-- Texto de digitação: `ui-monospace, "SF Mono", Menlo, Consolas, monospace`
+- Texto de digitação e teclas: `ui-monospace, "SF Mono", Menlo, Consolas, monospace`
 
-**Modo claro:**
+**Modo claro (branco neutro):**
 
 | Elemento | Cor |
 |---|---|
-| Fundo da página | `#F1EFE8` |
-| Cartões e painéis | `#FFFFFF` |
-| Bordas | `#D3D1C7` |
-| Texto principal | `#2C2C2A` |
-| Texto secundário | `#5F5E5A` |
-| Texto discreto e letras ainda não digitadas | `#888780` |
-| Botão principal | fundo `#2C2C2A`, texto `#FFFFFF` |
+| Fundo da página | `#FFFFFF` |
+| Superfícies secundárias (áreas destacadas, teclas neutras) | `#F4F4F5` |
+| Bordas | `#E4E4E7` |
+| Texto principal | `#18181B` |
+| Texto secundário | `#52525B` |
+| Texto discreto e legendas | `#71717A` |
+| Letras ainda não digitadas | `#8E8E96` (só em fonte grande) |
+| Botão principal | fundo `#18181B`, texto `#FFFFFF` |
+| Botão secundário | borda `#D4D4D8`, texto `#18181B` |
 
 **Modo escuro:**
 
@@ -74,16 +81,38 @@ Fontes (do sistema, sem baixar nada):
 
 | Dedo | Claro | Escuro |
 |---|---|---|
-| Mínimo (violeta) | `#EEEDFE` / `#3C3489` | `#3C3489` / `#CECBF6` |
-| Anelar (azul) | `#E6F1FB` / `#0C447C` | `#0C447C` / `#B5D4F4` |
-| Médio (verde-água) | `#E1F5EE` / `#085041` | `#085041` / `#9FE1CB` |
-| Indicador (verde) | `#EAF3DE` / `#27500A` | `#27500A` / `#C0DD97` |
-| Polegar e teclas neutras (cinza) | `#F1EFE8` / `#5F5E5A` | `#444441` / `#D3D1C7` |
+| Mínimo (violeta) | `#EDE9FE` / `#5B21B6` | `#3C3489` / `#CECBF6` |
+| Anelar (azul) | `#DBEAFE` / `#1E40AF` | `#0C447C` / `#B5D4F4` |
+| Médio (verde-água) | `#CCFBF1` / `#115E59` | `#085041` / `#9FE1CB` |
+| Indicador (verde) | `#DCFCE7` / `#166534` | `#27500A` / `#C0DD97` |
+| Polegar e teclas neutras (cinza) | `#F4F4F5` / `#52525B` | `#444441` / `#D3D1C7` |
 
-**Erro:** claro `#FCEBEB` / `#A32D2D` · escuro `#791F1F` / `#F7C1C1`
+**Erro:** claro `#FEE2E2` / `#B91C1C` · escuro `#791F1F` / `#F7C1C1`
 
-Use esta paleta como base. Se no planejamento você enxergar alguma melhoria de contraste
-ou legibilidade, sugira antes de aplicar, mas não troque as cores por conta própria.
+Use esta paleta como base. Se enxergar alguma melhoria de contraste ou legibilidade,
+sugira antes de aplicar, mas não troque as cores por conta própria.
+
+## LAYOUT
+
+Regras válidas para o site inteiro:
+
+- **Sem caixas com borda** envolvendo cada seção. Seções são separadas por espaço e,
+  quando o corte precisa ficar claro, por uma **linha fina**.
+- **Sem sombras e sem gradientes**, em nenhum lugar.
+- Conteúdo **centralizado**, com largura máxima de cerca de **1100px**.
+- **Nunca preencher as laterais com elementos decorativos.** Se não há conteúdo útil para
+  a lateral, a lateral fica vazia.
+
+### Por tela
+
+| Tela | Layout |
+|---|---|
+| **Início** e **Trilha** | Três colunas em telas largas. **Esquerda:** navegação (Início, Trilha, Treino livre, Jogos, Estatísticas, Configurações — o que não existe na v1 aparece como "em breve"). **Centro:** conteúdo principal. **Direita:** painel de progresso com sequência de dias e meta diária, teclas mais lentas (de `digita:estatisticas`) e progresso geral (lições concluídas de 100). |
+| **Entrada** | Duas colunas em telas largas: escolhas de um lado, prévia do teclado do outro. |
+| **Lição** | Centralizada, **sem nada nas laterais**. Texto de digitação e teclado grandes, com o teclado ocupando até cerca de **900px** de largura. |
+
+**Telas estreitas:** as colunas viram uma só, nesta ordem — **conteúdo principal,
+progresso, navegação**. A navegação vira um menu no topo.
 
 ## IDIOMA DA INTERFACE
 
@@ -252,12 +281,14 @@ diferentes. Portanto:
 
 ## Contraste da paleta
 
-A paleta fica **intacta** — nenhuma cor trocada. Mas `#888780` sobre `#F1EFE8` dá ~3:1,
-que é suficiente para texto grande e fraco para texto pequeno. Regra:
+A cor das letras ainda não digitadas (`--cor-letra-pendente`: `#8E8E96` no claro,
+`#888780` no escuro) dá cerca de 3:1 contra o fundo — suficiente para texto grande, fraco
+para texto pequeno. Regra:
 
-- `#888780` **só** nas letras ainda não digitadas, em fonte de **24px ou maior**.
-- Em legendas e textos pequenos, usar o texto secundário `#5F5E5A` (modo claro) ou
-  `#B4B2A9` (modo escuro).
+- `--cor-letra-pendente` **só** nas letras ainda não digitadas, em fonte de **24px ou
+  maior**.
+- Em legendas e textos pequenos, usar `--cor-texto-discreto`; em texto de apoio,
+  `--cor-texto-secundario`.
 
 ## Outros
 

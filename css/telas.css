@@ -11,7 +11,7 @@
 .mostruario {
   display: flex;
   flex-direction: column;
-  gap: var(--esp-5);
+  gap: var(--esp-4);
 }
 
 .mostruario .selo {
@@ -27,16 +27,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--esp-3);
-}
-
-.mostruario-cartao {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-3);
+  padding-bottom: var(--esp-4);
 }
 
 .mostruario-ajuda {
-  color: var(--cor-texto-secundario);
+  color: var(--cor-texto-discreto);
   font-size: 0.9rem;
 }
 
@@ -64,9 +59,11 @@
   border-bottom: 3px solid var(--cor-texto);
 }
 
-/* Letra ainda não digitada. */
+/* Letra ainda não digitada. Usa a cor própria --cor-letra-pendente, que só
+   tem contraste suficiente em fonte grande — daí o tamanho mínimo da linha
+   de digitação ser regra, e não enfeite. */
 .letra--falta {
-  color: var(--cor-texto-discreto);
+  color: var(--cor-letra-pendente);
 }
 
 /* Erro. */

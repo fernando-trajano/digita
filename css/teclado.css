@@ -17,7 +17,7 @@
   flex-direction: column;
   gap: var(--tecla-vao);
   width: fit-content;
-  max-width: 100%;
+  max-width: min(100%, var(--largura-teclado-max));
 }
 
 .teclado-fileira {

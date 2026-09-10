@@ -1,7 +1,7 @@
 /* ==========================================================================
    tema.css — o único arquivo que conhece cores.
 
-   REGRA DO PROJETO: nenhum outro CSS pode escrever uma cor literal (#F1EFE8).
+   REGRA DO PROJETO: nenhum outro CSS pode escrever uma cor literal (#FFFFFF).
    Todo o resto do site usa var(--nome-da-variavel). Assim, para mudar a
    aparência inteira do digita., basta mexer aqui.
 
@@ -18,40 +18,47 @@
   color-scheme: light;
 
   /* --- Superfícies e texto (modo claro) ------------------------------- */
-  --cor-fundo: #F1EFE8;             /* fundo da página */
-  --cor-painel: #FFFFFF;            /* cartões e painéis */
-  --cor-borda: #D3D1C7;             /* bordas */
-  --cor-texto: #2C2C2A;             /* texto principal */
-  --cor-texto-secundario: #5F5E5A;  /* texto secundário */
-  --cor-texto-discreto: #888780;    /* discreto e letras ainda não digitadas */
+  --cor-fundo: #FFFFFF;             /* fundo da página */
+  --cor-superficie: #F4F4F5;        /* áreas destacadas e teclas neutras */
+  --cor-borda: #E4E4E7;             /* bordas e linhas finas */
+  --cor-texto: #18181B;             /* texto principal */
+  --cor-texto-secundario: #52525B;  /* texto secundário */
+  --cor-texto-discreto: #71717A;    /* legendas e textos discretos */
+  --cor-letra-pendente: #8E8E96;    /* letras ainda não digitadas (fonte grande) */
 
-  --cor-botao-fundo: #2C2C2A;
+  --cor-botao-fundo: #18181B;
   --cor-botao-texto: #FFFFFF;
+  --cor-botao-secundario-borda: #D4D4D8;
 
   /* --- Cores dos dedos (fundo da tecla / texto da tecla) --------------- */
-  --dedo-minimo-fundo: #EEEDFE;     /* mínimo — violeta */
-  --dedo-minimo-texto: #3C3489;
+  --dedo-minimo-fundo: #EDE9FE;     /* mínimo — violeta */
+  --dedo-minimo-texto: #5B21B6;
 
-  --dedo-anelar-fundo: #E6F1FB;     /* anelar — azul */
-  --dedo-anelar-texto: #0C447C;
+  --dedo-anelar-fundo: #DBEAFE;     /* anelar — azul */
+  --dedo-anelar-texto: #1E40AF;
 
-  --dedo-medio-fundo: #E1F5EE;      /* médio — verde-água */
-  --dedo-medio-texto: #085041;
+  --dedo-medio-fundo: #CCFBF1;      /* médio — verde-água */
+  --dedo-medio-texto: #115E59;
 
-  --dedo-indicador-fundo: #EAF3DE;  /* indicador — verde */
-  --dedo-indicador-texto: #27500A;
+  --dedo-indicador-fundo: #DCFCE7;  /* indicador — verde */
+  --dedo-indicador-texto: #166534;
 
-  --dedo-neutro-fundo: #F1EFE8;     /* polegar e teclas neutras — cinza */
-  --dedo-neutro-texto: #5F5E5A;
+  --dedo-neutro-fundo: #F4F4F5;     /* polegar e teclas neutras — cinza */
+  --dedo-neutro-texto: #52525B;
 
   /* --- Erro ------------------------------------------------------------ */
-  --cor-erro-fundo: #FCEBEB;
-  --cor-erro-texto: #A32D2D;
+  --cor-erro-fundo: #FEE2E2;
+  --cor-erro-texto: #B91C1C;
 
   /* --- Fontes do sistema (nada é baixado) ------------------------------ */
-  --fonte-titulo: Georgia, "New York", serif;
+  /* Títulos e texto usam a mesma família: a diferença vem do peso e do
+     tamanho, não de uma fonte decorativa. */
+  --fonte-titulo: system-ui, -apple-system, "Segoe UI", sans-serif;
   --fonte-texto: system-ui, -apple-system, "Segoe UI", sans-serif;
   --fonte-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --peso-titulo: 600;
+  --espacamento-titulo: -0.02em;
 
   /* --- Espaçamentos ---------------------------------------------------- */
   --esp-1: 0.25rem;
@@ -63,12 +70,13 @@
   --esp-7: 3rem;
   --esp-8: 4rem;
 
-  /* --- Formas ---------------------------------------------------------- */
+  /* --- Formas e medidas ------------------------------------------------ */
   --raio-p: 6px;
   --raio-m: 10px;
   --raio-g: 16px;
   --borda: 1px solid var(--cor-borda);
-  --largura-max: 62rem;
+  --largura-max: 1100px;        /* largura máxima do conteúdo */
+  --largura-teclado-max: 900px; /* largura máxima do teclado na lição */
 
   /* --- Movimento ------------------------------------------------------- */
   --transicao: 150ms ease;
@@ -82,14 +90,16 @@
   color-scheme: dark;
 
   --cor-fundo: #1F1F1D;
-  --cor-painel: #2C2C2A;
+  --cor-superficie: #2C2C2A;
   --cor-borda: #444441;
   --cor-texto: #F1EFE8;
   --cor-texto-secundario: #B4B2A9;
   --cor-texto-discreto: #888780;
+  --cor-letra-pendente: #888780;
 
   --cor-botao-fundo: #F1EFE8;
   --cor-botao-texto: #2C2C2A;
+  --cor-botao-secundario-borda: #444441;
 
   --dedo-minimo-fundo: #3C3489;
   --dedo-minimo-texto: #CECBF6;
@@ -117,14 +127,16 @@
     color-scheme: dark;
 
     --cor-fundo: #1F1F1D;
-    --cor-painel: #2C2C2A;
+    --cor-superficie: #2C2C2A;
     --cor-borda: #444441;
     --cor-texto: #F1EFE8;
     --cor-texto-secundario: #B4B2A9;
     --cor-texto-discreto: #888780;
+    --cor-letra-pendente: #888780;
 
     --cor-botao-fundo: #F1EFE8;
     --cor-botao-texto: #2C2C2A;
+    --cor-botao-secundario-borda: #444441;
 
     --dedo-minimo-fundo: #3C3489;
     --dedo-minimo-texto: #CECBF6;

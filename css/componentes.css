@@ -3,13 +3,29 @@
    Só usa variáveis do tema.css.
    ========================================================================== */
 
-/* --- Cartão ------------------------------------------------------------ */
+/* --- Seção -------------------------------------------------------------
+   O site não usa caixas com borda em volta de cada bloco. As seções são
+   separadas por espaço e, quando o corte precisa ficar claro, por uma linha
+   fina — nada de sombras nem gradientes.
+   ----------------------------------------------------------------------- */
 
-.cartao {
+.secao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding-block: var(--esp-6);
+}
+
+.secao + .secao {
+  border-top: var(--borda);
+}
+
+/* Para os poucos casos em que um bloco precisa mesmo se destacar do fundo
+   (um aviso, um resumo), usa-se a superfície secundária — sem borda. */
+.destaque {
   padding: var(--esp-5);
-  border: var(--borda);
-  border-radius: var(--raio-g);
-  background-color: var(--cor-painel);
+  border-radius: var(--raio-m);
+  background-color: var(--cor-superficie);
 }
 
 /* --- Botões ------------------------------------------------------------ */
@@ -21,7 +37,7 @@
   gap: var(--esp-2);
 
   padding: var(--esp-3) var(--esp-5);
-  border: var(--borda);
+  border: 1px solid var(--cor-botao-secundario-borda);
   border-radius: var(--raio-p);
   background-color: transparent;
   color: var(--cor-texto);

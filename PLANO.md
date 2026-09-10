@@ -145,6 +145,35 @@ sem recarregar a página.
 
 ---
 
+## Layout das telas
+
+Regras definidas depois do briefing original (a paleta clara e a tipografia também
+mudaram — ver a seção VISUAL do `CLAUDE.md`, que é a fonte da verdade):
+
+- Sem caixas com borda em volta das seções; separar por espaço e, quando precisar, por uma
+  linha fina. Sem sombras, sem gradientes.
+- Conteúdo centralizado, largura máxima de cerca de **1100px** (`--largura-max`).
+- Nunca preencher as laterais com enfeites.
+
+| Tela | Colunas em tela larga |
+|---|---|
+| **Início** e **Trilha** (passos 13 e 15) | Três: navegação à esquerda · conteúdo no centro · progresso à direita |
+| **Entrada** (passo 6) | Duas: escolhas de um lado · prévia do teclado do outro |
+| **Lição** (passo 11) | Uma, centralizada, laterais vazias; teclado até ~900px (`--largura-teclado-max`) |
+
+**Navegação** (à esquerda, nas telas de início e trilha): Início, Trilha, Treino livre,
+Jogos, Estatísticas, Configurações. O que não existe na v1 aparece marcado como
+**"em breve"**.
+
+**Painel de progresso** (à direita, nas telas de início e trilha): sequência de dias e
+meta diária, teclas mais lentas (lidas de `digita:estatisticas`) e progresso geral
+(lições concluídas de 100).
+
+**Telas estreitas:** tudo vira uma coluna só, nesta ordem — conteúdo principal, progresso,
+navegação; a navegação vira um menu no topo.
+
+---
+
 ## Formato de uma lição (`dados/licoes/`)
 
 Contrato entre conteúdo e código — lições novas são criadas copiando este molde:
