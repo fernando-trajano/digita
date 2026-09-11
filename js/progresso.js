@@ -79,17 +79,22 @@ export function licaoLiberada(id) {
 }
 
 /**
- * Guarda o resultado do teste de nivelamento.
+ * Guarda a resposta do nivelamento.
  *
- * @param {{ppm: number, precisao: number}} resultado
+ * Vale tanto para quem fez o teste quanto para quem disse "quero começar do
+ * zero": as duas são respostas, e ambas precisam ficar registradas — senão
+ * o site repetiria a pergunta a cada visita.
+ *
+ * @param {{ppm: number, precisao: number}|null} resultado  null = pulou o teste
  * @returns {string[]}  os ids das trilhas liberadas
  */
 export function registrarNivelamento(resultado) {
-  const trilhasLiberadas = trilhasDominadas(resultado);
+  const trilhasLiberadas = resultado ? trilhasDominadas(resultado) : [];
 
   gravar(CHAVES.nivelamento, {
-    ppm: resultado.ppm,
-    precisao: resultado.precisao,
+    fezTeste: Boolean(resultado),
+    ppm: resultado?.ppm ?? null,
+    precisao: resultado?.precisao ?? null,
     trilhasLiberadas,
     data: new Date().toISOString(),
   });

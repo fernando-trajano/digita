@@ -806,3 +806,74 @@
   gap: var(--esp-3);
   padding-top: var(--esp-2);
 }
+
+/* ==========================================================================
+   Tela inicial
+   ========================================================================== */
+
+/* O bloco de continuar não leva linha em cima: ele é a primeira coisa da
+   tela, e a pergunta que ela responde. */
+.inicio-continuar {
+  padding-top: 0;
+}
+
+.inicio-continuar h2 {
+  margin-top: var(--esp-1);
+}
+
+/* Botões dentro de uma seção não esticam na largura toda: a seção é uma
+   coluna flexível, e sem isto o botão acompanharia a largura do texto. */
+.secao > .botao {
+  align-self: flex-start;
+  margin-top: var(--esp-2);
+}
+
+.atalhos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--esp-3);
+  margin: var(--esp-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.atalho {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  width: 100%;
+  height: 100%;
+  padding: var(--esp-4);
+
+  border: 1px solid var(--cor-botao-secundario-borda);
+  border-radius: var(--raio-m);
+  background-color: transparent;
+  color: var(--cor-texto);
+
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--transicao);
+}
+
+.atalho:hover {
+  border-color: var(--cor-texto-secundario);
+}
+
+.atalho--em-breve {
+  border-style: dashed;
+  color: var(--cor-texto-discreto);
+  cursor: default;
+}
+
+.atalho-nome {
+  font-weight: 600;
+}
+
+.atalho-descricao {
+  color: var(--cor-texto-secundario);
+  font-size: 0.875rem;
+}
+
+.atalho--em-breve .atalho-descricao {
+  color: var(--cor-texto-discreto);
+}

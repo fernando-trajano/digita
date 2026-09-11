@@ -14,6 +14,7 @@ import { mostrarEntrada } from './telas/entrada.js';
 import { mostrarLicao, encerrarLicao } from './telas/licao.js';
 import { mostrarResultado } from './telas/resultado.js';
 import { mostrarTrilha } from './telas/trilha.js';
+import { mostrarInicio } from './telas/inicio.js';
 import { mostrarNivelamento, encerrarNivelamento } from './telas/nivelamento.js';
 import { registrarResultado, licaoParaContinuar, nivelamento } from './progresso.js';
 import { pareceSemTecladoFisico, mostrarAvisoSemTeclado } from './telas/sem-teclado.js';
@@ -96,14 +97,14 @@ function irPara(desenhar) {
  * As seções que já existem. As outras aparecem no menu marcadas como
  * "em breve"; esta lista cresce a cada passo do plano.
  */
-const SECOES_DISPONIVEIS = new Set(['trilha']);
+const SECOES_DISPONIVEIS = new Set(['inicio', 'trilha']);
 
 /** A tela de entrada, com o botão que leva ao treino. */
 function telaDeEntrada(destino) {
   mostrarEntrada(destino, {
     // O nivelamento é uma pergunta que só se faz uma vez: quem já respondeu
-    // vai direto para a trilha.
-    aoContinuar: () => irPara(nivelamento() ? telaDeTrilha : telaDeNivelamento),
+    // volta para a tela inicial.
+    aoContinuar: () => irPara(nivelamento() ? telaDeInicio : telaDeNivelamento),
   });
 }
 
@@ -111,7 +112,19 @@ function telaDeEntrada(destino) {
 function telaDeNivelamento(destino) {
   mostrarNivelamento(destino, {
     aoComecarDoZero: () => abrirLicao(licaoParaContinuar()),
-    aoTerminar: () => irPara(telaDeTrilha),
+    aoTerminar: () => irPara(telaDeInicio),
+  });
+}
+
+/** A tela de quem volta: continuar de onde parou e os atalhos. */
+function telaDeInicio(destino) {
+  mostrarInicio(destino, {
+    secoesDisponiveis: SECOES_DISPONIVEIS,
+    aoContinuar: abrirLicao,
+    aoNavegar: navegar,
+    // A tela de entrada some do caminho depois da primeira visita, então é
+    // daqui que se volta a ela para trocar de teclado.
+    aoTrocarTeclado: () => irPara(telaDeEntrada),
   });
 }
 
@@ -120,10 +133,14 @@ function telaDeTrilha(destino) {
   mostrarTrilha(destino, {
     secoesDisponiveis: SECOES_DISPONIVEIS,
     aoAbrirLicao: abrirLicao,
-    aoNavegar: (secao) => {
-      if (secao === 'trilha') irPara(telaDeTrilha);
-    },
+    aoNavegar: navegar,
   });
+}
+
+/** O menu lateral, compartilhado pelas telas com moldura. */
+function navegar(secao) {
+  if (secao === 'inicio') irPara(telaDeInicio);
+  if (secao === 'trilha') irPara(telaDeTrilha);
 }
 
 /** Abre uma lição e cuida do que acontece quando ela termina. */
@@ -131,7 +148,7 @@ function abrirLicao(licao) {
   irPara((destino) =>
     mostrarLicao(destino, {
       licao,
-      aoSair: () => irPara(telaDeTrilha),
+      aoSair: () => irPara(telaDeInicio),
 
       aoConcluir(resumo) {
         // O progresso é gravado ANTES de a tela de resultado aparecer: o que
@@ -145,7 +162,7 @@ function abrirLicao(licao) {
             registro,
             aoRepetir: () => abrirLicao(licao),
             aoProxima: () => abrirLicao(registro.proxima),
-            aoSair: () => irPara(telaDeTrilha),
+            aoSair: () => irPara(telaDeInicio),
           })
         );
       },
@@ -171,10 +188,14 @@ conferirLicoes(config().layout);
 
 // Quem chega de celular recebe o aviso primeiro, mas pode entrar assim mesmo:
 // existe tablet com teclado acoplado, e o palpite do navegador pode errar.
+/* Primeira visita começa pela entrada, para acertar o teclado. Quem já
+   respondeu o nivelamento cai direto na tela inicial. */
+const primeiraTela = nivelamento() ? telaDeInicio : telaDeEntrada;
+
 if (pareceSemTecladoFisico()) {
-  irPara((destino) => mostrarAvisoSemTeclado(destino, () => irPara(telaDeEntrada)));
+  irPara((destino) => mostrarAvisoSemTeclado(destino, () => irPara(primeiraTela)));
 } else {
-  irPara(telaDeEntrada);
+  irPara(primeiraTela);
 }
 
 // As telas são desenhadas em JavaScript, então trocar o idioma pede que a

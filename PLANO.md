@@ -395,6 +395,7 @@ real no passo 7.
       com estrelas e cadeados, moldura de três colunas com navegação e painel de progresso)
 - [x] **Passo 14** — nivelamento (a pergunta, o teste de 1 minuto com relógio que só
       começa na primeira tecla, e a liberação da trilha para quem passa de 90% e 25 PPM)
-- [ ] **Passo 15** — tela inicial
+- [x] **Passo 15** — tela inicial (continuar de onde parei, sequência de dias no painel,
+      atalhos para as seções e o caminho de volta para trocar de teclado)
 - [ ] **Passo 16** — sons
 - [ ] **Passo 17** — exportar/importar, responsivo e polimento

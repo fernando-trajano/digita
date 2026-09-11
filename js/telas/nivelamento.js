@@ -65,7 +65,12 @@ function mostrarPergunta(destino, acoes) {
   `
   );
 
-  destino.querySelector('[data-acao="zero"]').addEventListener('click', acoes.aoComecarDoZero);
+  destino.querySelector('[data-acao="zero"]').addEventListener('click', () => {
+    // Escolher começar do zero também é uma resposta, e fica registrada: a
+    // pergunta não deve voltar na próxima visita.
+    registrarNivelamento(null);
+    acoes.aoComecarDoZero();
+  });
   destino
     .querySelector('[data-acao="teste"]')
     .addEventListener('click', () => mostrarTeste(destino, acoes));

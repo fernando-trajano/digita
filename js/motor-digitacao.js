@@ -175,6 +175,10 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
   }
 
   function aoDigitar(evento) {
+    // O campo pode já ter sido desmontado: ao terminar uma lição, a tela
+    // troca, e uma tecla que estava a caminho ainda chega aqui.
+    if (!campo) return;
+
     // Enquanto o sistema está compondo um acento, o texto ainda não está
     // pronto: quem termina o trabalho é o compositionend.
     if (evento.isComposing || compondo) return;
@@ -196,6 +200,7 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
   }
 
   function aoComporFim(evento) {
+    if (!campo) return;
     compondo = '';
 
     // Aqui chega a letra pronta: "á", e não "´" seguido de "a".

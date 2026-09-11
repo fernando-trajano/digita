@@ -86,6 +86,25 @@ export const pt = {
     continuar: 'Começar a treinar',
   },
 
+  inicio: {
+    deVolta: 'Bom te ver de volta.',
+    primeiraVez: 'Vamos começar.',
+    paradoEm: 'Você parou aqui',
+    comecarPor: 'Sua primeira lição',
+    jaTentada: 'já tentada antes',
+    continuar: 'Continuar de onde parei',
+    comecar: 'Começar a primeira lição',
+
+    atalhos: 'Ir para',
+    atalhoTrilha: 'O programa inteiro, lição por lição.',
+    atalhoTreino: 'Treinar texto livre e as teclas que mais escapam.',
+    atalhoJogos: 'Praticar sem parecer treino.',
+    atalhoEstatisticas: 'Sua evolução, dedo por dedo.',
+
+    seuTeclado: 'Seu teclado',
+    trocarTeclado: 'Trocar de teclado',
+  },
+
   nivelamento: {
     pergunta: 'Você já digita sem olhar para o teclado?',
     explica:

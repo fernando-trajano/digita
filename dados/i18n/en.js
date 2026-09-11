@@ -81,6 +81,25 @@ export const en = {
     continuar: 'Start practising',
   },
 
+  inicio: {
+    deVolta: 'Good to see you back.',
+    primeiraVez: 'Let us begin.',
+    paradoEm: 'You stopped here',
+    comecarPor: 'Your first lesson',
+    jaTentada: 'attempted before',
+    continuar: 'Continue where I left off',
+    comecar: 'Start the first lesson',
+
+    atalhos: 'Go to',
+    atalhoTrilha: 'The whole programme, lesson by lesson.',
+    atalhoTreino: 'Practise free text and the keys that slip most.',
+    atalhoJogos: 'Practise without it feeling like practice.',
+    atalhoEstatisticas: 'Your progress, finger by finger.',
+
+    seuTeclado: 'Your keyboard',
+    trocarTeclado: 'Change keyboard',
+  },
+
   nivelamento: {
     pergunta: 'Can you already type without looking at the keyboard?',
     explica:
