@@ -43,9 +43,12 @@ let sessao = null;
  */
 export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   encerrarLicao();
-  sugestaoDeLayout = null;
 
-  const layout = config().layout;
+  /* O formato do teclado pode mudar NO MEIO da lição, pelo botão "Trocar"
+     do aviso da rede de segurança. Por isso ele é lido a cada uso, e não
+     guardado numa constante: guardá-lo deixaria a tela desenhando o teclado
+     antigo depois da troca. */
+  const layoutAtual = () => config().layout;
 
   destino.replaceChildren();
   destino.insertAdjacentHTML('beforeend', montarHtml(licao));
@@ -67,7 +70,7 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   };
 
   desenharMaos(partes.maos);
-  desenharTeclado(partes.teclado, { layout, sistema: sistemaAtual(), modo: 'cinza' });
+  desenharTeclado(partes.teclado, { layout: layoutAtual(), sistema: sistemaAtual(), modo: 'cinza' });
 
 
   // Quantas letras já estavam certas na última atualização. Comparando com
@@ -86,7 +89,7 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     aoAtualizar(estado) {
       ultimoEstado = estado;
       desenharTexto(partes.texto, estado);
-      apontarProximaTecla(partes, estado, layout);
+      apontarProximaTecla(partes, estado, layoutAtual());
       atualizarMedidas(partes, estado);
 
       if (estado.feitos > letrasFeitas) tocarClique();
@@ -96,8 +99,8 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     aoErrar(erro) {
       // Pisca a tecla que a pessoa apertou por engano; se aquela letra não
       // existe neste teclado, pisca a que ela deveria ter apertado.
-      const errada = teclaDaLetra(erro.digitada, layout);
-      const certa = teclaDaLetra(erro.esperada, layout);
+      const errada = teclaDaLetra(erro.digitada, layoutAtual());
+      const certa = teclaDaLetra(erro.esperada, layoutAtual());
       const paraPiscar = errada ?? certa;
 
       if (paraPiscar) piscarErro(partes.teclado, paraPiscar.codigo);
@@ -125,7 +128,7 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
        tecla física não bate com o que foi escolhido. */
   const vigia = (evento) => {
     vigiarCapsLock(evento, partes, motor);
-    vigiarLayout(evento, partes, layout);
+    vigiarLayout(evento);
   };
 
   document.addEventListener('keydown', vigia, true);
@@ -137,6 +140,78 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     encerrarLicao();
     aoSair?.();
   });
+
+  /* ------------------------------------------------------------------------
+     Rede de segurança do layout
+
+     Escolher o teclado errado na entrada é fácil de fazer e difícil de
+     perceber: as letras saem certas, e só o Ç e a pontuação denunciam. Por
+     isso a lição vigia a tecla à direita do L e, quando o que ela produz não
+     bate com o formato escolhido, oferece a troca.
+
+     Trocar precisa acontecer INTEIRO e na hora: a configuração, o desenho do
+     teclado, a dica (que muda de teclado para teclado) e a tecla acesa. E
+     precisa devolver o foco ao campo invisível — sem isso, o clique no botão
+     deixaria a lição sem receber o que se digita.
+     ------------------------------------------------------------------------ */
+
+  /** O formato sugerido pela última tecla, enquanto o aviso estiver na tela. */
+  let sugestaoDeLayout = null;
+
+  function vigiarLayout(evento) {
+    const sugerido = conferirLayout(evento, layoutAtual());
+    if (!sugerido) return;
+
+    sugestaoDeLayout = sugerido;
+    escreverAvisoDeLayout(sugerido);
+  }
+
+  function escreverAvisoDeLayout(sugerido) {
+    const nome = sugerido === 'abnt2' ? t('teclado.abnt2') : t('teclado.us');
+
+    partes.avisoLayout.hidden = false;
+    partes.avisoLayout.replaceChildren();
+    partes.avisoLayout.append(
+      document.createTextNode(t('licao.avisoLayout').replace('{formato}', nome) + ' ')
+    );
+
+    const trocar = document.createElement('button');
+    trocar.type = 'button';
+    trocar.className = 'botao';
+    trocar.textContent = t('licao.trocarLayout');
+
+    /* Sem este preventDefault o botão não funciona — e o motivo é sutil:
+       apertar o mouse tira o foco do campo invisível, aparece a linha
+       "Clique no texto para continuar digitando", tudo o que está abaixo
+       desce uns 20px e, quando o mouse é solto, o botão já não está mais sob
+       o ponteiro. O navegador então não considera aquilo um clique, e nada
+       acontece. Impedir o padrão do mousedown mantém o foco onde está: o
+       aviso não aparece, nada se mexe, e o clique chega. O teclado (Tab e
+       Enter) não passa por aqui e continua funcionando. */
+    trocar.addEventListener('mousedown', (evento) => evento.preventDefault());
+    trocar.addEventListener('click', () => trocarLayout(sugerido));
+
+    partes.avisoLayout.append(trocar);
+  }
+
+  function trocarLayout(novo) {
+    definirConfig({ layout: novo });
+
+    desenharTeclado(partes.teclado, {
+      layout: novo,
+      sistema: sistemaAtual(),
+      modo: 'cinza',
+    });
+
+    if (partes.dica) partes.dica.textContent = textoDaDica(licao);
+
+    sugestaoDeLayout = null;
+    partes.avisoLayout.hidden = true;
+
+    // A lição fica exatamente onde estava: só o desenho do teclado muda.
+    if (ultimoEstado) apontarProximaTecla(partes, ultimoEstado, novo);
+    motor.focar();
+  }
 
   /**
    * Troca os textos da tela para o idioma novo, SEM remontar nada.
@@ -160,8 +235,8 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
 
     // Legenda e aviso de layout são reescritos a cada tecla; sem isto eles
     // ficariam no idioma antigo até a próxima letra.
-    if (ultimoEstado) apontarProximaTecla(partes, ultimoEstado, layout);
-    if (sugestaoDeLayout) escreverAvisoDeLayout(partes, sugestaoDeLayout);
+    if (ultimoEstado) apontarProximaTecla(partes, ultimoEstado, layoutAtual());
+    if (sugestaoDeLayout) escreverAvisoDeLayout(sugestaoDeLayout);
   }
 
   sessao = {
@@ -366,38 +441,3 @@ function vigiarCapsLock(evento, partes, motor) {
   motor.focar();
 }
 
-/* --------------------------------------------------------------------------
-   Rede de segurança do layout
-   -------------------------------------------------------------------------- */
-
-/** O formato sugerido pela última tecla, enquanto o aviso estiver na tela. */
-let sugestaoDeLayout = null;
-
-function vigiarLayout(evento, partes, layoutEscolhido) {
-  const sugerido = conferirLayout(evento, layoutEscolhido);
-  if (!sugerido) return;
-
-  sugestaoDeLayout = sugerido;
-  escreverAvisoDeLayout(partes, sugerido);
-}
-
-function escreverAvisoDeLayout(partes, sugerido) {
-  const nome = sugerido === 'abnt2' ? t('teclado.abnt2') : t('teclado.us');
-
-  partes.avisoLayout.hidden = false;
-  partes.avisoLayout.replaceChildren();
-  partes.avisoLayout.append(
-    document.createTextNode(t('licao.avisoLayout').replace('{formato}', nome) + ' ')
-  );
-
-  const trocar = document.createElement('button');
-  trocar.type = 'button';
-  trocar.className = 'botao';
-  trocar.textContent = t('licao.trocarLayout');
-  trocar.addEventListener('click', () => {
-    definirConfig({ layout: sugerido });
-    partes.avisoLayout.hidden = true;
-  });
-
-  partes.avisoLayout.append(trocar);
-}
