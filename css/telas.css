@@ -642,6 +642,66 @@
   gap: var(--esp-4);
 }
 
+/* --- O acordeão ---------------------------------------------------------
+
+   Cada trilha abre e fecha. O gatilho é um <button> de verdade, dentro do
+   <h2>: assim o Tab para nele, o Enter funciona sem nenhum JavaScript de
+   teclado, e a estrutura de títulos da página continua inteira para quem
+   navega por cabeçalhos.
+   ------------------------------------------------------------------------ */
+
+.trilha-titulo {
+  margin: 0;
+}
+
+.trilha-gatilho {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-4);
+  width: 100%;
+  padding: 0;
+
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* O cabeçalho ocupa toda a largura que sobra; a seta fica no fim. */
+.trilha-gatilho .trilha-cabecalho {
+  flex: 1;
+}
+
+.trilha-gatilho .trilha-nome,
+.trilha-gatilho .ajuda {
+  display: block;
+}
+
+/* O nome da trilha continua com cara de h2 — quem virou botão foi o
+   invólucro, não o título. */
+.trilha-nome {
+  font-size: clamp(1.3rem, 1.15rem + 0.8vw, 1.7rem);
+}
+
+.trilha-gatilho:hover .trilha-nome {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.trilha-seta {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+  color: var(--cor-texto-discreto);
+  transition: transform var(--transicao);
+}
+
+[aria-expanded='true'] .trilha-seta {
+  transform: rotate(180deg);
+}
+
 .trilha-contagem {
   color: var(--cor-texto-discreto);
   font-size: 0.9rem;
