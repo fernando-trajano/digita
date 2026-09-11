@@ -26,6 +26,7 @@ para mexer sem entender de programação, e sem tocar em nenhum arquivo da pasta
 | `teclasNovas` | As teclas que **esta** lição ensina, em minúsculas. Vazio (`[]`) quando a lição só revisa o que já veio. |
 | `conteudo` | O que o aluno digita, uma linha por item do array. |
 | `metas` | **Opcional.** Só use se esta lição precisar de metas diferentes das do tipo dela. |
+| `dica` | **Opcional.** Uma instrução mostrada acima do texto, diferente para cada teclado: `{ abnt2: {pt, en}, usMac: {pt, en}, usWindows: {pt, en} }`. É o que faz a trilha de acentos funcionar para todo mundo — a mesma lição pede "ç", e o caminho muda conforme o teclado. |
 
 ## O ritmo de uma trilha
 
@@ -73,9 +74,10 @@ navegador se encontrar:
 1. **Letra ensinada fora de hora** — o conteúdo de uma lição só pode usar as letras de
    `teclasNovas` dela **somadas às de todas as lições anteriores do programa**, inclusive
    as de trilhas anteriores: quem chega à fileira de cima já sabe a fileira base.
-2. **Tecla que não existe no teclado escolhido** — `ç`, `´`, `~`, `^` e `` ` `` só
-   existem no teclado brasileiro. Uma lição que os use quebraria para quem tem teclado
-   americano.
+2. **Acento solto** — nenhuma lição pode pedir `´`, `~`, `^`, `` ` `` ou `¨` como
+   caractere a digitar: no teclado americano eles exigem uma combinação seguida de
+   espaço. Letras acentuadas e o Ç estão liberados — os dois teclados sabem produzi-los,
+   e o motor recebe a letra pronta.
 
 Se você escrever uma lição errada, o site não quebra: o aviso aparece no console
 (no Safari: menu **Desenvolvedor → Mostrar console JavaScript**) e a lição continua lá.
@@ -85,7 +87,8 @@ Se você escrever uma lição errada, o site não quebra: o aviso aparece no con
 - **Só português do Brasil.** Nada de palavra de outro idioma que "pareça" portuguesa —
   *gafas* é espanhol, *sala* é português.
 - **Nada de acento antes da trilha de acentos.** `á`, `ã`, `é` e `ç` são assunto da
-  trilha 5.
+  trilha 5 — e quem garante isso é a conferência 1, já que eles só entram em
+  `teclasNovas` lá.
 - **Palavras de verdade sempre que possível.** Quando as letras disponíveis não
   formarem palavras (é o caso do K na fileira base), use exercícios de sílabas —
   `kjk`, `dkd` — em vez de inventar palavras.

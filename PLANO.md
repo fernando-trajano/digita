@@ -413,8 +413,8 @@ lição → resultado → trilha → início.
 - [x] **Fileira de cima** — 18 lições
 - [x] **Fileira de baixo** — 14 lições
 - [ ] Números — 10
-- [ ] Acentos e Ç — 16
+- [x] **Acentos e Ç** — 16 lições
 - [ ] Pontuação e maiúsculas — 14
 - [ ] Teclado numérico — 10
 
-**50 de 100 lições.**
+**66 de 100 lições.**

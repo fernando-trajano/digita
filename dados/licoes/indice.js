@@ -10,6 +10,7 @@
 import { fileiraBase } from './fileira-base.js';
 import { fileiraDeCima } from './fileira-de-cima.js';
 import { fileiraDeBaixo } from './fileira-de-baixo.js';
+import { acentos } from './acentos.js';
 
 /**
  * Metas de velocidade por tipo de lição, em PPM (palavras por minuto).
@@ -82,7 +83,7 @@ export const TRILHAS = [
       en: 'á é ã ç — with the right method for your keyboard.',
     },
     licoesPlanejadas: 16,
-    licoes: [],
+    licoes: acentos,
   },
   {
     id: 'pontuacao',

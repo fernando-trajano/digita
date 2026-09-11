@@ -220,10 +220,10 @@ definirIdioma(config().idioma ?? detectarIdioma());
 
 aplicarSom();
 
-// Confere o conteúdo das lições contra o teclado escolhido e contra a ordem
-// em que as teclas são ensinadas. Só avisa no console — quem precisa ver
+// Confere o conteúdo das lições: a ordem em que as teclas são ensinadas e
+// se nada exige um acento solto. Só avisa no console — quem precisa ver
 // isso é quem escreve as lições, não quem está treinando.
-conferirLicoes(config().layout);
+conferirLicoes();
 
 // Quem chega de celular recebe o aviso primeiro, mas pode entrar assim mesmo:
 // existe tablet com teclado acoplado, e o palpite do navegador pode errar.

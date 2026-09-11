@@ -166,6 +166,8 @@ function montarHtml(licao) {
 
       <div class="barra"><span data-papel="barra"></span></div>
 
+      ${montarDica(licao)}
+
       <p class="aviso-caps" data-papel="caps" role="status" hidden>${t('licao.capsLock')}</p>
 
       <div class="licao-corpo">
@@ -185,6 +187,30 @@ function montarHtml(licao) {
       <p class="aviso" data-papel="aviso-layout" role="status" hidden></p>
     </div>
   `;
+}
+
+/**
+ * A dica de como fazer o que a lição pede, quando ela tem uma.
+ *
+ * É aqui que a trilha de acentos ganha sentido: a MESMA lição pede "ç", mas
+ * o caminho muda conforme o teclado — tecla própria no brasileiro, ⌥ + c no
+ * Mac americano, e a aspa simples seguida de c no US Internacional. O
+ * conteúdo é um só; a instrução é que se adapta.
+ */
+function montarDica(licao) {
+  if (!licao.dica) return '';
+
+  const chave =
+    config().layout === 'abnt2'
+      ? 'abnt2'
+      : sistemaAtual() === 'mac'
+        ? 'usMac'
+        : 'usWindows';
+
+  const idioma = document.documentElement.lang.startsWith('pt') ? 'pt' : 'en';
+  const texto = licao.dica[chave]?.[idioma];
+
+  return texto ? `<p class="licao-dica">${texto}</p>` : '';
 }
 
 /* --------------------------------------------------------------------------

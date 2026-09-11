@@ -836,3 +836,16 @@
   min-height: 1.4em;
   text-align: center;
 }
+
+/* A dica de como produzir o que a lição pede — usada pela trilha de
+   acentos, onde o caminho muda conforme o teclado. */
+.licao-dica {
+  align-self: center;
+  max-width: 52rem;
+  padding: var(--esp-2) var(--esp-4);
+  border-radius: var(--raio-p);
+  background-color: var(--cor-superficie);
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+  text-align: center;
+}

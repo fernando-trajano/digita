@@ -21,11 +21,19 @@ import { TRILHAS, textoDaLicao } from './indice.js';
 const SEMPRE_PERMITIDOS = new Set([' ']);
 
 /**
- * O que cada teclado consegue escrever sem combinação de teclas.
- * O que importa aqui é a diferença entre os dois; letras comuns às duas
- * listas não precisam ser conferidas.
+ * Os acentos SOLTOS, digitados sozinhos.
+ *
+ * Esta é a diferença que importa entre os dois teclados. Uma letra
+ * acentuada — á, ç, ã — existe nos dois: no brasileiro sai da tecla de
+ * acento seguida da vogal, e no americano sai de ⌥ + e no Mac ou do layout
+ * US Internacional no Windows. O motor de digitação recebe a letra pronta
+ * nos dois casos, então o conteúdo pode usá-las à vontade.
+ *
+ * O que NÃO existe nos dois é o acento sozinho, como caractere a digitar:
+ * no teclado americano ele exige uma combinação seguida de espaço, e pedir
+ * isso numa lição seria pedir um truque, não digitação.
  */
-const SO_NO_ABNT2 = new Set(['ç', '´', '~', '^', '`']);
+const ACENTOS_SOLTOS = new Set(['´', '~', '^', '`', '¨']);
 
 /**
  * Conferência 1 — o aluno só vê letras que já aprendeu.
@@ -66,23 +74,25 @@ export function conferirLetrasJaEnsinadas() {
 }
 
 /**
- * Conferência 2 — o conteúdo cabe no teclado escolhido.
+ * Conferência 2 — o conteúdo cabe em qualquer teclado.
  *
- * @param {'abnt2'|'us'} layout
+ * Nenhuma lição pode pedir um acento solto, porque no teclado americano ele
+ * exige uma combinação seguida de espaço. Letras acentuadas e o Ç estão
+ * liberados: os dois teclados sabem produzi-los.
+ *
  * @returns {string[]}  os problemas encontrados, em texto
  */
-export function conferirLayout(layout) {
+export function conferirLayout() {
   const problemas = [];
-  if (layout === 'abnt2') return problemas; // o brasileiro escreve tudo
 
   for (const trilha of TRILHAS) {
     for (const licao of trilha.licoes) {
-      const usadas = new Set(textoDaLicao(licao).toLowerCase());
-      const impossiveis = [...usadas].filter((letra) => SO_NO_ABNT2.has(letra));
+      const usadas = new Set(textoDaLicao(licao));
+      const impossiveis = [...usadas].filter((letra) => ACENTOS_SOLTOS.has(letra));
 
       if (impossiveis.length > 0) {
         problemas.push(
-          `${licao.id}: usa "${impossiveis.join('", "')}", que não existe no teclado americano.`
+          `${licao.id}: pede o acento "${impossiveis.join('", "')}" sozinho, que o teclado americano só produz com combinação e espaço.`
         );
       }
     }
@@ -94,11 +104,9 @@ export function conferirLayout(layout) {
 /**
  * Roda as duas conferências e escreve o resultado no console.
  * Chamada uma vez quando o site abre.
- *
- * @param {'abnt2'|'us'} layout  o teclado que o usuário escolheu
  */
-export function conferirLicoes(layout) {
-  const problemas = [...conferirLetrasJaEnsinadas(), ...conferirLayout(layout)];
+export function conferirLicoes() {
+  const problemas = [...conferirLetrasJaEnsinadas(), ...conferirLayout()];
 
   if (problemas.length === 0) return true;
 
