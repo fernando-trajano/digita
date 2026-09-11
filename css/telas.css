@@ -538,13 +538,13 @@
 }
 
 /* ==========================================================================
-   Moldura de três colunas — telas de Início e Trilha
+   Moldura de duas colunas — telas de Início e Trilha
 
-   Em telas largas: navegação · conteúdo · progresso.
-   Em telas estreitas vira uma coluna só, nesta ordem: conteúdo, progresso,
-   navegação. A ordem visual é feita pelo `order` do grid, e não mexendo no
-   HTML: assim quem usa leitor de tela ou teclado percorre a página numa
-   ordem que faz sentido nos dois casos.
+   Conteúdo no centro, progresso à direita. Em telas estreitas vira uma
+   coluna só, com o progresso abaixo do conteúdo.
+
+   Não há menu lateral: a navegação é feita pelos atalhos da tela inicial e
+   pela marca "digita." do cabeçalho, que volta para o início.
    ========================================================================== */
 
 .moldura {
@@ -553,91 +553,20 @@
 }
 
 .moldura-centro {
-  order: 1;
   min-width: 0;
-}
-
-.moldura-progresso {
-  order: 2;
-}
-
-.moldura-navegacao {
-  order: 3;
 }
 
 @media (min-width: 64rem) {
   .moldura {
-    grid-template-columns: 11rem minmax(0, 1fr) 14rem;
-    gap: var(--esp-7);
+    grid-template-columns: minmax(0, 1fr) 14rem;
+    gap: var(--esp-8);
     align-items: start;
   }
 
-  .moldura-navegacao {
-    order: 0;
-    position: sticky;
-    top: var(--esp-6);
-  }
-
-  .moldura-centro {
-    order: 1;
-  }
-
   .moldura-progresso {
-    order: 2;
     position: sticky;
     top: var(--esp-6);
   }
-}
-
-/* --- Navegação ---------------------------------------------------------- */
-
-.navegacao {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--esp-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@media (min-width: 64rem) {
-  .navegacao {
-    flex-direction: column;
-    flex-wrap: nowrap;
-  }
-}
-
-.navegacao-item button {
-  width: 100%;
-  padding: var(--esp-2) var(--esp-3);
-  border: 0;
-  border-radius: var(--raio-p);
-  background: transparent;
-  color: var(--cor-texto-secundario);
-  text-align: left;
-  cursor: pointer;
-  transition: background-color var(--transicao), color var(--transicao);
-}
-
-.navegacao-item button:hover {
-  color: var(--cor-texto);
-  background-color: var(--cor-superficie);
-}
-
-/* A seção aberta agora. aria-current diz o mesmo para quem usa leitor de
-   tela, então o estado visual e o anunciado são a mesma informação. */
-.navegacao-item button[aria-current='page'] {
-  background-color: var(--cor-superficie);
-  color: var(--cor-texto);
-  font-weight: 600;
-}
-
-.navegacao-item--em-breve {
-  display: flex;
-  align-items: baseline;
-  gap: var(--esp-2);
-  padding: var(--esp-2) var(--esp-3);
-  color: var(--cor-texto-discreto);
 }
 
 .selo-pequeno {

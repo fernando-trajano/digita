@@ -130,14 +130,10 @@ function telaDeInicio(destino) {
 
 /** O mapa do programa: as sete trilhas e as lições de cada uma. */
 function telaDeTrilha(destino) {
-  mostrarTrilha(destino, {
-    secoesDisponiveis: SECOES_DISPONIVEIS,
-    aoAbrirLicao: abrirLicao,
-    aoNavegar: navegar,
-  });
+  mostrarTrilha(destino, { aoAbrirLicao: abrirLicao });
 }
 
-/** O menu lateral, compartilhado pelas telas com moldura. */
+/** Os atalhos da tela inicial. */
 function navegar(secao) {
   if (secao === 'inicio') irPara(telaDeInicio);
   if (secao === 'trilha') irPara(telaDeTrilha);
@@ -197,6 +193,13 @@ if (pareceSemTecladoFisico()) {
 } else {
   irPara(primeiraTela);
 }
+
+// A marca no cabeçalho é o caminho de volta: leva ao início, ou à entrada
+// para quem ainda não passou por ela. Sem recarregar a página inteira.
+document.querySelector('.marca').addEventListener('click', (evento) => {
+  evento.preventDefault();
+  irPara(nivelamento() ? telaDeInicio : telaDeEntrada);
+});
 
 // As telas são desenhadas em JavaScript, então trocar o idioma pede que a
 // tela seja desenhada de novo.

@@ -8,7 +8,7 @@
    ========================================================================== */
 
 import { t } from '../i18n.js';
-import { montarMoldura, ligarNavegacao } from './moldura.js';
+import { montarMoldura } from './moldura.js';
 import { TRILHAS, trilhaDisponivel, metasDaLicao } from '../../dados/licoes/indice.js';
 import { progressoDaLicao, licaoLiberada } from '../progresso.js';
 
@@ -18,16 +18,12 @@ import { progressoDaLicao, licaoLiberada } from '../progresso.js';
  * @param {HTMLElement} destino
  * @param {object} opcoes
  * @param {(licao: object) => void} opcoes.aoAbrirLicao
- * @param {(secao: string) => void} opcoes.aoNavegar
- * @param {Set<string>} opcoes.secoesDisponiveis
  */
-export function mostrarTrilha(destino, { aoAbrirLicao, aoNavegar, secoesDisponiveis }) {
+export function mostrarTrilha(destino, { aoAbrirLicao }) {
   destino.replaceChildren();
   destino.insertAdjacentHTML(
     'beforeend',
     montarMoldura({
-      atual: 'trilha',
-      disponiveis: secoesDisponiveis,
       conteudo: `
         <h1>${t('trilha.titulo')}</h1>
         <p class="subtitulo">${t('trilha.subtitulo')}</p>
@@ -35,8 +31,6 @@ export function mostrarTrilha(destino, { aoAbrirLicao, aoNavegar, secoesDisponiv
       `,
     })
   );
-
-  ligarNavegacao(destino, aoNavegar);
 
   destino.querySelectorAll('[data-licao]').forEach((botao) => {
     botao.addEventListener('click', () => {

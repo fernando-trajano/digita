@@ -123,13 +123,10 @@ export const en = {
   },
 
   nav: {
-    secoes: 'Site sections',
-    inicio: 'Home',
     trilha: 'Track',
     treino: 'Free practice',
     jogos: 'Games',
     estatisticas: 'Statistics',
-    configuracoes: 'Settings',
     emBreve: 'coming soon',
   },
 

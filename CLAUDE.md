@@ -107,7 +107,7 @@ Regras válidas para o site inteiro:
 
 | Tela | Layout |
 |---|---|
-| **Início** e **Trilha** | Três colunas em telas largas. **Esquerda:** navegação (Início, Trilha, Treino livre, Jogos, Estatísticas, Configurações — o que não existe na v1 aparece como "em breve"). **Centro:** conteúdo principal. **Direita:** painel de progresso com sequência de dias e meta diária, teclas mais lentas (de `digita:estatisticas`) e progresso geral (lições concluídas de 100). |
+| **Início** e **Trilha** | **Duas colunas** em telas largas: conteúdo principal no centro, painel de progresso à direita (sequência de dias, progresso geral de 100 lições e teclas que mais escapam, de `digita:estatisticas`). **Sem menu lateral** — ele foi construído e removido por ser redundante com os atalhos da tela inicial. A navegação é feita pelos atalhos do centro e pela marca "digita." do cabeçalho, que sempre volta ao início. |
 | **Entrada** | Duas colunas em telas largas: escolhas de um lado, prévia do teclado do outro. |
 | **Lição** | Centralizada, **sem nada nas laterais**. Ver as regras detalhadas logo abaixo. |
 
@@ -142,8 +142,8 @@ Regras válidas para o site inteiro:
    mesma regra de fallback em todas as telas (`sistemaAtual()`, em `js/estado.js`): o que
    o usuário escolheu ou, enquanto ele não escolheu, o que o navegador informou.
 
-**Telas estreitas:** as colunas viram uma só, nesta ordem — **conteúdo principal,
-progresso, navegação**. A navegação vira um menu no topo.
+**Telas estreitas:** as colunas viram uma só — **conteúdo principal e, abaixo, o
+progresso**.
 
 ## IDIOMA DA INTERFACE
 

@@ -128,13 +128,10 @@ export const pt = {
   },
 
   nav: {
-    secoes: 'Seções do site',
-    inicio: 'Início',
     trilha: 'Trilha',
     treino: 'Treino livre',
     jogos: 'Jogos',
     estatisticas: 'Estatísticas',
-    configuracoes: 'Configurações',
     emBreve: 'em breve',
   },
 

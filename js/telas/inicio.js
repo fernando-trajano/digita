@@ -11,7 +11,7 @@
 
 import { t } from '../i18n.js';
 import { config, sistemaAtual } from '../estado.js';
-import { montarMoldura, ligarNavegacao } from './moldura.js';
+import { montarMoldura } from './moldura.js';
 import { TRILHAS } from '../../dados/licoes/indice.js';
 import { licaoParaContinuar, progressoDaLicao, totalConcluidas } from '../progresso.js';
 
@@ -43,8 +43,6 @@ export function mostrarInicio(destino, { aoContinuar, aoNavegar, aoTrocarTeclado
   destino.insertAdjacentHTML(
     'beforeend',
     montarMoldura({
-      atual: 'inicio',
-      disponiveis: secoesDisponiveis,
       conteudo: `
         <h1>${comecou ? t('inicio.deVolta') : t('inicio.primeiraVez')}</h1>
 
@@ -77,8 +75,6 @@ export function mostrarInicio(destino, { aoContinuar, aoNavegar, aoTrocarTeclado
       `,
     })
   );
-
-  ligarNavegacao(destino, aoNavegar);
 
   destino
     .querySelector('[data-acao="continuar"]')
