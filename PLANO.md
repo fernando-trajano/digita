@@ -411,10 +411,10 @@ lição → resultado → trilha → início.
 
 - [x] **Fileira base** — 18 lições
 - [x] **Fileira de cima** — 18 lições
-- [ ] Fileira de baixo — 14
+- [x] **Fileira de baixo** — 14 lições
 - [ ] Números — 10
 - [ ] Acentos e Ç — 16
 - [ ] Pontuação e maiúsculas — 14
 - [ ] Teclado numérico — 10
 
-**36 de 100 lições.**
+**50 de 100 lições.**

@@ -9,6 +9,7 @@
 
 import { fileiraBase } from './fileira-base.js';
 import { fileiraDeCima } from './fileira-de-cima.js';
+import { fileiraDeBaixo } from './fileira-de-baixo.js';
 
 /**
  * Metas de velocidade por tipo de lição, em PPM (palavras por minuto).
@@ -61,7 +62,7 @@ export const TRILHAS = [
       en: 'z x c v b n m — including the C that so many words need.',
     },
     licoesPlanejadas: 14,
-    licoes: [],
+    licoes: fileiraDeBaixo,
   },
   {
     id: 'numeros',
