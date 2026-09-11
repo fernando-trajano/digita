@@ -130,22 +130,6 @@
   font-size: 0.9rem;
 }
 
-/* A legenda "Próxima: F · indicador esquerdo" — a versão em texto do que o
-   teclado e as mãos mostram em desenho, e a que os leitores de tela leem.
-   Fica junto das mãos, logo acima delas. */
-.legenda-dedo {
-  max-width: none;
-  /* Uma linha reservada: agora que a legenda é curta, ela nunca quebra — e a
-     altura fixa impede as mãos de subirem e descerem a cada letra. */
-  min-height: 1.6em;
-  margin: 0;
-  color: var(--cor-texto-secundario);
-  font-size: 0.8125rem; /* 13px: pequeno, mas nunca abaixo de 12 */
-  line-height: 1.3;
-  text-align: center;
-  text-wrap: balance;
-}
-
 /* ==========================================================================
    A área de digitação — o texto da lição e o campo invisível
    ========================================================================== */
@@ -327,14 +311,9 @@
   transition: width var(--transicao);
 }
 
-/* --- O corpo: texto à esquerda, mãos no canto direito ------------------- */
+/* --- O corpo: o texto da lição ------------------------------------------ */
 
-/* O texto ocupa a largura toda e se centraliza nela; as mãos flutuam no
-   canto direito, FORA do fluxo. É isso que mantém o texto no mesmo eixo do
-   teclado — se as mãos ocupassem uma coluna, empurrariam o texto para a
-   esquerda. */
 .licao-corpo {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -365,53 +344,89 @@
   font-size: 0.9rem;
 }
 
-/* As mãos: legenda em cima, desenho embaixo, encostados na altura da última
-   linha do texto, no canto direito. */
-/* A legenda anda para dentro e para baixo em relação às mãos: 15% da largura
-   da coluna (20% menos 5%) e 10% da altura do bloco (~10px). É um
-   deslocamento visual, não uma mudança de fluxo — as mãos não se mexem.
-   A porcentagem já é a largura da coluna, porque a legenda ocupa a coluna
-   inteira. */
-.licao-lado .legenda-dedo {
-  transform: translate(15%, 10px);
+/* --- Aviso de Caps Lock ------------------------------------------------- */
+
+.aviso-caps {
+  align-self: center;
+  padding: var(--esp-2) var(--esp-4);
+  border-radius: var(--raio-p);
+  background-color: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
-.licao-lado {
-  position: absolute;
-  /* Um pouco para dentro da borda direita, para as mãos não passarem da
-     ponta do teclado. */
-  right: 5%;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-2);
-  /* Um pouco mais larga que as mãos: a legenda precisa de espaço para caber
-     em duas linhas em vez de três. As mãos continuam encostadas à direita. */
-  width: 9.5rem;
-}
+/* --- O palco: mão, teclado, mão -----------------------------------------
 
-/* Em telas estreitas não há espaço ao lado do texto: as mãos voltam ao
-   fluxo e descem para cima do teclado, centralizadas — nunca por cima do
-   texto. */
-@media (max-width: 56rem) {
-  .licao-lado {
-    position: static;
-    margin-top: var(--esp-3);
-  }
-}
+   As mãos precisam ter exatamente a ALTURA do teclado, e a largura delas sai
+   dessa altura (a proporção do desenho é 130 por 150). Isso é circular no
+   CSS: a largura do teclado depende do espaço que sobra das mãos, e a
+   largura das mãos depende da altura do teclado.
 
-/* --- O teclado ---------------------------------------------------------- */
+   A saída é resolver a conta uma vez e escrevê-la aqui. Com T = tamanho da
+   tecla e o vão de 4px entre elas:
 
-.licao-teclado {
+     altura do teclado  = 5T + 16
+     largura do teclado = 15T + 56
+     largura de uma mão = (5T + 16) × 130/150 = 4,33T + 13,9
+     reserva de um lado = largura da mão + 16 de respiro = 4,33T + 30
+
+     largura total = 15T + 56 + 2 × (4,33T + 30) = 23,7T + 116
+
+   Daí T = (largura disponível − 116) ÷ 23,7 — que é o que está abaixo. As
+   mãos ficam fora do fluxo, e o espaço delas vem do padding: assim elas
+   nunca empurram nem espremem o teclado.
+   ------------------------------------------------------------------------ */
+
+.licao-palco {
+  position: relative;
   display: flex;
   justify-content: center;
+  width: 100%;
+  padding-inline: calc(4.34 * var(--tecla-da-licao) + 30px);
 }
 
-/* O teclado é o filho: desenharTeclado() transforma o elemento que recebe
-   em .teclado, então ele precisa de um invólucro para ser centralizado. */
-.licao-teclado > .teclado {
-  /* O teclado se mede pela coluna da lição, e não pela largura da tela. */
-  --tecla: clamp(1.5rem, 5.7cqw, 3.6rem);
+.licao-palco .teclado {
+  --tecla: var(--tecla-da-licao);
+}
+
+.licao {
+  --tecla-da-licao: clamp(1.2rem, (100cqw - 116px) / 23.7, 3.2rem);
+}
+
+/* Fora do fluxo, coladas nas bordas do palco e da altura dele — que é a
+   altura do teclado, o único filho que está no fluxo. */
+.mao {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: auto;
+}
+
+.mao--esquerda {
+  left: 0;
+}
+
+.mao--direita {
+  right: 0;
+}
+
+/* Abaixo de uma largura razoável não há espaço para as três coisas lado a
+   lado. Aí as mãos somem e o teclado fica com a largura toda — ele é o que
+   importa. */
+@media (max-width: 52rem) {
+  .maos {
+    display: none;
+  }
+
+  .licao-palco {
+    padding-inline: 0;
+  }
+
+  .licao {
+    --tecla-da-licao: clamp(1.2rem, 5.7cqw, 3.2rem);
+  }
 }
 
 /* ==========================================================================
@@ -821,4 +836,10 @@
   flex-wrap: wrap;
   gap: var(--esp-3);
   margin-top: var(--esp-2);
+}
+
+/* Na tela de entrada, o nome do dedo aparece ao pedir a tecla de teste. */
+.entrada-dedo {
+  min-height: 1.4em;
+  text-align: center;
 }

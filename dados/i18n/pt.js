@@ -195,6 +195,7 @@ export const pt = {
     precisao: 'precisão',
     progresso: 'progresso',
     erros: 'erros',
+    capsLock: 'Caps Lock ligado',
     campo: 'Área de digitação da lição',
     clique: 'Clique no texto para continuar digitando.',
     concluida: 'Lição concluída!',

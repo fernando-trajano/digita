@@ -102,72 +102,64 @@
 }
 
 /* ==========================================================================
-   As mãos desenhadas acima do teclado.
+   As mãos, uma de cada lado do teclado.
+
+   Cada mão tem a mesma altura do teclado e largura automática, dada pela
+   proporção do viewBox. O contorno nunca muda de cor: quem indica o dedo é
+   a bolinha na ponta dele.
    ========================================================================== */
 
 .maos {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: var(--esp-2);
-  width: var(--largura-maos, 100%);
-  margin-left: auto;
+  display: contents;
 }
 
-/* As duas mãos dividem a largura da coluna reservada a elas (--largura-maos),
-   descontado o vão entre as duas. */
 .mao {
-  width: calc((100% - var(--esp-2)) / 2);
-  height: auto;
+  height: 100%;
+  width: auto;
+  flex: 0 0 auto;
   overflow: visible;
 }
 
-/* A mão esquerda é a direita espelhada. O espelhamento é feito aqui, no CSS,
-   e não no SVG, porque assim o desenho não sai da caixa dele. */
+/* Uma de cada lado, encostadas nas bordas do conjunto. */
 .mao--esquerda {
-  transform: scaleX(-1);
+  order: -1;
 }
 
-/* O contorno usa a cor de texto discreto, e não a de borda: sobre o fundo
-   branco, uma linha clara demais faria a mão sumir. */
-.mao-palma {
-  fill: var(--dedo-neutro-fundo);
-  stroke: var(--cor-texto-discreto);
-  stroke-width: 1.5;
+.mao--direita {
+  order: 1;
 }
 
-.mao-dedo {
-  fill: var(--dedo-neutro-fundo);
-  stroke: var(--cor-texto-discreto);
-  stroke-width: 1.5;
+.mao-contorno {
+  fill: none;
+  stroke: var(--cor-texto-secundario);
+}
+
+/* A bolinha só aparece no dedo da próxima tecla. */
+.mao-bolinha {
+  fill: none;
   transition: fill var(--transicao);
 }
 
-/* O dedo aceso ganha a mesma cor que a tecla dele tem no teclado — é o que
-   liga um desenho ao outro na cabeça de quem está aprendendo. */
-.mao-dedo--ativo {
-  stroke: var(--cor-texto);
-  stroke-width: 2;
+/* A cor é a mesma do TEXTO da tecla daquele dedo no teclado — o tom forte,
+   não o fundo clarinho. É essa repetição que liga os dois desenhos. */
+.mao-bolinha--minimo {
+  fill: var(--dedo-minimo-texto);
 }
 
-.mao-dedo--minimo {
-  fill: var(--dedo-minimo-fundo);
+.mao-bolinha--anelar {
+  fill: var(--dedo-anelar-texto);
 }
 
-.mao-dedo--anelar {
-  fill: var(--dedo-anelar-fundo);
+.mao-bolinha--medio {
+  fill: var(--dedo-medio-texto);
 }
 
-.mao-dedo--medio {
-  fill: var(--dedo-medio-fundo);
+.mao-bolinha--indicador {
+  fill: var(--dedo-indicador-texto);
 }
 
-.mao-dedo--indicador {
-  fill: var(--dedo-indicador-fundo);
-}
-
-.mao-dedo--polegar {
-  fill: var(--dedo-neutro-fundo);
+.mao-bolinha--polegar {
+  fill: var(--dedo-neutro-texto);
 }
 
 /* --- Cores dos dedos ---------------------------------------------------- */

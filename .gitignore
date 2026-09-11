@@ -12,3 +12,6 @@
 # Arquivos temporários
 *.log
 *.tmp
+
+# Arquivos de teste de importação (não fazem parte do site)
+exemplos/

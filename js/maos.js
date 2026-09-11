@@ -1,151 +1,147 @@
 /* ==========================================================================
-   maos.js — o desenho das duas mãos, com o dedo certo aceso.
+   maos.js — as duas mãos ao lado do teclado.
 
-   As mãos são desenhadas em SVG, direto no código: nenhuma imagem é baixada.
-   São vistas de cima, como se você olhasse para as suas próprias mãos sobre
-   o teclado — a mão esquerda à esquerda, a direita à direita.
+   O contorno é um único caminho SVG, fornecido pelo Fernando: uma mão
+   ESQUERDA aberta, vista de cima, quatro dedos esticados e o polegar aberto
+   para o lado. As coordenadas dele não devem ser alteradas — a mão direita
+   é o mesmo caminho espelhado num <g>, e é por isso que as bolinhas têm as
+   mesmas coordenadas nas duas mãos.
 
-   Cada dedo é um caminho independente, marcado com data-mao e data-dedo, o
-   que permite acender um dedo específico com a mesma cor que a tecla dele
-   ganha no teclado da tela.
-
-   O desenho é simples de propósito: a função dele é dizer QUAL dedo usar,
-   não parecer uma foto de mão.
+   O contorno nunca muda de cor: quem indica o dedo é uma bolinha na ponta
+   dele, pintada com a cor forte daquele dedo — a mesma que o texto da tecla
+   correspondente usa no teclado da tela. É essa repetição de cor que liga os
+   dois desenhos na cabeça de quem está aprendendo.
    ========================================================================== */
 
+/** O contorno da mão esquerda. Coordenadas originais, não mexer. */
+const CONTORNO =
+  'M22 150 L22 138 C14 128 10 116 10 100 L10 56 A8 8 0 0 1 26 56 L26 76 ' +
+  'A1.5 1.5 0 0 0 29 76 L29 34 A8 8 0 0 1 45 34 L45 70 A1.5 1.5 0 0 0 48 70 ' +
+  'L48 26 A8 8 0 0 1 64 26 L64 70 A1.5 1.5 0 0 0 67 70 L67 34 A8 8 0 0 1 83 34 ' +
+  'L83 90 Q83.5 95.5 86 92.6 L100.3 78.3 A8 8 0 0 1 111.7 89.7 L91.7 109.7 ' +
+  'C86 116 78 126 76 138 L76 150';
+
 /**
- * Medidas de cada dedo da mão direita, em coordenadas do SVG.
- * A mão esquerda é a mesma coisa espelhada — por isso só um conjunto.
- *   x       posição horizontal do dedo
- *   topo    onde o dedo começa (quanto menor, mais comprido)
- *   largura espessura do dedo
+ * Onde fica a bolinha de cada dedo, um pouco à frente da ponta.
+ * Valem para as duas mãos: a direita é a esquerda espelhada, então o
+ * espelhamento leva as bolinhas junto.
  */
-const DEDOS_DA_MAO = [
-  { dedo: 'indicador', x: 22, topo: 30, largura: 14 },
-  { dedo: 'medio', x: 40, topo: 16, largura: 14 },
-  { dedo: 'anelar', x: 58, topo: 22, largura: 14 },
-  { dedo: 'minimo', x: 76, topo: 40, largura: 12 },
+const BOLINHAS = [
+  { dedo: 'minimo', cx: 18, cy: 40 },
+  { dedo: 'anelar', cx: 37, cy: 18 },
+  { dedo: 'medio', cx: 56, cy: 10 },
+  { dedo: 'indicador', cx: 75, cy: 18 },
+  { dedo: 'polegar', cx: 117.4, cy: 72.6 },
 ];
 
-/** Onde a palma começa, para os dedos nascerem dela. */
-const PALMA_TOPO = 84;
-const ALTURA = 150;
-const LARGURA = 100;
+const RAIO_DA_BOLINHA = 5;
+const CAIXA = { x: -5, y: 0, largura: 130, altura: 150 };
 
 /**
  * Desenha as duas mãos dentro de um elemento da página.
- * @param {HTMLElement} destino  onde desenhar (o conteúdo anterior é apagado)
+ * @param {HTMLElement} destino
  */
 export function desenharMaos(destino) {
   destino.replaceChildren();
   destino.classList.add('maos');
 
-  // Assim como o teclado, o desenho é um apoio visual: a informação de qual
-  // dedo usar vem escrita na legenda da lição, em texto.
+  // O desenho é um apoio visual. Para quem usa leitor de tela, a informação
+  // de qual dedo usar vem em texto, na legenda oculta da lição.
   destino.setAttribute('aria-hidden', 'true');
 
   destino.append(criarMao('esquerda'), criarMao('direita'));
 }
 
-/** Monta uma das mãos. */
 function criarMao(mao) {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', `0 0 ${LARGURA} ${ALTURA}`);
-  svg.setAttribute('class', `mao mao--${mao}`);
-  svg.dataset.mao = mao;
+  const svg = criar('svg', {
+    viewBox: `${CAIXA.x} ${CAIXA.y} ${CAIXA.largura} ${CAIXA.altura}`,
+    class: `mao mao--${mao}`,
+    'data-mao': mao,
+    fill: 'none',
+    'aria-hidden': 'true',
+  });
 
-  // A mão esquerda é a direita vista no espelho — o espelhamento acontece no
-  // CSS (.mao--esquerda), para o desenho não sair da caixa dele.
+  // A mão direita é a esquerda espelhada. O espelhamento é feito aqui, num
+  // grupo dentro do SVG, para o contorno e as bolinhas virarem juntos.
+  const grupo = criar('g', {
+    transform: mao === 'direita' ? 'translate(120, 0) scale(-1, 1)' : null,
+  });
 
-  // A palma.
-  svg.append(
-    criarParte('path', {
-      class: 'mao-palma',
-      d: `M 18 ${PALMA_TOPO}
-          Q 16 ${ALTURA - 22} 34 ${ALTURA - 6}
-          L 76 ${ALTURA - 6}
-          Q 92 ${ALTURA - 26} 90 ${PALMA_TOPO}
-          Z`,
+  grupo.append(
+    criar('path', {
+      class: 'mao-contorno',
+      d: CONTORNO,
+      fill: 'none',
+      'stroke-width': '1.5',
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+      'vector-effect': 'non-scaling-stroke',
     })
   );
 
-  // Os quatro dedos.
-  for (const { dedo, x, topo, largura } of DEDOS_DA_MAO) {
-    svg.append(
-      criarParte('rect', {
-        class: 'mao-dedo',
+  for (const { dedo, cx, cy } of BOLINHAS) {
+    grupo.append(
+      criar('circle', {
+        class: 'mao-bolinha',
         'data-mao': mao,
         'data-dedo': dedo,
-        x,
-        y: topo,
-        width: largura,
-        height: PALMA_TOPO - topo + 14,
-        rx: largura / 2,
+        cx,
+        cy,
+        r: RAIO_DA_BOLINHA,
       })
     );
   }
 
-  // O polegar, deitado ao lado da palma.
-  svg.append(
-    criarParte('rect', {
-      class: 'mao-dedo mao-polegar',
-      'data-mao': mao,
-      'data-dedo': 'polegar',
-      x: -6,
-      y: PALMA_TOPO + 18,
-      width: 36,
-      height: 13,
-      rx: 6.5,
-      transform: `rotate(30, 12, ${PALMA_TOPO + 24})`,
-    })
-  );
-
+  svg.append(grupo);
   return svg;
 }
 
 /** Cria um elemento SVG com os atributos já preenchidos. */
-function criarParte(tipo, atributos) {
+function criar(tipo, atributos) {
   const elemento = document.createElementNS('http://www.w3.org/2000/svg', tipo);
 
   for (const [nome, valor] of Object.entries(atributos)) {
-    elemento.setAttribute(nome, valor);
+    if (valor !== null && valor !== undefined) elemento.setAttribute(nome, valor);
   }
 
   return elemento;
 }
 
+/* --------------------------------------------------------------------------
+   Acender um dedo
+   -------------------------------------------------------------------------- */
+
 /**
- * Acende um dedo, na cor daquele dedo.
- * @param {HTMLElement} destino  o desenho das mãos
+ * Acende a bolinha de um dedo.
+ * @param {HTMLElement} destino
  * @param {string} mao   'esquerda' | 'direita' | 'ambas' (polegar)
- * @param {string} dedo  'minimo' | 'anelar' | 'medio' | 'indicador' | 'polegar'
+ * @param {string} dedo
  */
 export function destacarDedo(destino, mao, dedo) {
   limparDedos(destino);
 
   // O espaço pode ser apertado com qualquer polegar: nesse caso os dois
-  // acendem, e o aluno usa o que preferir.
+  // acendem, e a pessoa usa o que preferir.
   const seletor =
     mao === 'ambas'
       ? `[data-dedo="${dedo}"]`
       : `[data-mao="${mao}"][data-dedo="${dedo}"]`;
 
-  destino.querySelectorAll(seletor).forEach((parte) => {
-    parte.classList.add('mao-dedo--ativo');
-    parte.classList.add(`mao-dedo--${dedo}`);
+  destino.querySelectorAll(seletor).forEach((bolinha) => {
+    bolinha.classList.add('mao-bolinha--acesa', `mao-bolinha--${dedo}`);
   });
 }
 
-/** Apaga o dedo que estava aceso. */
+/** Apaga a bolinha que estava acesa. */
 export function limparDedos(destino) {
-  destino.querySelectorAll('.mao-dedo--ativo').forEach((parte) => {
-    parte.classList.remove(
-      'mao-dedo--ativo',
-      'mao-dedo--minimo',
-      'mao-dedo--anelar',
-      'mao-dedo--medio',
-      'mao-dedo--indicador',
-      'mao-dedo--polegar'
+  destino.querySelectorAll('.mao-bolinha--acesa').forEach((bolinha) => {
+    bolinha.classList.remove(
+      'mao-bolinha--acesa',
+      'mao-bolinha--minimo',
+      'mao-bolinha--anelar',
+      'mao-bolinha--medio',
+      'mao-bolinha--indicador',
+      'mao-bolinha--polegar'
     );
   });
 }

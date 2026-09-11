@@ -190,6 +190,7 @@ export const en = {
     precisao: 'accuracy',
     progresso: 'progress',
     erros: 'mistakes',
+    capsLock: 'Caps Lock is on',
     campo: 'Lesson typing area',
     clique: 'Click the text to keep typing.',
     concluida: 'Lesson complete!',

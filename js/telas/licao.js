@@ -58,6 +58,7 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     progresso: destino.querySelector('[data-papel="progresso"]'),
     barra: destino.querySelector('[data-papel="barra"]'),
     espera: destino.querySelector('[data-papel="espera"]'),
+    caps: destino.querySelector('[data-papel="caps"]'),
     avisoLayout: destino.querySelector('[data-papel="aviso-layout"]'),
   };
 
@@ -106,10 +107,21 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
 
   motor.montar(partes.texto);
 
-  // Rede de segurança do briefing: se a tecla física não bater com o layout
-  // escolhido, sugerir a troca com um aviso discreto.
-  const vigia = (evento) => vigiarLayout(evento, partes, layout);
+  /* Duas vigias de teclado, as duas em fase de captura:
+
+     - o Caps Lock, que precisa ser visto ANTES de a letra chegar ao motor,
+       para as maiúsculas não contarem como erro;
+     - a rede de segurança do layout, que sugere trocar de teclado quando a
+       tecla física não bate com o que foi escolhido. */
+  const vigia = (evento) => {
+    vigiarCapsLock(evento, partes, motor);
+    vigiarLayout(evento, partes, layout);
+  };
+
   document.addEventListener('keydown', vigia, true);
+  // Soltar a tecla também conta: é assim que o aviso some assim que o Caps
+  // Lock é desligado, sem esperar a próxima letra.
+  document.addEventListener('keyup', vigia, true);
 
   destino.querySelector('[data-acao="sair"]').addEventListener('click', () => {
     encerrarLicao();
@@ -120,6 +132,7 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     encerrar() {
       motor.destruir();
       document.removeEventListener('keydown', vigia, true);
+      document.removeEventListener('keyup', vigia, true);
     },
   };
 }
@@ -153,19 +166,19 @@ function montarHtml(licao) {
 
       <div class="barra"><span data-papel="barra"></span></div>
 
+      <p class="aviso-caps" data-papel="caps" role="status" hidden>${t('licao.capsLock')}</p>
+
       <div class="licao-corpo">
         <div class="licao-texto">
           <div data-papel="texto" data-rotulo="${t('licao.campo')}"></div>
           <p class="licao-espera" data-papel="espera" hidden>${t('licao.clique')}</p>
         </div>
-
-        <div class="licao-lado">
-          <p class="legenda-dedo" data-papel="legenda"></p>
-          <div data-papel="maos"></div>
-        </div>
       </div>
 
-      <div class="licao-teclado">
+      <p class="apenas-leitor-de-tela" data-papel="legenda" role="status"></p>
+
+      <div class="licao-palco">
+        <div data-papel="maos"></div>
         <div data-papel="teclado"></div>
       </div>
 
@@ -208,24 +221,14 @@ function apontarProximaTecla(partes, estado, layout) {
 }
 
 /**
- * A legenda mostra só a letra — "Próxima: J". Qual dedo usar é o que o
- * desenho das mãos e a cor da tecla já dizem, e repetir isso em texto polui
- * a tela.
- *
- * Mas o teclado e as mãos são desenhos, invisíveis para quem usa leitor de
- * tela. Por isso o nome do dedo continua aqui, escondido dos olhos e
- * disponível para quem ouve a página.
+ * A legenda não aparece na tela: o que se vê é a tecla acesa no teclado e a
+ * bolinha no dedo certo. Ela existe inteira, em texto, para quem usa leitor
+ * de tela — que não enxerga nenhum dos dois desenhos.
  */
 function escreverLegenda(destino, letra, posicao) {
-  destino.replaceChildren();
-  destino.append(`${t('licao.proxima')}: ${letra}`);
-
-  if (!posicao) return;
-
-  const paraLeitorDeTela = document.createElement('span');
-  paraLeitorDeTela.className = 'apenas-leitor-de-tela';
-  paraLeitorDeTela.textContent = ` · ${nomeDoDedo(posicao.mao, posicao.dedo)}`;
-  destino.append(paraLeitorDeTela);
+  destino.textContent = posicao
+    ? `${t('licao.proxima')}: ${letra} · ${nomeDoDedo(posicao.mao, posicao.dedo)}`
+    : `${t('licao.proxima')}: ${letra}`;
 }
 
 /** O espaço precisa ser dito por extenso; as outras letras falam por si. */
@@ -240,6 +243,37 @@ function atualizarMedidas(partes, estado) {
   partes.precisao.textContent = `${estado.precisao}%`;
   partes.progresso.textContent = `${porcentagem}%`;
   partes.barra.style.width = `${porcentagem}%`;
+}
+
+/* --------------------------------------------------------------------------
+   Caps Lock
+
+   Com o Caps Lock ligado, tudo o que se digita sai em maiúscula e o texto
+   da lição é minúsculo. Sem tratar isso, a pessoa erraria letra após letra
+   sem entender por quê — e ainda levaria a precisão para o chão.
+
+   A saída: enquanto ele estiver ligado, a tecla NÃO chega ao motor. Não
+   conta como erro, não avança o texto, e um aviso explica o que houve.
+   -------------------------------------------------------------------------- */
+
+function vigiarCapsLock(evento, partes, motor) {
+  // getModifierState responde sobre o estado atual do Caps Lock, e não
+  // sobre a tecla apertada — é o que permite avisar já na primeira letra.
+  const ligado = evento.getModifierState?.('CapsLock') ?? false;
+
+  partes.caps.hidden = !ligado;
+  if (!ligado) return;
+
+  // Só as teclas que escreveriam alguma coisa são bloqueadas: atalhos do
+  // navegador e Tab continuam funcionando.
+  const escreveLetra = evento.type === 'keydown' && [...evento.key].length === 1;
+  if (!escreveLetra) return;
+
+  evento.preventDefault();
+  evento.stopPropagation();
+
+  tocarErro();
+  motor.focar();
 }
 
 /* --------------------------------------------------------------------------

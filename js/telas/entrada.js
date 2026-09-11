@@ -112,7 +112,7 @@ function montarHtml() {
         <h2>${t('entrada.previaTitulo')}</h2>
         <p class="ajuda">${t('entrada.previaAjuda')}</p>
         <div data-papel="previa"></div>
-        <p class="legenda-dedo" data-papel="legenda"></p>
+        <p class="ajuda entrada-dedo" data-papel="legenda"></p>
       </aside>
     </div>
   `;
