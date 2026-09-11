@@ -25,6 +25,7 @@
   --cor-texto-secundario: #52525B;  /* texto secundário */
   --cor-texto-discreto: #71717A;    /* legendas e textos discretos */
   --cor-letra-pendente: #8E8E96;    /* letras ainda não digitadas (fonte grande) */
+  --cor-licao-feita: #444444;       /* nome de uma lição já feita, na trilha */
 
   --cor-botao-fundo: #18181B;
   --cor-botao-texto: #FFFFFF;
@@ -103,6 +104,9 @@
   --cor-texto-secundario: #B4B2A9;
   --cor-texto-discreto: #888780;
   --cor-letra-pendente: #888780;
+  /* No escuro o tom da lição feita precisa CLAREAR, e não escurecer: um
+     cinza-escuro sobre fundo escuro sumiria. */
+  --cor-licao-feita: #B4B2A9;
 
   --cor-botao-fundo: #F1EFE8;
   --cor-botao-texto: #2C2C2A;
@@ -140,6 +144,7 @@
     --cor-texto-secundario: #B4B2A9;
     --cor-texto-discreto: #888780;
     --cor-letra-pendente: #888780;
+    --cor-licao-feita: #B4B2A9;
 
     --cor-botao-fundo: #F1EFE8;
     --cor-botao-texto: #2C2C2A;

@@ -170,6 +170,17 @@ export const pt = {
     trancada: 'Conclua a anterior',
     aberta: 'Lição aberta, ainda não concluída',
     planejadas: '{quantas} lições planejadas.',
+    continuar: 'Continuar',
+
+    // Etiquetas das lições que mudam o ritmo da trilha.
+    revisao: 'Revisão',
+    desafioFinal: 'Desafio final',
+
+    // Ditos só para quem usa leitor de tela: na tela, quem conta o estado de
+    // cada lição é o ícone da esquerda, que ele não enxerga.
+    estadoConcluida: 'Concluída.',
+    estadoAtual: 'Lição atual.',
+    estadoBloqueada: 'Bloqueada.',
   },
 
   resultado: {

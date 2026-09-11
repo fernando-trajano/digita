@@ -165,6 +165,14 @@ export const en = {
     trancada: 'Finish the previous one',
     aberta: 'Lesson open, not completed yet',
     planejadas: '{quantas} lessons planned.',
+    continuar: 'Continue',
+
+    revisao: 'Review',
+    desafioFinal: 'Final challenge',
+
+    estadoConcluida: 'Completed.',
+    estadoAtual: 'Current lesson.',
+    estadoBloqueada: 'Locked.',
   },
 
   resultado: {

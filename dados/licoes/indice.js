@@ -35,10 +35,17 @@ export const METAS_POR_TIPO = {
  * As 7 trilhas, na ordem em que devem ser feitas.
  *   licoesPlanejadas  quantas lições a trilha terá quando estiver pronta
  *   licoes            as que já existem (vazio = "em breve")
+ *   teclas            as teclas que a trilha ensina, para o resumo visual da
+ *                     tela de trilha. A cor de cada uma sai do dedo que a
+ *                     aperta, então basta escrever o caractere aqui.
+ *   teclasSemCor      true quando as teclas não são as da fileira principal —
+ *                     é o caso do teclado numérico, onde o 7 não é o 7 de
+ *                     cima e pintá-lo com a cor dele ensinaria o dedo errado.
  */
 export const TRILHAS = [
   {
     id: 'fileira-base',
+    teclas: ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
     nome: { pt: 'Fileira base', en: 'Home row' },
     descricao: {
       pt: 'A posição de descanso das mãos: a s d f g h j k l.',
@@ -49,6 +56,7 @@ export const TRILHAS = [
   },
   {
     id: 'fileira-de-cima',
+    teclas: ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
     nome: { pt: 'Fileira de cima', en: 'Top row' },
     descricao: {
       pt: 'q w e r t y u i o p — e as primeiras vogais além do A.',
@@ -59,6 +67,7 @@ export const TRILHAS = [
   },
   {
     id: 'fileira-de-baixo',
+    teclas: ['z', 'x', 'c', 'v', 'b', 'n', 'm'],
     nome: { pt: 'Fileira de baixo', en: 'Bottom row' },
     descricao: {
       pt: 'z x c v b n m — inclusive o C, que falta para muita palavra.',
@@ -69,6 +78,7 @@ export const TRILHAS = [
   },
   {
     id: 'numeros',
+    teclas: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
     nome: { pt: 'Números', en: 'Numbers' },
     descricao: {
       pt: 'A fileira de cima do teclado, de 1 a 0.',
@@ -79,6 +89,7 @@ export const TRILHAS = [
   },
   {
     id: 'acentos',
+    teclas: ['´', '`', '^', '~', 'ç'],
     nome: { pt: 'Acentos e Ç', en: 'Accents and Ç' },
     descricao: {
       pt: 'á é ã ç — com o caminho certo para o seu teclado.',
@@ -89,6 +100,7 @@ export const TRILHAS = [
   },
   {
     id: 'pontuacao',
+    teclas: [',', '.', ';', '?', '!', "'"],
     nome: { pt: 'Pontuação e maiúsculas', en: 'Punctuation and capitals' },
     descricao: {
       pt: 'Vírgula, ponto, Shift — escrever texto de verdade.',
@@ -99,6 +111,8 @@ export const TRILHAS = [
   },
   {
     id: 'teclado-numerico',
+    teclas: ['7', '8', '9', '4', '5', '6', '+'],
+    teclasSemCor: true,
     nome: { pt: 'Teclado numérico', en: 'Number pad' },
     descricao: {
       pt: 'O bloco de números à direita, para quem lida com planilhas.',
