@@ -90,18 +90,22 @@ export async function importarProgresso(arquivo) {
     return { ok: false, motivo: 'versaoNova' };
   }
 
-  /* Importar SUBSTITUI, não mistura: o arquivo é uma fotografia completa do
-     progresso, e uma gaveta que não está nele precisa sair. Misturar daria
-     um estado que nunca existiu — o progresso do arquivo convivendo com o
-     que já estava na máquina.
+  /* Importar SUBSTITUI o progresso, não mistura: o arquivo é uma fotografia
+     completa, e uma gaveta que não está nele precisa sair. Misturar daria um
+     estado que nunca existiu — o progresso do arquivo convivendo com o que
+     já estava na máquina.
 
-     Só as gavetas que o site conhece são tocadas; um campo a mais no
-     arquivo é ignorado em silêncio, em vez de virar lixo no localStorage. */
+     A CONFIGURAÇÃO é a exceção. Teclado, idioma, tema e som são preferências
+     do aparelho em que a pessoa está, não parte do que ela conquistou. Um
+     arquivo feito num Mac com teclado americano não deve trocar o teclado de
+     quem o importa num PC brasileiro. Então: se o arquivo trouxer
+     configuração, ela vale; se não trouxer, a do aparelho fica como está. */
   for (const [nome, chave] of Object.entries(CHAVES)) {
     const valor = conteudo.dados[nome];
+    const temValor = valor && typeof valor === 'object';
 
-    if (valor && typeof valor === 'object') gravar(chave, valor);
-    else apagar(chave);
+    if (temValor) gravar(chave, valor);
+    else if (nome !== 'config') apagar(chave);
   }
 
   // A configuração fica em memória enquanto o site roda: sem isto, o idioma

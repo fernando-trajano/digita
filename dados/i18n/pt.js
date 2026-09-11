@@ -103,11 +103,13 @@ export const pt = {
 
     progresso: 'Seu progresso',
     progressoAjuda:
-      'Tudo fica guardado só neste navegador. Leve o progresso para outro computador, ou guarde uma cópia antes de limpar os dados do navegador.',
+      'Tudo fica guardado só neste navegador. Leve o progresso para outro computador, ou guarde uma cópia antes de limpar os dados do navegador. Importar substitui as lições, a sequência de dias e as estatísticas — o teclado e o idioma deste aparelho continuam como estão.',
     exportar: 'Exportar para um arquivo',
     importar: 'Importar de um arquivo',
     confirmarImportacao:
       'Importar vai substituir todo o progresso guardado neste navegador. Quer continuar?',
+    importado: 'Progresso importado. A tela já está mostrando os dados do arquivo.',
+    importacaoCancelada: 'Importação cancelada. Nada foi alterado.',
     exportado: 'Arquivo salvo. Guarde-o em algum lugar seguro.',
     erro_ilegivel: 'Não consegui ler esse arquivo. Ele parece estar corrompido.',
     erro_outroArquivo: 'Esse arquivo não é um progresso do digita.',

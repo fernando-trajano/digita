@@ -8,7 +8,7 @@
    telas (passo 11) e sons (passo 16).
    ========================================================================== */
 
-import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma, t } from './i18n.js';
+import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma, idioma, t } from './i18n.js';
 import { config, definirConfig, aoMudarConfig } from './estado.js';
 import { mostrarEntrada } from './telas/entrada.js';
 import { mostrarLicao, encerrarLicao } from './telas/licao.js';
@@ -155,11 +155,16 @@ function telaDeInicio(destino) {
     // daqui que se volta a ela para trocar de teclado.
     aoTrocarTeclado: () => irPara(telaDeEntrada),
 
-    // Importar troca tudo: idioma, teclado e progresso. A tela inteira é
-    // desenhada de novo para mostrar o que entrou.
+    /* Depois de importar, a tela é desenhada de novo para mostrar o que
+       entrou — UMA vez só. Trocar o idioma também redesenha (por conta do
+       evento), então chamar as duas coisas desenharia duas vezes, e o
+       segundo desenho apagaria o aviso de "importado" no mesmo instante em
+       que ele aparece. */
     aoImportar: () => {
-      definirIdioma(config().idioma ?? detectarIdioma());
-      irPara(telaDeInicio);
+      const idiomaImportado = config().idioma;
+
+      if (idiomaImportado && idiomaImportado !== idioma()) definirIdioma(idiomaImportado);
+      else irPara(telaDeInicio);
     },
   });
 }

@@ -98,11 +98,13 @@ export const en = {
 
     progresso: 'Your progress',
     progressoAjuda:
-      'Everything is kept in this browser alone. Take your progress to another computer, or keep a copy before clearing your browser data.',
+      'Everything is kept in this browser alone. Take your progress to another computer, or keep a copy before clearing your browser data. Importing replaces your lessons, day streak and statistics — this device\'s keyboard and language stay as they are.',
     exportar: 'Export to a file',
     importar: 'Import from a file',
     confirmarImportacao:
       'Importing will replace all the progress stored in this browser. Continue?',
+    importado: 'Progress imported. The screen is already showing the file data.',
+    importacaoCancelada: 'Import cancelled. Nothing was changed.',
     exportado: 'File saved. Keep it somewhere safe.',
     erro_ilegivel: 'I could not read that file. It looks corrupted.',
     erro_outroArquivo: 'That file is not a digita. progress file.',

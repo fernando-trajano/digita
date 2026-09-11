@@ -16,6 +16,15 @@ import { TRILHAS } from '../../dados/licoes/indice.js';
 import { licaoParaContinuar, progressoDaLicao, totalConcluidas } from '../progresso.js';
 import { exportarProgresso, importarProgresso } from '../exportacao.js';
 
+/**
+ * Um recado para mostrar no próximo desenho da tela.
+ *
+ * Existe porque importar um arquivo redesenha a tela inteira — e o redesenho
+ * apagaria a mensagem de "deu certo" no mesmo instante em que ela aparece.
+ * Sem isso, a pessoa importa e não recebe nenhum sinal de que funcionou.
+ */
+let recado = null;
+
 /** As seções que aparecem como atalho, na ordem. */
 const ATALHOS = [
   { id: 'trilha', chave: 'nav.trilha', descricao: 'inicio.atalhoTrilha' },
@@ -112,6 +121,12 @@ export function mostrarInicio(
   });
 
   ligarArquivo(destino, aoImportar);
+
+  // Um recado deixado pela importação anterior, se houver.
+  if (recado) {
+    destino.querySelector('[data-papel="aviso-arquivo"]').textContent = recado;
+    recado = null;
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -140,6 +155,7 @@ function ligarArquivo(destino, aoImportar) {
     // Importar apaga o progresso que está na máquina. Perguntar é o mínimo.
     if (!window.confirm(t('inicio.confirmarImportacao'))) {
       seletor.value = '';
+      aviso.textContent = t('inicio.importacaoCancelada');
       return;
     }
 
@@ -153,6 +169,7 @@ function ligarArquivo(destino, aoImportar) {
       return;
     }
 
+    recado = t('inicio.importado');
     aoImportar?.();
   });
 }
