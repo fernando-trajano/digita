@@ -316,7 +316,6 @@ export const fileiraDeBaixo = [
       'a coragem de fazer',
       'fvf jnj fbf jmj dcd sxs aza',
       'o exemplo do texto era exato',
-      'conhecer crescer coragem',
     ],
   },
 ];

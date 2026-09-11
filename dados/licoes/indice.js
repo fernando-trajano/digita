@@ -11,6 +11,7 @@ import { fileiraBase } from './fileira-base.js';
 import { fileiraDeCima } from './fileira-de-cima.js';
 import { fileiraDeBaixo } from './fileira-de-baixo.js';
 import { acentos } from './acentos.js';
+import { pontuacao } from './pontuacao.js';
 
 /**
  * Metas de velocidade por tipo de lição, em PPM (palavras por minuto).
@@ -93,7 +94,7 @@ export const TRILHAS = [
       en: 'Comma, period, Shift — writing real text.',
     },
     licoesPlanejadas: 14,
-    licoes: [],
+    licoes: pontuacao,
   },
   {
     id: 'teclado-numerico',
