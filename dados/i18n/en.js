@@ -125,7 +125,6 @@ export const en = {
   som: {
     silenciar: 'Mute sounds',
     ativar: 'Unmute sounds',
-    volume: 'Volume',
   },
 
   nav: {

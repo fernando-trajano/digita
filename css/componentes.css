@@ -149,33 +149,3 @@
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
-
-/* --- Controle de som ---------------------------------------------------- */
-
-.controle-som {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-2);
-}
-
-/* A barra de volume é discreta: o que precisa estar sempre à mão é o botão
-   de mudo; o volume é ajuste fino. */
-.volume {
-  width: 4.5rem;
-  height: 1.25rem;
-  accent-color: var(--cor-texto);
-  cursor: pointer;
-}
-
-.volume:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-@media (max-width: 40rem) {
-  /* Em telas estreitas o cabeçalho fica apertado: o botão de mudo continua,
-     o ajuste fino de volume sai. */
-  .volume {
-    display: none;
-  }
-}

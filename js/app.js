@@ -10,7 +10,6 @@
 
 import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma, t } from './i18n.js';
 import { config, definirConfig, aoMudarConfig } from './estado.js';
-import { tocarClique } from './som.js';
 import { mostrarEntrada } from './telas/entrada.js';
 import { mostrarLicao, encerrarLicao } from './telas/licao.js';
 import { mostrarResultado } from './telas/resultado.js';
@@ -66,24 +65,23 @@ preferenciaEscura.addEventListener('change', () => {
 /* --------------------------------------------------------------------------
    Som
 
-   O botão de mudo e o volume ficam sempre visíveis no cabeçalho, valem para
-   o site inteiro e são lembrados. Nada toca antes da primeira interação: o
-   próprio js/som.js só cria o contexto de áudio quando o primeiro som é
-   pedido, e isso nunca acontece antes de um clique ou uma tecla.
+   Um botão só, sempre visível no cabeçalho: ligado ou mudo. Ligado, o som
+   sai no volume cheio — quem quiser mais baixo usa o volume do computador,
+   que é onde as pessoas já procuram.
+
+   Nada toca antes da primeira interação: o próprio js/som.js só cria o
+   contexto de áudio quando o primeiro som é pedido, e isso nunca acontece
+   antes de um clique ou uma tecla.
    -------------------------------------------------------------------------- */
 
 const botaoSom = document.querySelector('#botao-som');
-const controleVolume = document.querySelector('#volume');
 
 function aplicarSom() {
-  const { mudo, volume } = config();
+  const { mudo } = config();
 
   botaoSom.querySelector('use').setAttribute('href', mudo ? '#icone-mudo' : '#icone-som');
   botaoSom.setAttribute('aria-pressed', String(mudo));
   botaoSom.setAttribute('aria-label', t(mudo ? 'som.ativar' : 'som.silenciar'));
-
-  controleVolume.value = Math.round(volume * 100);
-  controleVolume.disabled = mudo;
 }
 
 botaoSom.addEventListener('click', () => definirConfig({ mudo: !config().mudo }));
@@ -92,14 +90,6 @@ botaoSom.addEventListener('click', () => definirConfig({ mudo: !config().mudo })
 // quando a configuração muda por outro caminho — como a importação de
 // progresso do passo 17.
 aoMudarConfig(aplicarSom);
-
-controleVolume.addEventListener('input', () => {
-  definirConfig({ volume: Number(controleVolume.value) / 100 });
-});
-
-// Soltar o controle toca uma amostra: sem isso, ajustar o volume seria às
-// cegas.
-controleVolume.addEventListener('change', () => tocarClique(true));
 
 /* --------------------------------------------------------------------------
    Idioma

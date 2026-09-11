@@ -14,7 +14,8 @@
       ou digitou alguma coisa.
 
    2. Som é opcional e silenciável a qualquer momento. O botão de mudo fica
-      sempre visível no cabeçalho.
+      sempre visível no cabeçalho. Não há controle de volume no site: ligado
+      é volume cheio, e quem quiser mais baixo usa o volume do computador.
 
    O que toca, e quando:
      clique      a cada tecla certa — DESLIGADO por padrão
@@ -70,7 +71,6 @@ function tocarTom({ onda, frequencia, duracao, ganho, atraso = 0 }) {
   if (ctx.state === 'suspended') ctx.resume();
 
   const agora = ctx.currentTime + atraso;
-  const volume = ganho * config().volume;
 
   const oscilador = ctx.createOscillator();
   oscilador.type = onda;
@@ -78,7 +78,7 @@ function tocarTom({ onda, frequencia, duracao, ganho, atraso = 0 }) {
 
   const envelope = ctx.createGain();
   envelope.gain.setValueAtTime(0.0001, agora);
-  envelope.gain.exponentialRampToValueAtTime(Math.max(volume, 0.0001), agora + 0.008);
+  envelope.gain.exponentialRampToValueAtTime(ganho, agora + 0.008);
   envelope.gain.exponentialRampToValueAtTime(0.0001, agora + duracao);
 
   oscilador.connect(envelope).connect(ctx.destination);
@@ -88,21 +88,16 @@ function tocarTom({ onda, frequencia, duracao, ganho, atraso = 0 }) {
 
 /** O som está ligado? */
 function ligado() {
-  return !config().mudo && config().volume > 0;
+  return !config().mudo;
 }
 
 /* --------------------------------------------------------------------------
    Os três sons
    -------------------------------------------------------------------------- */
 
-/**
- * A cada tecla certa. Desligado por padrão.
- * @param {boolean} [amostra]  true para tocar mesmo com o clique desligado —
- *        é o que deixa ajustar o volume sem ficar às cegas.
- */
-export function tocarClique(amostra = false) {
-  if (!ligado()) return;
-  if (!amostra && !config().somDeClique) return;
+/** A cada tecla certa. Desligado por padrão. */
+export function tocarClique() {
+  if (!ligado() || !config().somDeClique) return;
 
   const estilo = ESTILOS_DE_CLIQUE[config().estiloDoClique] ?? ESTILOS_DE_CLIQUE.seco;
   tocarTom(estilo);

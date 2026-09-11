@@ -130,7 +130,6 @@ export const pt = {
   som: {
     silenciar: 'Silenciar os sons',
     ativar: 'Ativar os sons',
-    volume: 'Volume',
   },
 
   nav: {
