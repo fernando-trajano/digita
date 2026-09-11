@@ -837,14 +837,16 @@
   text-align: center;
 }
 
-/* A dica de como produzir o que a lição pede — usada pela trilha de
-   acentos, onde o caminho muda conforme o teclado. */
+/* A dica de como produzir o que a lição pede — usada pelas trilhas de
+   acentos e de pontuação, onde o caminho muda conforme o teclado.
+
+   Uma linha fina, no mesmo tom do "Clique no texto para continuar
+   digitando": ela orienta antes de começar e sai da frente depois. Numa
+   faixa com fundo, como era antes, ela competia com o texto da lição pela
+   atenção — e o texto é o que importa. */
 .licao-dica {
   align-self: center;
   max-width: 52rem;
-  padding: var(--esp-2) var(--esp-4);
-  border-radius: var(--raio-p);
-  background-color: var(--cor-superficie);
   color: var(--cor-texto-secundario);
   font-size: 0.9rem;
   text-align: center;

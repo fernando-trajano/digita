@@ -88,6 +88,9 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
 
     aoAtualizar(estado) {
       ultimoEstado = estado;
+
+      if (estado.posicao > 0) esconderDica();
+
       desenharTexto(partes.texto, estado);
       apontarProximaTecla(partes, estado, layoutAtual());
       atualizarMedidas(partes, estado);
@@ -104,6 +107,9 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
       const paraPiscar = errada ?? certa;
 
       if (paraPiscar) piscarErro(partes.teclado, paraPiscar.codigo);
+
+      // Errar também é começar a digitar.
+      esconderDica();
 
       tocarErro();
     },
@@ -140,6 +146,14 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     encerrarLicao();
     aoSair?.();
   });
+
+  /**
+   * A dica orienta ANTES de começar. Da primeira tecla em diante ela só
+   * ocuparia espaço logo acima do texto, que é onde os olhos precisam estar.
+   */
+  function esconderDica() {
+    if (partes.dica) partes.dica.hidden = true;
+  }
 
   /* ------------------------------------------------------------------------
      Rede de segurança do layout
