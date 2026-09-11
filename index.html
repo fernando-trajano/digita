@@ -45,6 +45,15 @@
     <symbol id="icone-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
       <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
     </symbol>
+    <symbol id="icone-som" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"></path>
+      <path d="M16 9.2a4 4 0 0 1 0 5.6"></path>
+      <path d="M18.6 6.6a7.5 7.5 0 0 1 0 10.8"></path>
+    </symbol>
+    <symbol id="icone-mudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"></path>
+      <path d="M16.5 9.5l5 5M21.5 9.5l-5 5"></path>
+    </symbol>
     <symbol id="icone-estrela" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
       <path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8L3.5 9.7l5.9-.9z"></path>
     </symbol>
@@ -57,6 +66,14 @@
       <div class="seletor" role="group" data-i18n-aria="cabecalho.idioma" aria-label="Idioma da interface">
         <button type="button" class="seletor-opcao" data-idioma="pt" aria-pressed="true">PT</button>
         <button type="button" class="seletor-opcao" data-idioma="en" aria-pressed="false">EN</button>
+      </div>
+
+      <div class="controle-som">
+        <button type="button" class="botao-icone" id="botao-som" data-i18n-aria="som.silenciar" aria-label="Silenciar os sons" aria-pressed="false">
+          <svg aria-hidden="true"><use href="#icone-som"></use></svg>
+        </button>
+        <input type="range" class="volume" id="volume" min="0" max="100" step="5"
+               data-i18n-aria="som.volume" aria-label="Volume">
       </div>
 
       <button type="button" class="botao-icone" id="botao-tema" data-i18n-aria="cabecalho.alternarTema" aria-label="Alternar entre modo claro e escuro">

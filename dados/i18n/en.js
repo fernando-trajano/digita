@@ -122,6 +122,12 @@ export const en = {
     verTrilha: 'See the track',
   },
 
+  som: {
+    silenciar: 'Mute sounds',
+    ativar: 'Unmute sounds',
+    volume: 'Volume',
+  },
+
   nav: {
     trilha: 'Track',
     treino: 'Free practice',

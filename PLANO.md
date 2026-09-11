@@ -397,5 +397,6 @@ real no passo 7.
       começa na primeira tecla, e a liberação da trilha para quem passa de 90% e 25 PPM)
 - [x] **Passo 15** — tela inicial (continuar de onde parei, sequência de dias no painel,
       atalhos para as seções e o caminho de volta para trocar de teclado)
-- [ ] **Passo 16** — sons
+- [x] **Passo 16** — sons (clique, erro e conclusão sintetizados na Web Audio API, botão
+      de mudo e volume no cabeçalho, nada tocando antes da primeira interação)
 - [ ] **Passo 17** — exportar/importar, responsivo e polimento

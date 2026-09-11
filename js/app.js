@@ -8,8 +8,9 @@
    telas (passo 11) e sons (passo 16).
    ========================================================================== */
 
-import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma } from './i18n.js';
-import { config, definirConfig } from './estado.js';
+import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma, t } from './i18n.js';
+import { config, definirConfig, aoMudarConfig } from './estado.js';
+import { tocarClique } from './som.js';
 import { mostrarEntrada } from './telas/entrada.js';
 import { mostrarLicao, encerrarLicao } from './telas/licao.js';
 import { mostrarResultado } from './telas/resultado.js';
@@ -61,6 +62,44 @@ botaoTema.addEventListener('click', () => {
 preferenciaEscura.addEventListener('change', () => {
   if (!config().tema) aplicarTema(temaDoSistema());
 });
+
+/* --------------------------------------------------------------------------
+   Som
+
+   O botão de mudo e o volume ficam sempre visíveis no cabeçalho, valem para
+   o site inteiro e são lembrados. Nada toca antes da primeira interação: o
+   próprio js/som.js só cria o contexto de áudio quando o primeiro som é
+   pedido, e isso nunca acontece antes de um clique ou uma tecla.
+   -------------------------------------------------------------------------- */
+
+const botaoSom = document.querySelector('#botao-som');
+const controleVolume = document.querySelector('#volume');
+
+function aplicarSom() {
+  const { mudo, volume } = config();
+
+  botaoSom.querySelector('use').setAttribute('href', mudo ? '#icone-mudo' : '#icone-som');
+  botaoSom.setAttribute('aria-pressed', String(mudo));
+  botaoSom.setAttribute('aria-label', t(mudo ? 'som.ativar' : 'som.silenciar'));
+
+  controleVolume.value = Math.round(volume * 100);
+  controleVolume.disabled = mudo;
+}
+
+botaoSom.addEventListener('click', () => definirConfig({ mudo: !config().mudo }));
+
+// O cabeçalho segue o estado, e não o clique: assim ele fica certo mesmo
+// quando a configuração muda por outro caminho — como a importação de
+// progresso do passo 17.
+aoMudarConfig(aplicarSom);
+
+controleVolume.addEventListener('input', () => {
+  definirConfig({ volume: Number(controleVolume.value) / 100 });
+});
+
+// Soltar o controle toca uma amostra: sem isso, ajustar o volume seria às
+// cegas.
+controleVolume.addEventListener('change', () => tocarClique(true));
 
 /* --------------------------------------------------------------------------
    Idioma
@@ -177,6 +216,8 @@ aplicarTema(config().tema ?? raiz.dataset.tema ?? temaDoSistema());
 // Idioma salvo, se houver; senão, o do navegador de quem chegou.
 definirIdioma(config().idioma ?? detectarIdioma());
 
+aplicarSom();
+
 // Confere o conteúdo das lições contra o teclado escolhido e contra a ordem
 // em que as teclas são ensinadas. Só avisa no console — quem precisa ver
 // isso é quem escreve as lições, não quem está treinando.
@@ -203,4 +244,7 @@ document.querySelector('.marca').addEventListener('click', (evento) => {
 
 // As telas são desenhadas em JavaScript, então trocar o idioma pede que a
 // tela seja desenhada de novo.
-document.addEventListener('idioma-mudou', () => telaAtual(tela));
+document.addEventListener('idioma-mudou', () => {
+  aplicarSom();
+  telaAtual(tela);
+});

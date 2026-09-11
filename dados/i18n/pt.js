@@ -127,6 +127,12 @@ export const pt = {
     verTrilha: 'Ver a trilha',
   },
 
+  som: {
+    silenciar: 'Silenciar os sons',
+    ativar: 'Ativar os sons',
+    volume: 'Volume',
+  },
+
   nav: {
     trilha: 'Trilha',
     treino: 'Treino livre',

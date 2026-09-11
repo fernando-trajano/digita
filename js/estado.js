@@ -20,8 +20,11 @@ const PADRAO = {
   layout: 'abnt2', // o briefing manda começar no teclado brasileiro
   sistema: null, // null = usar o sistema que o navegador informou
   tema: null, // null = acompanhar o modo claro/escuro do sistema
-  som: false, // o clique de tecla nasce desligado
+  mudo: false, // o botão de mudo do cabeçalho
   volume: 0.5,
+  somDeClique: false, // o clique de tecla nasce desligado, como manda o briefing
+  somDeErro: true, // o aviso de erro nasce ligado, e é bem discreto
+  estiloDoClique: 'seco', // seco | suave | mecanico (ver js/som.js)
 };
 
 let configuracao = ler(CHAVES.config, PADRAO);

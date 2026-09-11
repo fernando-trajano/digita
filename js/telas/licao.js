@@ -26,6 +26,7 @@ import {
 import { desenharMaos, destacarDedo, limparDedos } from '../maos.js';
 import { dedoDaTecla } from '../../dados/layouts/dedos.js';
 import { conferirLayout } from '../deteccao.js';
+import { tocarClique, tocarErro, tocarConclusao } from '../som.js';
 
 /** A lição aberta agora, para poder desmontá-la ao sair. */
 let sessao = null;
@@ -64,6 +65,11 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   desenharTeclado(partes.teclado, { layout, sistema: sistemaAtual(), modo: 'cinza' });
 
 
+  // Quantas letras já estavam certas na última atualização. Comparando com
+  // o número novo dá para saber que o cursor andou — e é isso que dispara o
+  // clique, sem precisar de mais um gancho dentro do motor.
+  let letrasFeitas = 0;
+
   const motor = criarMotor({
     linhas: licao.conteudo,
 
@@ -71,6 +77,9 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
       desenharTexto(partes.texto, estado);
       apontarProximaTecla(partes, estado, layout);
       atualizarMedidas(partes, estado);
+
+      if (estado.feitos > letrasFeitas) tocarClique();
+      letrasFeitas = estado.feitos;
     },
 
     aoErrar(erro) {
@@ -81,6 +90,8 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
       const paraPiscar = errada ?? certa;
 
       if (paraPiscar) piscarErro(partes.teclado, paraPiscar.codigo);
+
+      tocarErro();
     },
 
     aoMudarFoco(temFoco) {
@@ -88,6 +99,7 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     },
 
     aoConcluir(resumo) {
+      tocarConclusao();
       aoConcluir?.(resumo);
     },
   });
