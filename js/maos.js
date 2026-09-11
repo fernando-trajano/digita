@@ -136,11 +136,35 @@ export function destacarDedo(destino, mao, dedo) {
   });
 }
 
-/** Apaga a bolinha que estava acesa. */
+/**
+ * Acende a bolinha de um dedo PULSANDO, sem apagar a que já estava acesa.
+ *
+ * É o dedo que segura a modificadora numa combinação. Ficam duas bolinhas ao
+ * mesmo tempo, e é a diferença entre elas que ensina o gesto: a fixa é a
+ * tecla que se aperta, a que pulsa é a que se segura.
+ *
+ * @param {HTMLElement} destino
+ * @param {string} mao   'esquerda' | 'direita'
+ * @param {string} dedo
+ */
+export function pulsarDedo(destino, mao, dedo) {
+  destino
+    .querySelectorAll(`[data-mao="${mao}"][data-dedo="${dedo}"]`)
+    .forEach((bolinha) => {
+      bolinha.classList.add(
+        'mao-bolinha--acesa',
+        'mao-bolinha--pulsando',
+        `mao-bolinha--${dedo}`
+      );
+    });
+}
+
+/** Apaga as bolinhas que estavam acesas. */
 export function limparDedos(destino) {
   destino.querySelectorAll('.mao-bolinha--acesa').forEach((bolinha) => {
     bolinha.classList.remove(
       'mao-bolinha--acesa',
+      'mao-bolinha--pulsando',
       'mao-bolinha--minimo',
       'mao-bolinha--anelar',
       'mao-bolinha--medio',

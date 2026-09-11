@@ -23,8 +23,10 @@ import {
   piscarErro,
   teclaDaLetra,
   passosDaLetra,
+  destacarModificadora,
+  teclaDaModificadora,
 } from '../teclado.js';
-import { desenharMaos, destacarDedo, limparDedos } from '../maos.js';
+import { desenharMaos, destacarDedo, pulsarDedo, limparDedos } from '../maos.js';
 import { dedoDaTecla } from '../../dados/layouts/dedos.js';
 import { conferirLayout } from '../deteccao.js';
 import { tocarClique, tocarErro, tocarConclusao } from '../som.js';
@@ -373,30 +375,41 @@ function apontarProximaTecla(partes, estado, layout) {
   }
 
   // Uma letra acentuada sai de DUAS teclas: primeiro o acento, depois a
-  // vogal. O motor avisa quando o acento já foi apertado (estado.compondo) —
-  // e então o teclado deixa de acender o acento e acende a vogal.
-  const etapas = passosDaLetra(letra, layout);
+  // letra. O motor avisa quando o acento já foi apertado (estado.compondo) —
+  // e então o teclado deixa de acender o acento e acende a letra.
+  const etapas = passosDaLetra(letra, layout, sistemaAtual());
   const atual = etapas.length === 2 && !estado.compondo ? etapas[0] : etapas.at(-1);
 
   if (!atual) {
-    // Letra que este teclado não produz com uma tecla nem com acento — é o
-    // caso das acentuadas no teclado americano, onde o caminho é ⌥ ou o US
-    // Internacional. O teclado fica quieto em vez de acender a tecla errada,
-    // e quem orienta é a dica escrita da lição.
+    // Letra que este teclado não sabe produzir. O teclado fica quieto em vez
+    // de acender a tecla errada, e quem orienta é a dica escrita da lição.
     limparDestaque(partes.teclado);
     limparDedos(partes.maos);
-    escreverLegenda(partes.legenda, nomeDaLetra(letra), null);
+    escreverLegenda(partes.legenda, nomeDaLetra(letra), null, null);
     return;
   }
 
-  const onde = atual;
+  destacarTecla(partes.teclado, atual.codigo);
 
-  destacarTecla(partes.teclado, onde.codigo);
-
-  const posicao = dedoDaTecla(onde.codigo);
+  const posicao = dedoDaTecla(atual.codigo);
   if (posicao) destacarDedo(partes.maos, posicao.mao, posicao.dedo);
 
-  escreverLegenda(partes.legenda, nomeDaLetra(onde.letra ?? letra), posicao);
+  /* Combinações (Shift + letra, ⌥ + letra). A tecla da letra fica colorida
+     como sempre, com a bolinha fixa no dedo dela; a modificadora aparece só
+     com o contorno pulsando, e a bolinha do dedo que a segura pulsa junto,
+     na mão contrária. Duas bolinhas ao mesmo tempo: a fixa é a que se
+     aperta, a que pulsa é a que se segura. */
+  const modificadora =
+    atual.modificador && posicao
+      ? teclaDaModificadora(atual.modificador, posicao.mao)
+      : null;
+
+  if (modificadora) {
+    destacarModificadora(partes.teclado, modificadora.codigo);
+    pulsarDedo(partes.maos, modificadora.mao, modificadora.dedo);
+  }
+
+  escreverLegenda(partes.legenda, nomeDaLetra(atual.letra ?? letra), posicao, modificadora);
 }
 
 /**
@@ -404,10 +417,20 @@ function apontarProximaTecla(partes, estado, layout) {
  * bolinha no dedo certo. Ela existe inteira, em texto, para quem usa leitor
  * de tela — que não enxerga nenhum dos dois desenhos.
  */
-function escreverLegenda(destino, letra, posicao) {
-  destino.textContent = posicao
-    ? `${t('licao.proxima')}: ${letra} · ${nomeDoDedo(posicao.mao, posicao.dedo)}`
-    : `${t('licao.proxima')}: ${letra}`;
+function escreverLegenda(destino, letra, posicao, modificadora) {
+  const pedacos = [`${t('licao.proxima')}: ${letra}`];
+
+  if (posicao) pedacos.push(nomeDoDedo(posicao.mao, posicao.dedo));
+
+  if (modificadora) {
+    pedacos.push(
+      t('licao.segure')
+        .replace('{tecla}', t(`teclas.${modificadora.modificador}`))
+        .replace('{dedo}', nomeDoDedo(modificadora.mao, modificadora.dedo))
+    );
+  }
+
+  destino.textContent = pedacos.join(' · ');
 }
 
 /** O espaço precisa ser dito por extenso; as outras letras falam por si. */

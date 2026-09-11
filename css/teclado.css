@@ -227,6 +227,45 @@
   }
 }
 
+/* --- A tecla que se SEGURA: Shift, Option, AltGr ------------------------ */
+
+/* Um modificador não se aperta e solta — segura-se enquanto a outra mão
+   digita. Por isso ele não ganha cor de fundo como a tecla da vez: fundo
+   cheio já quer dizer "aperte aqui". O contorno pulsando devagar, num ciclo
+   de um segundo, é o que diz "fique aqui". A largura da borda fica fixa em
+   2px e só a cor muda, senão o rótulo da tecla tremeria a cada ciclo. */
+.tecla--modificadora {
+  border-width: 2px;
+  animation: pulsar-contorno 1s ease-in-out infinite;
+}
+
+@keyframes pulsar-contorno {
+  0%,
+  100% {
+    border-color: var(--cor-borda);
+  }
+  50% {
+    border-color: var(--cor-texto);
+  }
+}
+
+/* A bolinha do dedo que segura o modificador pulsa no mesmo ritmo da tecla
+   dele. Ao lado da bolinha fixa da letra, as duas juntas contam o gesto
+   inteiro: segure esta, aperte aquela. */
+.mao-bolinha--pulsando {
+  animation: pulsar-bolinha 1s ease-in-out infinite;
+}
+
+@keyframes pulsar-bolinha {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* --- Erro --------------------------------------------------------------- */
 
 .tecla--erro {

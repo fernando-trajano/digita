@@ -209,6 +209,10 @@ export const pt = {
     // é o contrário ("left index"). Por isso a ordem é uma tradução também.
     ordemDoDedo: '{dedo} {mao}',
     qualquerPolegar: 'qualquer polegar',
+
+    // Combinações: a legenda oculta descreve o gesto inteiro para quem usa
+    // leitor de tela, que não enxerga a tecla acesa nem a bolinha pulsando.
+    segure: 'segure {tecla} com o {dedo}',
   },
 
   maos: {
@@ -227,5 +231,8 @@ export const pt = {
 
   teclas: {
     espaco: 'espaço',
+    shift: 'Shift',
+    option: 'Option',
+    altgr: 'AltGr',
   },
 };

@@ -193,12 +193,12 @@ function mapaDeLetras(layout) {
       // O símbolo de baixo sai direto; o de cima precisa de Shift.
       if (tecla.rotulo) mapa.set(tecla.rotulo.toLowerCase(), {
         codigo: tecla.codigo,
-        comShift: false,
+        modificador: null,
       });
 
       if (tecla.sup) mapa.set(tecla.sup.toLowerCase(), {
         codigo: tecla.codigo,
-        comShift: true,
+        modificador: 'shift',
       });
     }
   }
@@ -206,10 +206,10 @@ function mapaDeLetras(layout) {
   // Letras maiúsculas moram na mesma tecla, com Shift.
   for (const [letra, onde] of [...mapa]) {
     const maiuscula = letra.toUpperCase();
-    if (maiuscula !== letra) mapa.set(maiuscula, { ...onde, comShift: true });
+    if (maiuscula !== letra) mapa.set(maiuscula, { ...onde, modificador: 'shift' });
   }
 
-  mapa.set(' ', { codigo: 'Space', comShift: false });
+  mapa.set(' ', { codigo: 'Space', modificador: null });
 
   mapasDeLetras.set(layout, mapa);
   return mapa;
@@ -219,8 +219,8 @@ function mapaDeLetras(layout) {
  * Em que tecla mora uma letra.
  * @param {string} letra
  * @param {'abnt2'|'us'} layout
- * @returns {{codigo: string, comShift: boolean} | null}  null quando a letra
- *          não sai de uma tecla só (é o caso das letras acentuadas, que
+ * @returns {{codigo: string, modificador: string|null} | null}  null quando a
+ *          letra não sai de uma tecla só (é o caso das acentuadas, que
  *          precisam do acento antes)
  */
 export function teclaDaLetra(letra, layout) {
@@ -229,62 +229,150 @@ export function teclaDaLetra(letra, layout) {
 }
 
 /**
- * Os acentos, pelo código que o Unicode usa para cada um.
+ * Os acentos, pelo sinal que o Unicode usa para cada um.
  *
- * Uma letra acentuada é, por dentro, duas coisas: a vogal e o acento. Isto
- * traduz o segundo para a tecla que o produz no teclado brasileiro.
+ * Uma letra acentuada é, por dentro, duas coisas: a letra e o sinal. Isto
+ * traduz o segundo para o acento que se digita.
+ *
+ * A cedilha entra na lista porque no US Internacional ela sai da mesma tecla
+ * do agudo (a aspa simples) seguida do C. No teclado brasileiro ela nunca
+ * chega aqui: lá o Ç tem tecla própria.
  */
-const TECLA_DO_ACENTO = {
+const SINAL_DO_ACENTO = {
   '\u0301': '´', // agudo
   '\u0300': '`', // grave
   '\u0302': '^', // circunflexo
   '\u0303': '~', // til
   '\u0308': '¨', // trema
+  '\u0327': '´', // cedilha
+};
+
+/**
+ * Onde mora cada acento no teclado AMERICANO.
+ *
+ * O brasileiro não precisa desta tabela: lá os acentos são teclas com
+ * rótulo, e saem do próprio desenho do layout. O americano não tem tecla de
+ * acento nenhuma — o caminho é outro em cada sistema:
+ *
+ *   Mac        ⌥ + uma letra que "significa" o acento (⌥E = agudo, ⌥N = til)
+ *   Windows    o layout US Internacional, onde ' ` ^ ~ viram teclas mortas
+ *
+ * No Windows isto pressupõe o US Internacional ligado — que é exatamente o
+ * que a dica escrita da lição manda fazer.
+ */
+const ACENTO_NO_US = {
+  mac: {
+    '´': { codigo: 'KeyE', modificador: 'option' },
+    '`': { codigo: 'Backquote', modificador: 'option' },
+    '^': { codigo: 'KeyI', modificador: 'option' },
+    '~': { codigo: 'KeyN', modificador: 'option' },
+    '¨': { codigo: 'KeyU', modificador: 'option' },
+  },
+  windows: {
+    '´': { codigo: 'Quote', modificador: null },
+    '`': { codigo: 'Backquote', modificador: null },
+    '^': { codigo: 'Digit6', modificador: 'shift' },
+    '~': { codigo: 'Backquote', modificador: 'shift' },
+    '¨': { codigo: 'Quote', modificador: 'shift' },
+  },
 };
 
 /**
  * Os PASSOS para produzir uma letra: uma tecla, ou duas.
  *
  * A maioria das letras sai de uma tecla só. As acentuadas saem de duas, na
- * ordem em que se aperta: primeiro o acento, depois a vogal. É por isso que
+ * ordem em que se aperta: primeiro o acento, depois a letra. É por isso que
  * a lição consegue acender a tecla certa em cada momento — enquanto o acento
- * está pendente, o teclado já mostra a vogal que vem a seguir.
+ * está pendente, o teclado já mostra a letra que vem a seguir.
  *
- * No teclado americano não há teclas de acento: lá o caminho é ⌥ + letra no
- * Mac ou o layout US Internacional no Windows, que o desenho do teclado não
- * representa. Nesse caso a lista volta vazia, e quem orienta é a dica
- * escrita da lição.
+ * Cada passo diz também se há uma tecla a SEGURAR junto (Shift, Option ou
+ * AltGr). Quem traduz isso para uma tecla física é teclaDaModificadora.
  *
  * @param {string} letra
  * @param {'abnt2'|'us'} layout
- * @returns {Array<{codigo: string, comShift: boolean}>}
+ * @param {'windows'|'mac'} sistema
+ * @returns {Array<{codigo: string, modificador: string|null, letra: string}>}
  */
-export function passosDaLetra(letra, layout) {
+export function passosDaLetra(letra, layout, sistema = 'windows') {
   const direta = teclaDaLetra(letra, layout);
   if (direta) return [{ ...direta, letra }];
-
-  // Só o teclado brasileiro tem teclas de acento de verdade. No americano
-  // os símbolos ~ ^ ` existem, mas como caracteres comuns: acender aquelas
-  // teclas ensinaria o caminho errado — no Mac o acento sai de ⌥ + letra, e
-  // no Windows só funciona com o layout US Internacional ligado.
-  if (layout !== 'abnt2') return [];
 
   // Separa a letra nas partes dela: "á" vira "a" mais o sinal do agudo.
   const partes = letra.normalize('NFD');
   if (partes.length < 2) return [];
 
-  const acento = TECLA_DO_ACENTO[partes[1]];
+  const base = partes[0];
+  const sinal = partes[1];
+
+  /* O ç no teclado americano do Mac é a exceção da exceção: ⌥ + c produz a
+     letra pronta, de uma vez. Não é tecla morta, então não são dois passos. */
+  if (sinal === '\u0327' && layout === 'us' && sistema === 'mac') {
+    const comoEstava = base === base.toUpperCase() ? 'Ç' : 'ç';
+    return [{ codigo: 'KeyC', modificador: 'option', letra: comoEstava }];
+  }
+
+  const acento = SINAL_DO_ACENTO[sinal];
   if (!acento) return [];
 
-  const teclaAcento = teclaDaLetra(acento, layout);
-  const teclaVogal = teclaDaLetra(partes[0], layout);
-
-  if (!teclaAcento || !teclaVogal) return [];
+  const teclaAcento = teclaDoAcento(acento, layout, sistema);
+  const teclaLetra = teclaDaLetra(base, layout);
+  if (!teclaAcento || !teclaLetra) return [];
 
   return [
     { ...teclaAcento, letra: acento },
-    { ...teclaVogal, letra: partes[0] },
+    { ...teclaLetra, letra: base },
   ];
+}
+
+/** Em que tecla mora um acento, conforme o teclado e o sistema. */
+function teclaDoAcento(acento, layout, sistema) {
+  if (layout === 'abnt2') return teclaDaLetra(acento, 'abnt2');
+
+  return ACENTO_NO_US[sistema === 'mac' ? 'mac' : 'windows'][acento] ?? null;
+}
+
+/**
+ * Onde fica a tecla modificadora que a OUTRA mão vai segurar.
+ *
+ * É a regra de sempre da digitação: o modificador é apertado pela mão
+ * contrária à da letra. Fazer as duas coisas com a mesma mão obrigaria a
+ * torcer o pulso — e é justamente o vício que o método existe para evitar.
+ * Shift sai no mínimo; Option e AltGr saem no polegar.
+ *
+ * O AltGr é a exceção: não existe um do lado esquerdo em teclado nenhum,
+ * então ele é sempre o da direita.
+ *
+ * @param {'shift'|'option'|'altgr'} modificador
+ * @param {'esquerda'|'direita'|'ambas'} maoDaLetra
+ * @returns {{modificador: string, codigo: string, mao: string, dedo: string} | null}
+ */
+export function teclaDaModificadora(modificador, maoDaLetra) {
+  const oposta = maoDaLetra === 'esquerda' ? 'direita' : 'esquerda';
+  const ladoDireito = oposta === 'direita';
+
+  if (modificador === 'shift') {
+    return {
+      modificador,
+      codigo: ladoDireito ? 'ShiftRight' : 'ShiftLeft',
+      mao: oposta,
+      dedo: 'minimo',
+    };
+  }
+
+  if (modificador === 'option') {
+    return {
+      modificador,
+      codigo: ladoDireito ? 'AltRight' : 'AltLeft',
+      mao: oposta,
+      dedo: 'polegar',
+    };
+  }
+
+  if (modificador === 'altgr') {
+    return { modificador, codigo: 'AltRight', mao: 'direita', dedo: 'polegar' };
+  }
+
+  return null;
 }
 
 /* --------------------------------------------------------------------------
@@ -307,8 +395,26 @@ export function destacarTecla(destino, codigo) {
   if (posicao) tecla.classList.add(`tecla--${posicao.dedo}`);
 }
 
+/**
+ * Acende a tecla que se SEGURA numa combinação (Shift, Option, AltGr).
+ *
+ * Ela não ganha cor de fundo como a tecla da vez, de propósito: cor cheia
+ * quer dizer "aperte e solte", e não é isso que se faz com um modificador.
+ * O contorno pulsando quer dizer "fique aqui enquanto a outra mão digita".
+ *
+ * @param {HTMLElement} destino
+ * @param {string} codigo  ex.: 'ShiftRight'
+ */
+export function destacarModificadora(destino, codigo) {
+  destino.querySelector(`[data-codigo="${codigo}"]`)?.classList.add('tecla--modificadora');
+}
+
 /** Apaga o destaque anterior. */
 export function limparDestaque(destino) {
+  destino.querySelectorAll('.tecla--modificadora').forEach((tecla) => {
+    tecla.classList.remove('tecla--modificadora');
+  });
+
   destino.querySelectorAll('.tecla--ativa').forEach((tecla) => {
     tecla.classList.remove('tecla--ativa');
 

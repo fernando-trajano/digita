@@ -201,6 +201,7 @@ export const en = {
     trocarLayout: 'Switch',
     ordemDoDedo: '{mao} {dedo}',
     qualquerPolegar: 'either thumb',
+    segure: 'hold {tecla} with the {dedo}',
   },
 
   maos: {
@@ -219,5 +220,8 @@ export const en = {
 
   teclas: {
     espaco: 'space',
+    shift: 'Shift',
+    option: 'Option',
+    altgr: 'AltGr',
   },
 };
