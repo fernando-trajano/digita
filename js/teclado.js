@@ -228,6 +228,65 @@ export function teclaDaLetra(letra, layout) {
   return mapaDeLetras(layout).get(letra) ?? null;
 }
 
+/**
+ * Os acentos, pelo código que o Unicode usa para cada um.
+ *
+ * Uma letra acentuada é, por dentro, duas coisas: a vogal e o acento. Isto
+ * traduz o segundo para a tecla que o produz no teclado brasileiro.
+ */
+const TECLA_DO_ACENTO = {
+  '\u0301': '´', // agudo
+  '\u0300': '`', // grave
+  '\u0302': '^', // circunflexo
+  '\u0303': '~', // til
+  '\u0308': '¨', // trema
+};
+
+/**
+ * Os PASSOS para produzir uma letra: uma tecla, ou duas.
+ *
+ * A maioria das letras sai de uma tecla só. As acentuadas saem de duas, na
+ * ordem em que se aperta: primeiro o acento, depois a vogal. É por isso que
+ * a lição consegue acender a tecla certa em cada momento — enquanto o acento
+ * está pendente, o teclado já mostra a vogal que vem a seguir.
+ *
+ * No teclado americano não há teclas de acento: lá o caminho é ⌥ + letra no
+ * Mac ou o layout US Internacional no Windows, que o desenho do teclado não
+ * representa. Nesse caso a lista volta vazia, e quem orienta é a dica
+ * escrita da lição.
+ *
+ * @param {string} letra
+ * @param {'abnt2'|'us'} layout
+ * @returns {Array<{codigo: string, comShift: boolean}>}
+ */
+export function passosDaLetra(letra, layout) {
+  const direta = teclaDaLetra(letra, layout);
+  if (direta) return [{ ...direta, letra }];
+
+  // Só o teclado brasileiro tem teclas de acento de verdade. No americano
+  // os símbolos ~ ^ ` existem, mas como caracteres comuns: acender aquelas
+  // teclas ensinaria o caminho errado — no Mac o acento sai de ⌥ + letra, e
+  // no Windows só funciona com o layout US Internacional ligado.
+  if (layout !== 'abnt2') return [];
+
+  // Separa a letra nas partes dela: "á" vira "a" mais o sinal do agudo.
+  const partes = letra.normalize('NFD');
+  if (partes.length < 2) return [];
+
+  const acento = TECLA_DO_ACENTO[partes[1]];
+  if (!acento) return [];
+
+  const teclaAcento = teclaDaLetra(acento, layout);
+  const teclaVogal = teclaDaLetra(partes[0], layout);
+
+  if (!teclaAcento || !teclaVogal) return [];
+
+  return [
+    { ...teclaAcento, letra: acento },
+    { ...teclaVogal, letra: partes[0] },
+  ];
+}
+
 /* --------------------------------------------------------------------------
    Destaque da próxima tecla
    -------------------------------------------------------------------------- */

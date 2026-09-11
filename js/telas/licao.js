@@ -22,6 +22,7 @@ import {
   limparDestaque,
   piscarErro,
   teclaDaLetra,
+  passosDaLetra,
 } from '../teclado.js';
 import { desenharMaos, destacarDedo, limparDedos } from '../maos.js';
 import { dedoDaTecla } from '../../dados/layouts/dedos.js';
@@ -227,23 +228,31 @@ function apontarProximaTecla(partes, estado, layout) {
     return;
   }
 
-  const onde = teclaDaLetra(letra, layout);
+  // Uma letra acentuada sai de DUAS teclas: primeiro o acento, depois a
+  // vogal. O motor avisa quando o acento já foi apertado (estado.compondo) —
+  // e então o teclado deixa de acender o acento e acende a vogal.
+  const etapas = passosDaLetra(letra, layout);
+  const atual = etapas.length === 2 && !estado.compondo ? etapas[0] : etapas.at(-1);
 
-  if (!onde) {
-    // Letra que não sai de uma tecla só (as acentuadas). O teclado fica
-    // quieto em vez de acender a tecla errada.
+  if (!atual) {
+    // Letra que este teclado não produz com uma tecla nem com acento — é o
+    // caso das acentuadas no teclado americano, onde o caminho é ⌥ ou o US
+    // Internacional. O teclado fica quieto em vez de acender a tecla errada,
+    // e quem orienta é a dica escrita da lição.
     limparDestaque(partes.teclado);
     limparDedos(partes.maos);
     escreverLegenda(partes.legenda, nomeDaLetra(letra), null);
     return;
   }
 
+  const onde = atual;
+
   destacarTecla(partes.teclado, onde.codigo);
 
   const posicao = dedoDaTecla(onde.codigo);
   if (posicao) destacarDedo(partes.maos, posicao.mao, posicao.dedo);
 
-  escreverLegenda(partes.legenda, nomeDaLetra(letra), posicao);
+  escreverLegenda(partes.legenda, nomeDaLetra(onde.letra ?? letra), posicao);
 }
 
 /**
