@@ -101,6 +101,18 @@ export const pt = {
     atalhoJogos: 'Praticar sem parecer treino.',
     atalhoEstatisticas: 'Sua evolução, dedo por dedo.',
 
+    progresso: 'Seu progresso',
+    progressoAjuda:
+      'Tudo fica guardado só neste navegador. Leve o progresso para outro computador, ou guarde uma cópia antes de limpar os dados do navegador.',
+    exportar: 'Exportar para um arquivo',
+    importar: 'Importar de um arquivo',
+    confirmarImportacao:
+      'Importar vai substituir todo o progresso guardado neste navegador. Quer continuar?',
+    exportado: 'Arquivo salvo. Guarde-o em algum lugar seguro.',
+    erro_ilegivel: 'Não consegui ler esse arquivo. Ele parece estar corrompido.',
+    erro_outroArquivo: 'Esse arquivo não é um progresso do digita.',
+    erro_versaoNova: 'Esse arquivo foi feito por uma versão mais nova do digita.',
+
     seuTeclado: 'Seu teclado',
     trocarTeclado: 'Trocar de teclado',
   },

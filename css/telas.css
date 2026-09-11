@@ -813,3 +813,12 @@
 .atalho--em-breve .atalho-descricao {
   color: var(--cor-texto-discreto);
 }
+
+/* --- Exportar e importar o progresso ------------------------------------ */
+
+.inicio-arquivo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-top: var(--esp-2);
+}

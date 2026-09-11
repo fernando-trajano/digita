@@ -154,6 +154,13 @@ function telaDeInicio(destino) {
     // A tela de entrada some do caminho depois da primeira visita, então é
     // daqui que se volta a ela para trocar de teclado.
     aoTrocarTeclado: () => irPara(telaDeEntrada),
+
+    // Importar troca tudo: idioma, teclado e progresso. A tela inteira é
+    // desenhada de novo para mostrar o que entrou.
+    aoImportar: () => {
+      definirIdioma(config().idioma ?? detectarIdioma());
+      irPara(telaDeInicio);
+    },
   });
 }
 

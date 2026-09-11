@@ -26,7 +26,23 @@ const PADRAO = {
   estiloDoClique: 'seco', // seco | suave | mecanico (ver js/som.js)
 };
 
-let configuracao = ler(CHAVES.config, PADRAO);
+let configuracao = limpar(ler(CHAVES.config, PADRAO));
+
+/**
+ * Descarta campos que o site não usa mais.
+ *
+ * Uma configuração salva mês passado pode ter campos que já foram
+ * removidos do site — o "volume", por exemplo, que saiu quando a barra de
+ * volume virou um botão só. Sem esta limpeza eles ficariam para sempre no
+ * localStorage e, pior, entrariam no arquivo de progresso exportado.
+ */
+function limpar(salva) {
+  const limpa = {};
+
+  for (const chave of Object.keys(PADRAO)) limpa[chave] = salva[chave];
+
+  return limpa;
+}
 
 /** Quem quer ser avisado quando algo muda. */
 const ouvintes = new Set();
@@ -84,8 +100,19 @@ export function aoMudarConfig(ouvinte) {
 }
 
 /**
- * Volta tudo ao estado de fábrica — usado pela importação de progresso
- * (passo 17) e por uma futura tela de configurações.
+ * Relê a configuração do que está salvo e avisa quem depende dela.
+ * Usado depois de importar um arquivo de progresso: sem isto, o idioma e o
+ * teclado importados só valeriam ao recarregar a página.
+ */
+export function recarregarConfig() {
+  configuracao = limpar(ler(CHAVES.config, PADRAO));
+
+  for (const ouvinte of ouvintes) ouvinte(config(), configuracao);
+}
+
+/**
+ * Volta tudo ao estado de fábrica — usado por uma futura tela de
+ * configurações.
  */
 export function reiniciarConfig() {
   configuracao = { ...PADRAO };

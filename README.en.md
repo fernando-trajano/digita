@@ -26,9 +26,22 @@ Brazilians up: the **Ç**, the **accents**, and the differences between the **AB
 
 ## Project status
 
-Work in progress. **Version 1** ships the full flow with the *home row* track (18 lessons);
-the other 6 tracks show up as "coming soon". The goal is a 30-day program of roughly
-100 five-minute lessons.
+**Version 1 is complete.** The whole flow works: choosing your keyboard, the placement
+test, the 18 home-row lessons, the result screen with stars, the track map and the home
+screen. The other 6 tracks show up as "coming soon" — the goal is a 30-day programme of
+roughly 100 five-minute lessons.
+
+### What works today
+
+- Keyboard (ABNT2 or US) and system detection, with your manual choice always overriding
+  the automatic guess
+- A one-minute placement test that lets confident typists skip ahead
+- 18 lessons with an on-screen keyboard and hands, a cursor that locks on mistakes, and
+  live metrics
+- Stars for speed, with a 90% accuracy floor to complete a lesson
+- Progress, day streak and most-missed keys, all kept in your browser
+- Export and import your progress as a file
+- Portuguese and English, light and dark mode, optional sounds
 
 ## Tech
 

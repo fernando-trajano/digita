@@ -14,6 +14,7 @@ import { config, sistemaAtual } from '../estado.js';
 import { montarMoldura } from './moldura.js';
 import { TRILHAS } from '../../dados/licoes/indice.js';
 import { licaoParaContinuar, progressoDaLicao, totalConcluidas } from '../progresso.js';
+import { exportarProgresso, importarProgresso } from '../exportacao.js';
 
 /** As seções que aparecem como atalho, na ordem. */
 const ATALHOS = [
@@ -31,9 +32,14 @@ const ATALHOS = [
  * @param {(licao: object) => void} opcoes.aoContinuar
  * @param {(secao: string) => void} opcoes.aoNavegar
  * @param {() => void} opcoes.aoTrocarTeclado
+ * @param {() => void} opcoes.aoImportar  para a tela se redesenhar com os
+ *        dados novos
  * @param {Set<string>} opcoes.secoesDisponiveis
  */
-export function mostrarInicio(destino, { aoContinuar, aoNavegar, aoTrocarTeclado, secoesDisponiveis }) {
+export function mostrarInicio(
+  destino,
+  { aoContinuar, aoNavegar, aoTrocarTeclado, aoImportar, secoesDisponiveis }
+) {
   const idioma = document.documentElement.lang.startsWith('pt') ? 'pt' : 'en';
   const licao = licaoParaContinuar();
   const trilha = TRILHAS.find((t_) => t_.licoes.some((l) => l.id === licao.id));
@@ -66,6 +72,23 @@ export function mostrarInicio(destino, { aoContinuar, aoNavegar, aoTrocarTeclado
         </section>
 
         <section class="secao">
+          <h2>${t('inicio.progresso')}</h2>
+          <p class="ajuda">${t('inicio.progressoAjuda')}</p>
+
+          <div class="inicio-arquivo">
+            <button type="button" class="botao" data-acao="exportar">
+              ${t('inicio.exportar')}
+            </button>
+            <button type="button" class="botao" data-acao="importar">
+              ${t('inicio.importar')}
+            </button>
+            <input type="file" accept="application/json,.json" hidden data-papel="arquivo">
+          </div>
+
+          <p class="aviso" data-papel="aviso-arquivo" role="status"></p>
+        </section>
+
+        <section class="secao">
           <h2>${t('inicio.seuTeclado')}</h2>
           <p class="subtitulo">${nomeDoTeclado()}</p>
           <button type="button" class="botao" data-acao="trocar-teclado">
@@ -86,6 +109,51 @@ export function mostrarInicio(destino, { aoContinuar, aoNavegar, aoTrocarTeclado
 
   destino.querySelectorAll('[data-atalho]').forEach((botao) => {
     botao.addEventListener('click', () => aoNavegar(botao.dataset.atalho));
+  });
+
+  ligarArquivo(destino, aoImportar);
+}
+
+/* --------------------------------------------------------------------------
+   Exportar e importar
+   -------------------------------------------------------------------------- */
+
+function ligarArquivo(destino, aoImportar) {
+  const seletor = destino.querySelector('[data-papel="arquivo"]');
+  const aviso = destino.querySelector('[data-papel="aviso-arquivo"]');
+
+  destino.querySelector('[data-acao="exportar"]').addEventListener('click', () => {
+    exportarProgresso();
+    aviso.textContent = t('inicio.exportado');
+  });
+
+  // O campo de arquivo de verdade é feio e não combina com o resto; o botão
+  // é quem aparece, e ele abre o seletor do sistema.
+  destino.querySelector('[data-acao="importar"]').addEventListener('click', () => {
+    seletor.click();
+  });
+
+  seletor.addEventListener('change', async () => {
+    const arquivo = seletor.files?.[0];
+    if (!arquivo) return;
+
+    // Importar apaga o progresso que está na máquina. Perguntar é o mínimo.
+    if (!window.confirm(t('inicio.confirmarImportacao'))) {
+      seletor.value = '';
+      return;
+    }
+
+    const resultado = await importarProgresso(arquivo);
+
+    // Limpar o campo permite importar o mesmo arquivo duas vezes seguidas.
+    seletor.value = '';
+
+    if (!resultado.ok) {
+      aviso.textContent = t(`inicio.erro_${resultado.motivo}`);
+      return;
+    }
+
+    aoImportar?.();
   });
 }
 

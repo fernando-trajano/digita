@@ -25,9 +25,21 @@ O `digita.` resolve isso com:
 
 ## Estado do projeto
 
-Em construção. A **versão 1** entrega o fluxo completo com a trilha *fileira base*
-(18 lições); as outras 6 trilhas aparecem como "em breve". A meta é um programa de 30 dias
+**Versão 1 completa.** O fluxo inteiro funciona: escolher o teclado, o teste de
+nivelamento, as 18 lições da fileira base, o resultado com estrelas, a trilha e a tela
+inicial. As outras 6 trilhas aparecem como "em breve" — a meta é um programa de 30 dias
 com cerca de 100 lições de 5 minutos.
+
+### O que já funciona
+
+- Detecção do teclado (ABNT2 ou americano) e do sistema, com escolha manual sempre acima
+  do palpite automático
+- Teste de nivelamento de um minuto, que dispensa quem já digita
+- 18 lições com teclado e mãos na tela, cursor que trava no erro e métricas ao vivo
+- Estrelas por velocidade, com precisão mínima de 90% para concluir
+- Progresso, sequência de dias e teclas que mais escapam, tudo no seu navegador
+- Exportar e importar o progresso em arquivo
+- Português e inglês, modo claro e escuro, sons opcionais
 
 ## Tecnologia
 

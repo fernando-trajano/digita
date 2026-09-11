@@ -399,4 +399,10 @@ real no passo 7.
       atalhos para as seções e o caminho de volta para trocar de teclado)
 - [x] **Passo 16** — sons (clique, erro e conclusão sintetizados na Web Audio API, botão
       de mudo e volume no cabeçalho, nada tocando antes da primeira interação)
-- [ ] **Passo 17** — exportar/importar, responsivo e polimento
+- [x] **Passo 17** — exportar/importar o progresso em arquivo, revisão responsiva das seis
+      telas em 375px e limpeza de campos obsoletos da configuração
+
+---
+
+**Versão 1 completa.** O fluxo inteiro funciona de ponta a ponta: entrada → nivelamento →
+lição → resultado → trilha → início.

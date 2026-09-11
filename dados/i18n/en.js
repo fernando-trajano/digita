@@ -96,6 +96,18 @@ export const en = {
     atalhoJogos: 'Practise without it feeling like practice.',
     atalhoEstatisticas: 'Your progress, finger by finger.',
 
+    progresso: 'Your progress',
+    progressoAjuda:
+      'Everything is kept in this browser alone. Take your progress to another computer, or keep a copy before clearing your browser data.',
+    exportar: 'Export to a file',
+    importar: 'Import from a file',
+    confirmarImportacao:
+      'Importing will replace all the progress stored in this browser. Continue?',
+    exportado: 'File saved. Keep it somewhere safe.',
+    erro_ilegivel: 'I could not read that file. It looks corrupted.',
+    erro_outroArquivo: 'That file is not a digita. progress file.',
+    erro_versaoNova: 'That file was made by a newer version of digita.',
+
     seuTeclado: 'Your keyboard',
     trocarTeclado: 'Change keyboard',
   },
