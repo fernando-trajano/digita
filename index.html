@@ -9,18 +9,22 @@
   <!-- Escolhe o tema ANTES de a página aparecer, para não piscar branco em
        quem usa o modo escuro. É o único JavaScript fora da pasta js/, e ele
        precisa estar aqui: qualquer coisa carregada depois já seria tarde.
-       Lê o tema salvo; se não houver escolha salva, segue o sistema. -->
+       A regra é a mesma do app.js (ver a seção Tema lá): a escolha manual
+       só vale enquanto o sistema continuar no tema que tinha quando ela foi
+       feita. Ela está repetida aqui porque isto roda antes de tudo. -->
   <script>
     (function () {
-      var tema = null;
+      var salvo = {};
       try {
-        tema = JSON.parse(localStorage.getItem('digita:config') || '{}').tema;
+        salvo = JSON.parse(localStorage.getItem('digita:config') || '{}');
       } catch (erro) {
         /* navegador sem localStorage: segue o sistema */
       }
+      var sistema =
+        window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+
       document.documentElement.dataset.tema =
-        tema ||
-        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro');
+        salvo.tema && salvo.temaDoSistemaNaEscolha === sistema ? salvo.tema : sistema;
     })();
   </script>
 

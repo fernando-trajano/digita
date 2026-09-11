@@ -28,9 +28,19 @@ const preferenciaEscura = window.matchMedia('(prefers-color-scheme: dark)');
 /* --------------------------------------------------------------------------
    Tema
 
-   Enquanto o usuário não clicar no botão, o site segue o tema do sistema.
-   Depois do primeiro clique, a escolha dele fica salva e manda — a mesma
-   regra da tela de entrada.
+   A regra, numa frase: a ÚLTIMA mudança vale, e o sistema é a referência.
+
+     - primeira visita: segue o tema do sistema;
+     - clique no botão: a escolha vale e fica salva;
+     - o sistema muda com o site aberto: o site acompanha e a escolha manual
+       é descartada, porque ela é a mudança mais antiga das duas;
+     - ao voltar ao site: se o sistema continua como estava quando a escolha
+       foi feita, a escolha vale; se mudou nesse meio-tempo, quem vale é o
+       sistema, e a escolha é descartada.
+
+   É por isso que a escolha manual é salva em DUAS partes: o tema escolhido e
+   o tema que o sistema tinha naquele momento. Sem a segunda não há como
+   saber, na volta, se o sistema mudou desde então.
    -------------------------------------------------------------------------- */
 
 /**
@@ -50,16 +60,40 @@ function temaDoSistema() {
   return preferenciaEscura.matches ? 'escuro' : 'claro';
 }
 
+/** Esquece a escolha manual: daqui em diante quem manda é o sistema. */
+function esquecerEscolhaDeTema() {
+  definirConfig({ tema: null, temaDoSistemaNaEscolha: null });
+}
+
+/** O tema que vale agora, com a regra inteira aplicada. */
+function temaQueVale() {
+  const { tema, temaDoSistemaNaEscolha } = config();
+  const sistema = temaDoSistema();
+
+  if (!tema) return sistema;
+
+  // O sistema mudou desde a escolha: ela caducou.
+  if (temaDoSistemaNaEscolha !== sistema) {
+    esquecerEscolhaDeTema();
+    return sistema;
+  }
+
+  return tema;
+}
+
 botaoTema.addEventListener('click', () => {
   const novo = raiz.dataset.tema === 'escuro' ? 'claro' : 'escuro';
-  definirConfig({ tema: novo });
+
+  definirConfig({ tema: novo, temaDoSistemaNaEscolha: temaDoSistema() });
   aplicarTema(novo);
 });
 
-// Se o computador trocar de claro para escuro sozinho (ao anoitecer, por
-// exemplo), o site acompanha — a não ser que já tenha havido escolha manual.
+// O computador trocou de claro para escuro (ao anoitecer, por exemplo). Essa
+// é agora a última mudança, então ela vale — e a escolha manual anterior,
+// que era mais antiga, é descartada.
 preferenciaEscura.addEventListener('change', () => {
-  if (!config().tema) aplicarTema(temaDoSistema());
+  esquecerEscolhaDeTema();
+  aplicarTema(temaDoSistema());
 });
 
 /* --------------------------------------------------------------------------
@@ -211,9 +245,10 @@ function abrirLicao(licao) {
    Início
    -------------------------------------------------------------------------- */
 
-// O script no <head> do index.html já definiu o tema antes de a página
-// aparecer; aqui só acertamos o ícone para combinar com ele.
-aplicarTema(config().tema ?? raiz.dataset.tema ?? temaDoSistema());
+// O script no <head> do index.html já aplicou esta mesma regra antes de a
+// página aparecer. Repeti-la aqui acerta o ícone e, quando a escolha manual
+// caducou, é o que apaga de fato o que estava salvo.
+aplicarTema(temaQueVale());
 
 // Idioma salvo, se houver; senão, o do navegador de quem chegou.
 definirIdioma(config().idioma ?? detectarIdioma());

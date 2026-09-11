@@ -20,6 +20,11 @@ const PADRAO = {
   layout: 'abnt2', // o briefing manda começar no teclado brasileiro
   sistema: null, // null = usar o sistema que o navegador informou
   tema: null, // null = acompanhar o modo claro/escuro do sistema
+
+  /* O tema que o SISTEMA tinha quando o usuário escolheu um tema à mão.
+     Guardar isto é o que permite saber, na volta, se o sistema mudou desde
+     então — e, se mudou, descartar a escolha. Ver a seção Tema do app.js. */
+  temaDoSistemaNaEscolha: null,
   mudo: false, // o botão de mudo do cabeçalho
   somDeClique: false, // o clique de tecla nasce desligado, como manda o briefing
   somDeErro: true, // o aviso de erro nasce ligado, e é bem discreto
