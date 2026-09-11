@@ -46,16 +46,16 @@ const dicaDeTecla = (nome, abnt2, us) => ({
 
 const DICA_SHIFT = {
   abnt2: {
-    pt: 'Aperte o Shift com o mínimo da mão CONTRÁRIA à da letra: Shift direito para as letras da esquerda, e vice-versa.',
-    en: 'Press Shift with the little finger of the OPPOSITE hand: right Shift for left-hand letters, and the other way round.',
+    pt: 'Shift com o mínimo da outra mão.',
+    en: "Shift with the other hand's pinky.",
   },
   usMac: {
-    pt: 'Aperte o Shift com o mínimo da mão CONTRÁRIA à da letra: Shift direito para as letras da esquerda, e vice-versa.',
-    en: 'Press Shift with the little finger of the OPPOSITE hand: right Shift for left-hand letters, and the other way round.',
+    pt: 'Shift com o mínimo da outra mão.',
+    en: "Shift with the other hand's pinky.",
   },
   usWindows: {
-    pt: 'Aperte o Shift com o mínimo da mão CONTRÁRIA à da letra: Shift direito para as letras da esquerda, e vice-versa.',
-    en: 'Press Shift with the little finger of the OPPOSITE hand: right Shift for left-hand letters, and the other way round.',
+    pt: 'Shift com o mínimo da outra mão.',
+    en: "Shift with the other hand's pinky.",
   },
 };
 

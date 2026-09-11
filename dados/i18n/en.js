@@ -117,7 +117,7 @@ export const en = {
   nivelamento: {
     pergunta: 'Can you already type without looking at the keyboard?',
     explica:
-      'If you can, there is no point starting from "fff jjj". A one-minute test shows where you should come in.',
+      'If you already type, a one-minute test shows your level and where to start.',
     naoSei: 'No, I want to start from scratch',
     jaSei: 'Yes, let me take the test',
     aviso: 'You can retake the test later, or ignore the result and practise everything anyway.',
@@ -161,7 +161,7 @@ export const en = {
   trilha: {
     titulo: 'The track',
     subtitulo:
-      'A programme of seven tracks and around a hundred five-minute lessons. Each lesson opens when the previous one is complete.',
+      'A program of seven tracks and about a hundred lessons. Each lesson unlocks when the previous one is completed.',
     trancada: 'Finish the previous one',
     aberta: 'Lesson open, not completed yet',
     planejadas: '{quantas} lessons planned.',

@@ -122,7 +122,7 @@ export const pt = {
   nivelamento: {
     pergunta: 'Você já digita sem olhar para o teclado?',
     explica:
-      'Se já digita, não faz sentido recomeçar do "fff jjj". Um teste de um minuto mostra por onde você deve entrar.',
+      'Se você já digita, um teste de um minuto indica seu nível e por onde começar.',
     naoSei: 'Não, quero começar do zero',
     jaSei: 'Sim, quero fazer o teste',
     aviso: 'Você pode refazer o teste depois, ou ignorar o resultado e treinar tudo mesmo assim.',
@@ -166,7 +166,7 @@ export const pt = {
   trilha: {
     titulo: 'A trilha',
     subtitulo:
-      'Um programa de sete trilhas e cerca de cem lições de cinco minutos. Cada lição abre quando a anterior é concluída.',
+      'Um programa de sete trilhas e cerca de cem lições. Cada lição abre quando a anterior é concluída.',
     trancada: 'Conclua a anterior',
     aberta: 'Lição aberta, ainda não concluída',
     planejadas: '{quantas} lições planejadas.',
