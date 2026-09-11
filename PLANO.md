@@ -418,3 +418,35 @@ lição → resultado → trilha → início.
 - [ ] Teclado numérico — 10
 
 **90 de 100 lições.**
+
+## Correções e melhorias depois da versão 1
+
+Pedidas pelo Fernando em 11 de setembro de 2026, um commit por item.
+
+- [x] **Troca de idioma na lição** — clicar em PT/EN no meio de uma lição trocava os
+      textos redesenhando a tela, o que recomeçava a lição. Agora a tela de lição troca
+      só as palavras, no lugar: posição no texto, erros, tempo e métricas continuam.
+- [x] **Botão "Trocar" do aviso de teclado** — não funcionava por dois motivos somados: o
+      clique não se completava (o campo perdia o foco, a linha "Clique no texto" aparecia
+      e empurrava o botão para fora do ponteiro entre o mousedown e o mouseup) e, mesmo
+      rodando, só gravava a configuração sem redesenhar o teclado. Agora a troca acontece
+      inteira e a lição fica onde estava.
+- [x] **Tema claro/escuro** — a última mudança vale, e o sistema é a referência. A escolha
+      manual passou a ser salva junto com o tema que o sistema tinha naquele momento
+      (`temaDoSistemaNaEscolha`), e caduca quando o sistema muda.
+- [x] **Acordeão na tela de trilhas** — cada trilha abre e fecha; a trilha de agora já vem
+      aberta, as outras fechadas. Teclado (Tab e Enter) e `aria-expanded`. As trilhas "em
+      breve" aparecem, mas não abrem.
+- [x] **Textos encurtados** (PT e EN) — subtítulo da trilha, explicação do nivelamento e a
+      instrução do Shift.
+- [x] **Dica da lição** — era uma faixa grossa no topo; virou uma linha fina, no estilo do
+      "Clique no texto para continuar digitando", e some na primeira tecla.
+- [x] **Combinações de teclas** — Shift, Option e AltGr aparecem no teclado só com o
+      contorno pulsando (ciclo de 1s, sem preenchimento), e a bolinha do dedo que segura a
+      modificadora pulsa junto, na mão contrária; a tecla da letra continua colorida com a
+      bolinha fixa. O teclado americano ganhou a tabela de acentos que lhe faltava (⌥ +
+      letra no Mac, teclas mortas do US Internacional no Windows), então nenhuma lição fica
+      mais sem tecla acesa.
+
+Ficaram **fora** deste lote, por decisão do Fernando: opção de "reduzir movimento" e
+controle de volume — os dois são assunto da futura aba de configurações.
