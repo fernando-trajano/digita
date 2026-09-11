@@ -34,7 +34,11 @@ const BOLINHAS = [
   { dedo: 'polegar', cx: 117.4, cy: 72.6 },
 ];
 
-const RAIO_DA_BOLINHA = 5;
+/* Raio 7, e não 5: com a mão pequena ao lado do teclado, o desenho fica
+   reduzido a cerca de metade do tamanho do viewBox, e uma bolinha de raio 5
+   apareceria com 5px de diâmetro na tela. Sete é o maior raio que ainda
+   deixa um respiro entre a bolinha e a ponta do dedo. */
+const RAIO_DA_BOLINHA = 7;
 const CAIXA = { x: -5, y: 0, largura: 130, altura: 150 };
 
 /**

@@ -358,49 +358,42 @@
 
 /* --- O palco: mão, teclado, mão -----------------------------------------
 
-   As mãos precisam ter exatamente a ALTURA do teclado, e a largura delas sai
-   dessa altura (a proporção do desenho é 130 por 150). Isso é circular no
-   CSS: a largura do teclado depende do espaço que sobra das mãos, e a
-   largura das mãos depende da altura do teclado.
+   As mãos são pequenas e coladas ao teclado: cada uma tem 1,6 vez a altura
+   de uma tecla (cerca de 30% da altura do teclado, ou uma fileira e meia),
+   e fica a meia tecla da borda dele. Tudo amarrado à mesma variável de
+   tamanho de tecla, então mão e teclado crescem e diminuem juntos.
 
-   A saída é resolver a conta uma vez e escrevê-la aqui. Com T = tamanho da
-   tecla e o vão de 4px entre elas:
+   A largura de cada mão sai da altura, pela proporção do desenho (130 por
+   150): 1,6T × 130/150 = 1,387T. Com o respiro de meia tecla, cada lado
+   reserva 1,887T, e a largura total fica:
 
-     altura do teclado  = 5T + 16
-     largura do teclado = 15T + 56
-     largura de uma mão = (5T + 16) × 130/150 = 4,33T + 13,9
-     reserva de um lado = largura da mão + 16 de respiro = 4,33T + 30
+     15T + 56 + 2 × 1,887T = 18,77T + 56
 
-     largura total = 15T + 56 + 2 × (4,33T + 30) = 23,7T + 116
-
-   Daí T = (largura disponível − 116) ÷ 23,7 — que é o que está abaixo. As
-   mãos ficam fora do fluxo, e o espaço delas vem do padding: assim elas
-   nunca empurram nem espremem o teclado.
+   Daí T = (largura disponível − 56) ÷ 18,77, que é o que está abaixo.
    ------------------------------------------------------------------------ */
+
+.licao {
+  --tecla-da-licao: clamp(1.2rem, (100cqw - 56px) / 18.77, 3.2rem);
+}
 
 .licao-palco {
   position: relative;
   display: flex;
   justify-content: center;
   width: 100%;
-  padding-inline: calc(4.34 * var(--tecla-da-licao) + 30px);
+  padding-inline: calc(1.887 * var(--tecla-da-licao));
 }
 
 .licao-palco .teclado {
   --tecla: var(--tecla-da-licao);
 }
 
-.licao {
-  --tecla-da-licao: clamp(1.2rem, (100cqw - 116px) / 23.7, 3.2rem);
-}
-
-/* Fora do fluxo, coladas nas bordas do palco e da altura dele — que é a
-   altura do teclado, o único filho que está no fluxo. */
+/* Fora do fluxo, com o topo alinhado ao topo do teclado — a ponta do dedo
+   médio encosta na fileira dos números. A mão não desce até a base. */
 .mao {
   position: absolute;
   top: 0;
-  bottom: 0;
-  height: 100%;
+  height: calc(1.6 * var(--tecla-da-licao));
   width: auto;
 }
 
@@ -412,10 +405,10 @@
   right: 0;
 }
 
-/* Abaixo de uma largura razoável não há espaço para as três coisas lado a
-   lado. Aí as mãos somem e o teclado fica com a largura toda — ele é o que
-   importa. */
-@media (max-width: 52rem) {
+/* Abaixo desta largura a mão ficaria pequena demais para a bolinha do dedo
+   ser legível. Aí as mãos somem e o teclado fica com a largura toda — ele é
+   o que importa. */
+@media (max-width: 64rem) {
   .maos {
     display: none;
   }
