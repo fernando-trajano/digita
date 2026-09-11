@@ -30,17 +30,22 @@ const SO_NO_ABNT2 = new Set(['ç', '´', '~', '^', '`']);
 /**
  * Conferência 1 — o aluno só vê letras que já aprendeu.
  *
- * Percorre cada trilha somando as teclasNovas lição a lição. O conteúdo de
- * uma lição só pode usar letras desse acumulado.
+ * Percorre o programa INTEIRO somando as teclasNovas lição a lição, na ordem
+ * em que elas são feitas. O conteúdo de uma lição só pode usar letras desse
+ * acumulado.
+ *
+ * O acumulado atravessa as trilhas de propósito: quem chega à fileira de
+ * cima já passou pela fileira base, e continua sabendo a s d f g h j k l.
+ * Zerar a conta a cada trilha acusaria como erro exatamente o que se espera
+ * de uma trilha que vem depois da outra.
  *
  * @returns {string[]}  os problemas encontrados, em texto
  */
 export function conferirLetrasJaEnsinadas() {
   const problemas = [];
+  const jaEnsinadas = new Set(SEMPRE_PERMITIDOS);
 
   for (const trilha of TRILHAS) {
-    const jaEnsinadas = new Set(SEMPRE_PERMITIDOS);
-
     for (const licao of trilha.licoes) {
       for (const tecla of licao.teclasNovas ?? []) {
         jaEnsinadas.add(tecla.toLowerCase());

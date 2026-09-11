@@ -2,12 +2,13 @@
    indice.js — as 7 trilhas do digita. e as regras que valem para todas.
 
    A meta é um programa de ~30 dias, com cerca de 100 lições de 5 minutos.
-   Na versão 1 só a fileira base tem conteúdo; as outras aparecem como
-   "em breve", mas já estão declaradas aqui com o tamanho planejado, para o
-   progresso geral ("12 de 100") fazer sentido desde o primeiro dia.
+   As trilhas ainda sem conteúdo aparecem como "em breve", mas já estão
+   declaradas aqui com o tamanho planejado, para o progresso geral
+   ("12 de 100") fazer sentido desde o primeiro dia.
    ========================================================================== */
 
 import { fileiraBase } from './fileira-base.js';
+import { fileiraDeCima } from './fileira-de-cima.js';
 
 /**
  * Metas de velocidade por tipo de lição, em PPM (palavras por minuto).
@@ -50,7 +51,7 @@ export const TRILHAS = [
       en: 'q w e r t y u i o p — and the first vowels beyond A.',
     },
     licoesPlanejadas: 18,
-    licoes: [],
+    licoes: fileiraDeCima,
   },
   {
     id: 'fileira-de-baixo',

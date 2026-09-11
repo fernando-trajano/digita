@@ -71,7 +71,8 @@ Ao abrir o site, o `conferencia.js` percorre todas as lições e avisa no consol
 navegador se encontrar:
 
 1. **Letra ensinada fora de hora** — o conteúdo de uma lição só pode usar as letras de
-   `teclasNovas` dela **somadas às de todas as lições anteriores da mesma trilha**.
+   `teclasNovas` dela **somadas às de todas as lições anteriores do programa**, inclusive
+   as de trilhas anteriores: quem chega à fileira de cima já sabe a fileira base.
 2. **Tecla que não existe no teclado escolhido** — `ç`, `´`, `~`, `^` e `` ` `` só
    existem no teclado brasileiro. Uma lição que os use quebraria para quem tem teclado
    americano.

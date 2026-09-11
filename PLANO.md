@@ -406,3 +406,15 @@ real no passo 7.
 
 **Versão 1 completa.** O fluxo inteiro funciona de ponta a ponta: entrada → nivelamento →
 lição → resultado → trilha → início.
+
+## Conteúdo escrito
+
+- [x] **Fileira base** — 18 lições
+- [x] **Fileira de cima** — 18 lições
+- [ ] Fileira de baixo — 14
+- [ ] Números — 10
+- [ ] Acentos e Ç — 16
+- [ ] Pontuação e maiúsculas — 14
+- [ ] Teclado numérico — 10
+
+**36 de 100 lições.**
