@@ -10,6 +10,7 @@
 import { fileiraBase } from './fileira-base.js';
 import { fileiraDeCima } from './fileira-de-cima.js';
 import { fileiraDeBaixo } from './fileira-de-baixo.js';
+import { numeros } from './numeros.js';
 import { acentos } from './acentos.js';
 import { pontuacao } from './pontuacao.js';
 
@@ -74,7 +75,7 @@ export const TRILHAS = [
       en: 'The number row, 1 through 0.',
     },
     licoesPlanejadas: 10,
-    licoes: [],
+    licoes: numeros,
   },
   {
     id: 'acentos',
