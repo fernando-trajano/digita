@@ -13,7 +13,7 @@
    treinando precisa olhar para uma coisa só.
    ========================================================================== */
 
-import { t, nomeDoDedo } from '../i18n.js';
+import { t, nomeDoDedo, traduzirPagina } from '../i18n.js';
 import { config, definirConfig, sistemaAtual } from '../estado.js';
 import { criarMotor, desenharTexto } from '../motor-digitacao.js';
 import {
@@ -43,6 +43,7 @@ let sessao = null;
  */
 export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   encerrarLicao();
+  sugestaoDeLayout = null;
 
   const layout = config().layout;
 
@@ -50,6 +51,8 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   destino.insertAdjacentHTML('beforeend', montarHtml(licao));
 
   const partes = {
+    nome: destino.querySelector('[data-papel="nome"]'),
+    dica: destino.querySelector('[data-papel="dica"]'),
     texto: destino.querySelector('[data-papel="texto"]'),
     legenda: destino.querySelector('[data-papel="legenda"]'),
     maos: destino.querySelector('[data-papel="maos"]'),
@@ -72,10 +75,16 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
   // clique, sem precisar de mais um gancho dentro do motor.
   let letrasFeitas = 0;
 
+  // O último estado recebido do motor. Serve para redesenhar a tecla acesa e
+  // a legenda sem mexer no motor — é o que permite trocar de idioma no meio
+  // da lição sem recomeçar nada.
+  let ultimoEstado = null;
+
   const motor = criarMotor({
     linhas: licao.conteudo,
 
     aoAtualizar(estado) {
+      ultimoEstado = estado;
       desenharTexto(partes.texto, estado);
       apontarProximaTecla(partes, estado, layout);
       atualizarMedidas(partes, estado);
@@ -129,13 +138,53 @@ export function mostrarLicao(destino, { licao, aoConcluir, aoSair }) {
     aoSair?.();
   });
 
+  /**
+   * Troca os textos da tela para o idioma novo, SEM remontar nada.
+   *
+   * Remontar seria o caminho fácil — é o que todas as outras telas fazem —,
+   * mas aqui ele apagaria a lição em andamento: posição no texto, erros,
+   * tempo e métricas voltariam ao zero por causa de um clique em PT/EN.
+   * Então a tela troca só as palavras, e o motor nem fica sabendo.
+   */
+  function retraduzir() {
+    // Os textos fixos estão marcados com data-i18n e são trocados de uma vez.
+    traduzirPagina(destino);
+
+    const idioma = document.documentElement.lang.startsWith('pt') ? 'pt' : 'en';
+    partes.nome.textContent = licao.titulo[idioma];
+
+    partes.texto.dataset.rotulo = t('licao.campo');
+    partes.texto.querySelector('.campo-invisivel')?.setAttribute('aria-label', t('licao.campo'));
+
+    if (partes.dica) partes.dica.textContent = textoDaDica(licao);
+
+    // Legenda e aviso de layout são reescritos a cada tecla; sem isto eles
+    // ficariam no idioma antigo até a próxima letra.
+    if (ultimoEstado) apontarProximaTecla(partes, ultimoEstado, layout);
+    if (sugestaoDeLayout) escreverAvisoDeLayout(partes, sugestaoDeLayout);
+  }
+
   sessao = {
+    retraduzir,
+
     encerrar() {
       motor.destruir();
       document.removeEventListener('keydown', vigia, true);
       document.removeEventListener('keyup', vigia, true);
     },
   };
+}
+
+/**
+ * Troca o idioma da lição aberta, se houver uma.
+ * @returns {boolean} true quando havia uma lição para retraduzir — e, nesse
+ *                    caso, quem chamou NÃO deve redesenhar a tela.
+ */
+export function retraduzirLicao() {
+  if (!sessao) return false;
+
+  sessao.retraduzir();
+  return true;
 }
 
 /** Fecha a lição aberta, se houver. */
@@ -154,27 +203,27 @@ function montarHtml(licao) {
   return `
     <div class="licao">
       <div class="licao-topo">
-        <p class="licao-nome">${licao.titulo[idioma]}</p>
+        <p class="licao-nome" data-papel="nome">${licao.titulo[idioma]}</p>
 
         <div class="medidas">
-          <span class="medida"><strong data-papel="ppm">0</strong> ${t('licao.ppm')}</span>
-          <span class="medida"><strong data-papel="precisao">100%</strong> ${t('licao.precisao')}</span>
-          <span class="medida"><strong data-papel="progresso">0%</strong> ${t('licao.progresso')}</span>
+          <span class="medida"><strong data-papel="ppm">0</strong> <span data-i18n="licao.ppm">${t('licao.ppm')}</span></span>
+          <span class="medida"><strong data-papel="precisao">100%</strong> <span data-i18n="licao.precisao">${t('licao.precisao')}</span></span>
+          <span class="medida"><strong data-papel="progresso">0%</strong> <span data-i18n="licao.progresso">${t('licao.progresso')}</span></span>
         </div>
 
-        <button type="button" class="botao botao--pequeno" data-acao="sair">${t('licao.sair')}</button>
+        <button type="button" class="botao botao--pequeno" data-acao="sair" data-i18n="licao.sair">${t('licao.sair')}</button>
       </div>
 
       <div class="barra"><span data-papel="barra"></span></div>
 
       ${montarDica(licao)}
 
-      <p class="aviso-caps" data-papel="caps" role="status" hidden>${t('licao.capsLock')}</p>
+      <p class="aviso-caps" data-papel="caps" role="status" data-i18n="licao.capsLock" hidden>${t('licao.capsLock')}</p>
 
       <div class="licao-corpo">
         <div class="licao-texto">
           <div data-papel="texto" data-rotulo="${t('licao.campo')}"></div>
-          <p class="licao-espera" data-papel="espera" hidden>${t('licao.clique')}</p>
+          <p class="licao-espera" data-papel="espera" data-i18n="licao.clique" hidden>${t('licao.clique')}</p>
         </div>
       </div>
 
@@ -198,7 +247,7 @@ function montarHtml(licao) {
  * Mac americano, e a aspa simples seguida de c no US Internacional. O
  * conteúdo é um só; a instrução é que se adapta.
  */
-function montarDica(licao) {
+function textoDaDica(licao) {
   if (!licao.dica) return '';
 
   const chave =
@@ -209,9 +258,15 @@ function montarDica(licao) {
         : 'usWindows';
 
   const idioma = document.documentElement.lang.startsWith('pt') ? 'pt' : 'en';
-  const texto = licao.dica[chave]?.[idioma];
 
-  return texto ? `<p class="licao-dica">${texto}</p>` : '';
+  return licao.dica[chave]?.[idioma] ?? '';
+}
+
+/** A dica, já embrulhada — vazia quando a lição não tem nenhuma. */
+function montarDica(licao) {
+  const texto = textoDaDica(licao);
+
+  return texto ? `<p class="licao-dica" data-papel="dica">${texto}</p>` : '';
 }
 
 /* --------------------------------------------------------------------------
@@ -315,10 +370,18 @@ function vigiarCapsLock(evento, partes, motor) {
    Rede de segurança do layout
    -------------------------------------------------------------------------- */
 
+/** O formato sugerido pela última tecla, enquanto o aviso estiver na tela. */
+let sugestaoDeLayout = null;
+
 function vigiarLayout(evento, partes, layoutEscolhido) {
   const sugerido = conferirLayout(evento, layoutEscolhido);
   if (!sugerido) return;
 
+  sugestaoDeLayout = sugerido;
+  escreverAvisoDeLayout(partes, sugerido);
+}
+
+function escreverAvisoDeLayout(partes, sugerido) {
   const nome = sugerido === 'abnt2' ? t('teclado.abnt2') : t('teclado.us');
 
   partes.avisoLayout.hidden = false;

@@ -11,7 +11,7 @@
 import { detectarIdioma, definirIdioma, ligarSeletorDeIdioma, idioma, t } from './i18n.js';
 import { config, definirConfig, aoMudarConfig } from './estado.js';
 import { mostrarEntrada } from './telas/entrada.js';
-import { mostrarLicao, encerrarLicao } from './telas/licao.js';
+import { mostrarLicao, encerrarLicao, retraduzirLicao } from './telas/licao.js';
 import { mostrarResultado } from './telas/resultado.js';
 import { mostrarTrilha } from './telas/trilha.js';
 import { mostrarInicio } from './telas/inicio.js';
@@ -248,5 +248,11 @@ document.querySelector('.marca').addEventListener('click', (evento) => {
 // tela seja desenhada de novo.
 document.addEventListener('idioma-mudou', () => {
   aplicarSom();
+
+  // Menos a de lição: redesenhá-la recomeçaria a lição em andamento. Ela
+  // troca os próprios textos no lugar e devolve true para avisar que já se
+  // resolveu — posição no texto, erros, tempo e métricas continuam intactos.
+  if (retraduzirLicao()) return;
+
   telaAtual(tela);
 });
