@@ -285,7 +285,8 @@ export function mostrarTreinoLivre(destino, { aoSair } = {}) {
             <div class="ilustracoes" data-papel="ilustracoes">
               ${MODOS.map(
                 (modo) => `
-                <svg class="ilustracao" data-ilustracao="${modo.id}" aria-hidden="true">
+                <svg class="ilustracao" data-ilustracao="${modo.id}"
+                     viewBox="0 0 320 240" aria-hidden="true">
                   <use href="#${modo.ilustracao}"></use>
                 </svg>`
               ).join('')}

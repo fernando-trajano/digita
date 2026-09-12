@@ -1221,7 +1221,10 @@
   display: block;
   width: 100%;
   height: auto;
-  max-width: 340px;
+
+  /* Sem max-width próprio: o desenho preenche o contêiner, e quem limita o
+     tamanho é ele. Dois números que precisam concordar é um que vai ficar
+     para trás na primeira vez que o outro mudar. */
 
   /* currentColor: é isto que faz o desenho acompanhar o tema sozinho. */
   color: var(--cor-texto-secundario);
