@@ -154,6 +154,60 @@ export const pt = {
     emBreve: 'em breve',
   },
 
+  treinoLivre: {
+    titulo: 'Treino livre',
+    subtitulo: 'Treino sem nota: não tem estrelas e não conta precisão mínima.',
+
+    oQueTreinar: 'O que treinar',
+    porQuantoTempo: 'Por quanto tempo',
+    comecar: 'Começar',
+    minutos: '{quantos} min',
+    semFim: 'Sem fim',
+
+    colar: 'Cole aqui o texto que você quer treinar.',
+    textoProprio: 'Texto próprio',
+
+    avisoUsInternacional:
+      'No Windows, para digitar acentos num teclado americano é preciso ativar o layout {layout} nas configurações de idioma.',
+    usInternacional: 'US Internacional',
+    avisoNumerico: 'MacBooks e teclados compactos não têm teclado numérico.',
+
+    // A sessão
+    restam: 'restam',
+    decorrido: 'decorrido',
+    encerrar: 'Encerrar',
+    campo: 'Área de digitação do treino livre',
+
+    // O resumo
+    fim: 'Fim do treino.',
+    ppmLongo: 'palavras por minuto',
+    precisaoLonga: 'precisão',
+    deTreino: 'de treino',
+    teclasQueEscaparam: 'Teclas que mais escaparam',
+    semErros: 'Nenhuma: você não errou nenhuma tecla.',
+    deNovo: 'Treinar de novo',
+    voltar: 'Voltar ao treino livre',
+
+    modos: {
+      adaptativo: {
+        nome: 'Adaptativo',
+        descricao: 'Sorteia mais as teclas em que você mais erra, com base nas suas estatísticas.',
+      },
+      acentos: {
+        nome: 'Acentos e Ç',
+        descricao: 'Palavras com á, é, í, ó, ú, â, ê, ô, ã, õ, à e ç.',
+      },
+      numerico: {
+        nome: 'Teclado numérico',
+        descricao: 'Números e operadores do teclado numérico.',
+      },
+      proprio: {
+        nome: 'Texto próprio',
+        descricao: 'Cole o texto que quiser e treine com ele.',
+      },
+    },
+  },
+
   painel: {
     titulo: 'Seu progresso',
     dia: 'dia seguido praticando',

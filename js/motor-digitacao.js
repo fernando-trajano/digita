@@ -41,7 +41,10 @@ import { criarMetricas } from './metricas.js';
 export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFoco }) {
   // O texto vira uma string só, com quebras de linha. As quebras são
   // puladas automaticamente: ninguém precisa apertar Enter no fim da linha.
-  const texto = linhas.join('\n');
+  //
+  // É `let` por causa do Treino livre, que acrescenta linhas ao fim enquanto
+  // a pessoa digita (ver `acrescentar`). Na lição, ele nunca muda.
+  let texto = linhas.join('\n');
 
   const metricas = criarMetricas();
 
@@ -247,7 +250,26 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
     destino?.classList.remove('area-digitacao');
   }
 
-  return { montar, focar, destruir, estado, processar, resumo };
+  /**
+   * Acrescenta linhas ao fim do texto, sem mexer em nada do que já foi
+   * digitado.
+   *
+   * Existe para o Treino livre, onde o texto não acaba: quando o cursor
+   * chega perto do fim, entra mais. A lição não usa isto — lá o texto é
+   * fechado, e chegar ao fim dele é justamente o que conclui a lição.
+   *
+   * Quem chama precisa acrescentar ANTES de o cursor alcançar o fim: depois
+   * de concluído, o motor já parou.
+   *
+   * @param {string[]} linhas
+   */
+  function acrescentar(linhas) {
+    if (!linhas?.length) return;
+
+    texto += `\n${linhas.join('\n')}`;
+  }
+
+  return { montar, focar, destruir, estado, processar, resumo, acrescentar };
 }
 
 /** Conta só o que a pessoa realmente digita (quebras de linha não contam). */

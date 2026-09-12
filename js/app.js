@@ -14,6 +14,11 @@ import { mostrarEntrada } from './telas/entrada.js';
 import { mostrarLicao, encerrarLicao, retraduzirLicao } from './telas/licao.js';
 import { mostrarResultado } from './telas/resultado.js';
 import { mostrarTrilha } from './telas/trilha.js';
+import {
+  mostrarTreinoLivre,
+  encerrarTreinoLivre,
+  retraduzirTreinoLivre,
+} from './telas/treino-livre.js';
 import { mostrarInicio } from './telas/inicio.js';
 import { mostrarNivelamento, encerrarNivelamento } from './telas/nivelamento.js';
 import { registrarResultado, licaoParaContinuar, nivelamento } from './progresso.js';
@@ -147,10 +152,11 @@ document.addEventListener('idioma-mudou', (evento) => {
 let telaAtual = telaDeEntrada;
 
 function irPara(desenhar) {
-  // Sair de uma lição ou de um teste precisa desligar os ouvintes e o
-  // relógio deles; as outras telas não deixam nada para trás.
+  // Sair de uma lição, de um teste ou de um treino precisa desligar os
+  // ouvintes e o relógio deles; as outras telas não deixam nada para trás.
   encerrarLicao();
   encerrarNivelamento();
+  encerrarTreinoLivre();
 
   telaAtual = desenhar;
   desenhar(tela);
@@ -160,7 +166,7 @@ function irPara(desenhar) {
  * As seções que já existem. As outras aparecem no menu marcadas como
  * "em breve"; esta lista cresce a cada passo do plano.
  */
-const SECOES_DISPONIVEIS = new Set(['inicio', 'trilha']);
+const SECOES_DISPONIVEIS = new Set(['inicio', 'trilha', 'treino']);
 
 /** A tela de entrada, com o botão que leva ao treino. */
 function telaDeEntrada(destino) {
@@ -208,10 +214,16 @@ function telaDeTrilha(destino) {
   mostrarTrilha(destino, { aoAbrirLicao: abrirLicao });
 }
 
+/** Treino sem nota: nada daqui entra no progresso. */
+function telaDeTreinoLivre(destino) {
+  mostrarTreinoLivre(destino, { aoSair: () => irPara(telaDeInicio) });
+}
+
 /** Os atalhos da tela inicial. */
 function navegar(secao) {
   if (secao === 'inicio') irPara(telaDeInicio);
   if (secao === 'trilha') irPara(telaDeTrilha);
+  if (secao === 'treino') irPara(telaDeTreinoLivre);
 }
 
 /** Abre uma lição e cuida do que acontece quando ela termina. */
@@ -284,10 +296,12 @@ document.querySelector('.marca').addEventListener('click', (evento) => {
 document.addEventListener('idioma-mudou', () => {
   aplicarSom();
 
-  // Menos a de lição: redesenhá-la recomeçaria a lição em andamento. Ela
-  // troca os próprios textos no lugar e devolve true para avisar que já se
-  // resolveu — posição no texto, erros, tempo e métricas continuam intactos.
+  // Menos as telas com relógio correndo: redesenhá-las recomeçaria o que
+  // está em andamento. Elas trocam os próprios textos no lugar e devolvem
+  // true para avisar que já se resolveram — posição no texto, erros, tempo e
+  // métricas continuam intactos.
   if (retraduzirLicao()) return;
+  if (retraduzirTreinoLivre()) return;
 
   telaAtual(tela);
 });

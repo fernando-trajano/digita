@@ -981,6 +981,337 @@
 }
 
 /* ==========================================================================
+   Tela de Treino livre
+   ========================================================================== */
+
+/* Conteúdo centralizado, com as laterais vazias: esta tela não tem painel de
+   progresso, que é das telas de início e trilha. */
+.livre {
+  max-width: var(--largura-max);
+  margin-inline: auto;
+  padding-block: var(--esp-6);
+}
+
+/* --- A escolha: duas colunas, como a tela de entrada -------------------- */
+
+.livre-escolha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--esp-8);
+  align-items: start;
+  padding-block: var(--esp-5) var(--esp-6);
+}
+
+.livre-grupo {
+  margin-bottom: var(--esp-6);
+}
+
+.livre-rotulo {
+  margin-bottom: var(--esp-3);
+  color: var(--cor-texto-discreto);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* --- Os modos: linhas finas, sem caixa ---------------------------------- */
+
+.livre-modos {
+  border-top: var(--borda);
+}
+
+.livre-modo {
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  align-items: start;
+  gap: var(--esp-4);
+
+  width: 100%;
+  padding: var(--esp-4) 0;
+
+  border: 0;
+  border-bottom: var(--borda);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* A marca do modo escolhido: um ponto, do mesmo tamanho do que marca a lição
+   de agora na trilha. Sem caixa, sem fundo, sem borda colorida. */
+.livre-modo-marca {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.45rem;
+}
+
+.livre-modo-ponto {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--cor-texto-discreto);
+  border-radius: 50%;
+  transition: border-color var(--transicao), background-color var(--transicao);
+}
+
+.livre-modo[aria-pressed='true'] .livre-modo-ponto {
+  border-color: var(--cor-texto);
+  background-color: var(--cor-texto);
+}
+
+.livre-modo-nome {
+  display: block;
+  font-weight: 600;
+  transition: color var(--transicao);
+}
+
+.livre-modo-descricao {
+  display: block;
+  margin-top: 2px;
+  color: var(--cor-texto-discreto);
+  font-size: 0.85rem;
+}
+
+.livre-modo[aria-pressed='true'] .livre-modo-nome {
+  color: var(--cor-texto);
+}
+
+.livre-modo:not([aria-pressed='true']) .livre-modo-nome {
+  color: var(--cor-texto-secundario);
+}
+
+/* O gesto ao passar o mouse é o mesmo das lições na tela de trilha: o texto
+   escurece e desliza 4px. Nome e descrição deslizam JUNTOS — mover só o nome
+   deixaria a descrição para trás.
+
+   Este bloco precisa vir DEPOIS das duas regras acima: elas têm a mesma
+   especificidade que o :hover, e nesse empate quem vence é a última. */
+.livre-modo-texto {
+  /* A transição fica aqui, e não no :hover, para o texto voltar deslizando
+     quando o mouse sai — em vez de dar um pulo. */
+  transition: transform var(--transicao);
+}
+
+.livre-modo:hover .livre-modo-texto {
+  transform: translateX(4px);
+}
+
+.livre-modo:hover .livre-modo-nome {
+  color: var(--cor-texto);
+}
+
+.livre-modo:hover .livre-modo-ponto {
+  border-color: var(--cor-texto);
+}
+
+/* --- Duração: opções em texto, na mesma linha --------------------------- */
+
+.livre-duracoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-5);
+}
+
+.livre-duracao {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto-secundario);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.livre-duracao[aria-pressed='true'] {
+  color: var(--cor-texto);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--cor-texto);
+}
+
+/* --- Texto próprio e avisos --------------------------------------------- */
+
+.livre-texto-proprio {
+  width: 100%;
+  min-height: 8rem;
+  margin-top: var(--esp-3);
+  padding: var(--esp-3);
+
+  border: var(--borda);
+  border-radius: var(--raio-p);
+  background-color: transparent;
+  color: var(--cor-texto);
+
+  font-family: var(--fonte-mono);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+/* Aviso em linha, sem caixa: ele orienta, não interrompe. */
+.livre-recado {
+  margin-top: var(--esp-3);
+  color: var(--cor-texto-discreto);
+  font-size: 0.85rem;
+}
+
+/* --- As teclas que mais escapam ----------------------------------------- */
+
+/* Quatro por linha, no máximo. Em flex elas se enfileiravam até caber, e
+   davam uma linha e meia quebrada; a grade fecha a conta e alinha as
+   colunas entre si. */
+.teclas-fracas {
+  display: grid;
+  grid-template-columns: repeat(4, max-content);
+  gap: var(--esp-2);
+  justify-content: start;
+}
+
+/* Cada tecla na cor do dedo que a aperta — o mesmo código de cores do
+   teclado e das mãos. */
+.tecla-fraca {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--esp-2);
+  padding: var(--esp-1) var(--esp-3);
+  border-radius: var(--raio-p);
+
+  background-color: var(--dedo-neutro-fundo);
+  color: var(--dedo-neutro-texto);
+
+  font-family: var(--fonte-mono);
+  font-size: 0.85rem;
+}
+
+.tecla-fraca--minimo    { background-color: var(--dedo-minimo-fundo);    color: var(--dedo-minimo-texto); }
+.tecla-fraca--anelar    { background-color: var(--dedo-anelar-fundo);    color: var(--dedo-anelar-texto); }
+.tecla-fraca--medio     { background-color: var(--dedo-medio-fundo);     color: var(--dedo-medio-texto); }
+.tecla-fraca--indicador { background-color: var(--dedo-indicador-fundo); color: var(--dedo-indicador-texto); }
+
+.tecla-fraca-conta {
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+
+/* --- As ilustrações dos modos -------------------------------------------
+
+   As quatro ficam EMPILHADAS no mesmo lugar, uma por cima da outra, e a
+   troca é só de opacidade. Por isso o contêiner tira a altura da proporção,
+   e não do conteúdo: com todas absolutas, ele não teria altura nenhuma — e
+   a coluna pularia de tamanho a cada troca.
+
+   A proporção 4/3 é a do viewBox que as quatro compartilham (320 × 240), o
+   que faz o desenho preencher a caixa sem esticar.
+   ------------------------------------------------------------------------ */
+
+.ilustracoes {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  max-width: 340px;
+  margin-top: var(--esp-6);
+
+  /* O desenho tem muito ar nas bordas do viewBox; alinhá-lo pela caixa o
+     deixava parecendo deslocado para a direita. */
+  margin-left: -28px;
+}
+
+.ilustracao {
+  position: absolute;
+  inset: 0;
+
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 340px;
+
+  /* currentColor: é isto que faz o desenho acompanhar o tema sozinho. */
+  color: var(--cor-texto-secundario);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transicao-lenta);
+}
+
+.ilustracao--ativa {
+  opacity: 1;
+}
+
+/* --- A sessão ------------------------------------------------------------ */
+
+/* A linha do topo: tempo, PPM e precisão. Só texto, sem caixa e sem barra —
+   o treino livre não tem progresso para preencher. */
+.livre-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-4);
+}
+
+/* "Encerrar" é um link discreto, e não um botão: sair no meio não é a ação
+   principal da tela. */
+.livre-encerrar {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto-discreto);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.livre-encerrar:hover {
+  color: var(--cor-texto);
+}
+
+/* --- O resumo ------------------------------------------------------------ */
+
+.livre-resumo {
+  max-width: 34rem;
+  padding-block: var(--esp-5);
+}
+
+.livre-numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-7);
+  margin: var(--esp-5) 0;
+  padding-block: var(--esp-5);
+  border-top: var(--borda);
+  border-bottom: var(--borda);
+}
+
+.livre-numero {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.livre-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-top: var(--esp-6);
+}
+
+/* Numa coluna só, a ilustração esticaria até a largura da tela, e o recuo de
+   28px a jogaria para fora da margem da página. */
+@media (max-width: 60rem) {
+  .livre-escolha {
+    grid-template-columns: 1fr;
+    gap: var(--esp-6);
+  }
+
+  .ilustracoes {
+    max-width: 340px;
+    margin-left: 0;
+  }
+}
+
+/* ==========================================================================
    Tela de nivelamento
    ========================================================================== */
 

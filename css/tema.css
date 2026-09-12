@@ -88,6 +88,10 @@
 
   /* --- Movimento ------------------------------------------------------- */
   --transicao: 150ms ease;
+
+  /* Só para a troca das ilustrações do treino livre: um fade de 150ms fica
+     nervoso quando o desenho inteiro troca. */
+  --transicao-lenta: 250ms ease;
 }
 
 /* ==========================================================================

@@ -450,3 +450,25 @@ Pedidas pelo Fernando em 11 de setembro de 2026, um commit por item.
 
 Ficaram **fora** deste lote, por decisão do Fernando: opção de "reduzir movimento" e
 controle de volume — os dois são assunto da futura aba de configurações.
+
+## Depois da versão 1 — Treino livre
+
+Primeira seção da lista "Fora da versão 1" a sair do papel. Desenhada num rascunho à
+parte (`rascunhos/treino-livre.html`, aprovado e depois apagado) e aplicada ao site.
+
+- [x] **Treino livre** — treino sem nota: sem estrelas, sem precisão mínima e sem
+      efeito na trilha. Quatro modos (adaptativo, acentos e Ç, teclado numérico, texto
+      próprio), duração de 1, 2 ou 5 minutos ou sem fim, e um resumo em texto ao final.
+      O texto é gerado continuamente: quem termina a sessão é o relógio, não o texto.
+
+O **modo adaptativo** sorteia as palavras com peso: cada tecla vale quantas vezes já foi
+errada em `digita:estatisticas`, e as palavras que a usam saem mais. Onde o português não
+forma palavra — W, K e Y — entram os vaivéns de sílaba (`sws`, `kjk`), a mesma saída das
+lições. O conteúdo fica em `dados/treino-livre.js`, separado da lógica como as lições.
+
+Ficou para depois: pesar também a **lentidão** por tecla. Hoje `digita:estatisticas` só
+guarda erros; medir o tempo de cada tecla é mudança no motor e nas métricas, e não neste
+lote.
+
+Ainda **fora**: estatísticas, jogos, conquistas, configurações e teclado numérico como
+trilha.

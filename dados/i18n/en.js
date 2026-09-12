@@ -149,6 +149,58 @@ export const en = {
     emBreve: 'coming soon',
   },
 
+  treinoLivre: {
+    titulo: 'Free practice',
+    subtitulo: 'Practice without a score: no stars, and no minimum accuracy.',
+
+    oQueTreinar: 'What to practise',
+    porQuantoTempo: 'For how long',
+    comecar: 'Start',
+    minutos: '{quantos} min',
+    semFim: 'Endless',
+
+    colar: 'Paste here the text you want to practise.',
+    textoProprio: 'Your own text',
+
+    avisoUsInternacional:
+      'On Windows, typing accents on a US keyboard needs the {layout} layout switched on in the language settings.',
+    usInternacional: 'US International',
+    avisoNumerico: 'MacBooks and compact keyboards have no number pad.',
+
+    restam: 'left',
+    decorrido: 'elapsed',
+    encerrar: 'Finish',
+    campo: 'Free practice typing area',
+
+    fim: 'Practice over.',
+    ppmLongo: 'words per minute',
+    precisaoLonga: 'accuracy',
+    deTreino: 'of practice',
+    teclasQueEscaparam: 'Keys that slipped most',
+    semErros: 'None: you did not miss a single key.',
+    deNovo: 'Practise again',
+    voltar: 'Back to free practice',
+
+    modos: {
+      adaptativo: {
+        nome: 'Adaptive',
+        descricao: 'Draws more of the keys you miss most, based on your statistics.',
+      },
+      acentos: {
+        nome: 'Accents and Ç',
+        descricao: 'Words with á, é, í, ó, ú, â, ê, ô, ã, õ, à and ç.',
+      },
+      numerico: {
+        nome: 'Number pad',
+        descricao: 'Numbers and operators from the number pad.',
+      },
+      proprio: {
+        nome: 'Your own text',
+        descricao: 'Paste any text and practise with it.',
+      },
+    },
+  },
+
   painel: {
     titulo: 'Your progress',
     dia: 'day in a row',

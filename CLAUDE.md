@@ -342,8 +342,8 @@ para texto pequeno. Regra:
 Não construir agora, mesmo que pareça fácil:
 
 - Estatísticas: evolução, mapa de calor do teclado, precisão por dedo.
-- Treino livre: modo adaptativo com foco nas teclas mais lentas, texto próprio, acentos,
-  teclado numérico.
+- ~~Treino livre~~ — **feito depois da v1** (ver PLANO.md). O que ficou de fora dele:
+  pesar a lentidão por tecla, e não só os erros.
 - Jogos: "palavras caindo" primeiro, cobrinha depois.
 - Conquistas e tela de configurações.
 - Meta diária de 15 minutos com sequência de dias, modo adaptativo e desafio do dia.

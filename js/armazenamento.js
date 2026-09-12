@@ -22,6 +22,7 @@ export const CHAVES = {
   sequencia: `${PREFIXO}sequencia`,
   estatisticas: `${PREFIXO}estatisticas`,
   nivelamento: `${PREFIXO}nivelamento`,
+  livre: `${PREFIXO}livre`,
 };
 
 /**
