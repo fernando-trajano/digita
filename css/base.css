@@ -124,6 +124,9 @@ a {
   align-items: center;
   gap: 0.6rem;
 
+  /* O ícone e o nome são uma coisa só: nunca se separam em duas linhas. */
+  white-space: nowrap;
+
   font-family: var(--fonte-titulo);
   font-size: 1.25rem;
   font-weight: var(--peso-titulo);
@@ -133,10 +136,21 @@ a {
 }
 
 /* A tecla com um ponto dentro — o mesmo desenho do favicon. Herda a cor do
-   texto, então acompanha o tema sem precisar de regra por modo. */
+   texto, então acompanha o tema sem precisar de regra por modo.
+
+   O TAMANHO ESTÁ EM DOIS LUGARES, e é de propósito: aqui e em atributos
+   width/height no próprio <svg>, lá no index.html.
+
+   O motivo é o reset lá de cima, que faz todo `svg` virar display:block. Um
+   SVG que só tem viewBox não tem medida própria — sem esta regra ele cai no
+   tamanho padrão de 300×150, vira um bloco enorme e empurra o nome para a
+   linha de baixo. Com a medida no atributo, isso não acontece nem que esta
+   folha de estilo chegue atrasada ou venha velha do cache. */
 .marca-icone {
   width: 22px;
   height: 22px;
+
+  /* 0 0 auto = não cresce, NÃO ENCOLHE, largura pela medida própria. */
   flex: 0 0 auto;
 }
 
