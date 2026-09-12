@@ -120,11 +120,24 @@ a {
 }
 
 .marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+
   font-family: var(--fonte-titulo);
   font-size: 1.25rem;
   font-weight: var(--peso-titulo);
   letter-spacing: var(--espacamento-titulo);
   text-decoration: none;
+  color: inherit;
+}
+
+/* A tecla com um ponto dentro — o mesmo desenho do favicon. Herda a cor do
+   texto, então acompanha o tema sem precisar de regra por modo. */
+.marca-icone {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
 }
 
 /* O ponto final do "digita." é a assinatura da marca. */

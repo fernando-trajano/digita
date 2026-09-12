@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>digita. — treino de digitação em português</title>
+  <title>digita. · solte os dedos</title>
   <meta name="description" content="Treino de digitação em português do Brasil, com foco em acentos, Ç e nas diferenças entre o teclado ABNT2 e o americano.">
 
   <!-- Escolhe o tema ANTES de a página aparecer, para não piscar branco em
@@ -185,7 +185,18 @@
   </svg>
 
   <header class="cabecalho">
-    <a class="marca" href="./">digita<span class="marca-ponto">.</span></a>
+    <!-- O ícone é o mesmo desenho do favicon, mas redesenhado aqui inline e
+         em currentColor: o arquivo tem cores fixas e uma media query de
+         prefers-color-scheme que só serve para a aba do navegador. Ele e o
+         nome vivem dentro do mesmo link, e o nome é que dá o texto dele. -->
+    <a class="marca" href="./">
+      <svg class="marca-icone" viewBox="0 0 100 100" aria-hidden="true">
+        <rect x="10" y="10" width="80" height="80" rx="18" fill="none"
+              stroke="currentColor" stroke-width="9"/>
+        <circle cx="50" cy="50" r="10" fill="currentColor"/>
+      </svg>
+      <span>digita<span class="marca-ponto">.</span></span>
+    </a>
 
     <nav class="cabecalho-acoes">
       <div class="seletor" role="group" data-i18n-aria="cabecalho.idioma" aria-label="Idioma da interface">

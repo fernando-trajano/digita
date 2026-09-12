@@ -39,12 +39,21 @@ import { criarMetricas } from './metricas.js';
  *        ganha ou perde o foco — a lição fica em espera enquanto não o tem
  */
 export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFoco }) {
-  // O texto vira uma string só, com quebras de linha. As quebras são
-  // puladas automaticamente: ninguém precisa apertar Enter no fim da linha.
-  //
-  // É `let` por causa do Treino livre, que acrescenta linhas ao fim enquanto
-  // a pessoa digita (ver `acrescentar`). Na lição, ele nunca muda.
-  let texto = linhas.join('\n');
+  /* O conteúdo vira UMA sequência contínua de palavras separadas por espaço.
+
+     As linhas do arquivo da lição são só um jeito cômodo de escrever o
+     conteúdo: aqui elas viram espaço, como qualquer outra separação entre
+     palavras. Quem decide onde a linha quebra na tela é a largura da caixa,
+     e mais nada — redimensionar a janela muda onde o texto dobra, nunca o
+     que é preciso digitar.
+
+     Antes as linhas eram guardadas com \n e o motor pulava a quebra
+     sozinho: ao chegar no fim da linha, o cursor descia sem ninguém digitar
+     nada. Era um separador invisível, que não existe em texto de verdade.
+
+     É `let` por causa do Treino livre, que acrescenta texto enquanto a
+     pessoa digita (ver `acrescentar`). Na lição, ele nunca muda. */
+  let texto = linhas.join(' ');
 
   const metricas = criarMetricas();
 
@@ -68,8 +77,8 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
       compondo,
       concluido,
       letraEsperada: texto[posicao] ?? null,
-      total: contarDigitaveis(texto),
-      feitos: contarDigitaveis(texto.slice(0, posicao)),
+      total: texto.length,
+      feitos: posicao,
       ...metricas.aoVivo(),
     };
   }
@@ -110,7 +119,6 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
 
       posicao += 1;
       errouAqui = false;
-      pularQuebrasDeLinha();
 
       if (posicao >= texto.length) concluido = true;
       return;
@@ -123,11 +131,6 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
     errouAqui = true;
 
     aoErrar?.({ esperada, digitada: letra, posicao });
-  }
-
-  /** Quebras de linha não se digitam: o motor passa por elas sozinho. */
-  function pularQuebrasDeLinha() {
-    while (texto[posicao] === '\n') posicao += 1;
   }
 
   /* ------------------------------------------------------------------------
@@ -218,6 +221,10 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
     // Não há o que apagar: como o cursor trava no erro, nunca existe letra
     // errada escrita para trás.
     if (evento.key === 'Backspace') evento.preventDefault();
+
+    // O separador entre palavras é sempre o espaço, mesmo na virada de
+    // linha: o Enter não tem função nenhuma aqui.
+    if (evento.key === 'Enter') evento.preventDefault();
   }
 
   /* Colar o texto da lição terminaria a lição sem ninguém ter digitado nada.
@@ -266,17 +273,10 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
   function acrescentar(linhas) {
     if (!linhas?.length) return;
 
-    texto += `\n${linhas.join('\n')}`;
+    texto += ` ${linhas.join(' ')}`;
   }
 
   return { montar, focar, destruir, estado, processar, resumo, acrescentar };
-}
-
-/** Conta só o que a pessoa realmente digita (quebras de linha não contam). */
-function contarDigitaveis(texto) {
-  let total = 0;
-  for (const letra of texto) if (letra !== '\n') total += 1;
-  return total;
 }
 
 /* ==========================================================================
@@ -287,12 +287,44 @@ function contarDigitaveis(texto) {
    ========================================================================== */
 
 /**
+ * Quantos caracteres desenhar à frente do cursor.
+ *
+ * O texto inteiro seria caro no Treino livre, onde ele cresce sem parar — e
+ * desnecessário na lição, já que só três linhas aparecem.
+ */
+const DEPOIS_DO_CURSOR = 400;
+
+/**
+ * Em que linha o corte do começo acontece.
+ *
+ * Quanto mais alto, menos vezes o texto é podado; quanto mais baixo, menos
+ * letras ficam desenhadas à toa. Doze linhas é folgado para a lição inteira
+ * caber sem poda nenhuma.
+ */
+const LINHAS_ANTES_DE_PODAR = 12;
+
+/**
+ * Onde o desenho de cada área começa, no texto.
+ *
+ * Precisa ser lembrado entre um desenho e outro: se o começo mudasse a cada
+ * letra, o texto acima do cursor quebraria num lugar diferente toda vez e
+ * dançaria na tela. Ele só anda quando há linha sobrando, e quando anda é
+ * para um COMEÇO DE LINHA VISUAL — aí o que fica quebra exatamente igual.
+ */
+const ancoras = new WeakMap();
+
+/**
  * Desenha o texto com as letras coloridas conforme o andamento.
  *
- * Mostra só uma JANELA de linhas em volta da linha atual, e não a lição
- * inteira. O motivo é prático: quem treina não pode rolar a página nem
- * desviar os olhos para longe: texto, mãos e teclado precisam caber juntos
- * na tela. A barra de progresso é que conta o resto.
+ * O texto é uma sequência contínua de palavras, e a quebra de linha é só
+ * VISUAL: quem decide onde ela cai é a largura da caixa. Por isso as letras
+ * entram todas num parágrafo só, que dobra sozinho — e não em linhas
+ * montadas à mão, como era antes.
+ *
+ * A janela de três linhas continua: a caixa tem altura de três linhas e
+ * esconde o resto, e o bloco é deslocado para cima até a linha do cursor
+ * ficar na segunda. Quem treina não pode rolar a página nem desviar os olhos
+ * para longe — texto, mãos e teclado precisam caber juntos na tela.
  *
  * @param {HTMLElement} destino
  * @param {object} estado  o que o motor devolve em estado()
@@ -301,49 +333,85 @@ function contarDigitaveis(texto) {
 export function desenharTexto(destino, estado, linhasVisiveis = 3) {
   const { texto, posicao, errouAqui } = estado;
 
-  // Apaga só as linhas de texto, e não tudo o que houver dentro: o campo
-  // invisível costuma morar no mesmo elemento, e apagá-lo aqui deixaria a
-  // lição sem quem escute a digitação.
-  destino.querySelectorAll('.linha-digitacao').forEach((linha) => linha.remove());
+  // O bloco é reaproveitado, e não recriado: o campo invisível mora no mesmo
+  // elemento, e apagar tudo aqui deixaria a lição sem quem escute a
+  // digitação.
+  let bloco = destino.querySelector('.bloco-digitacao');
 
-  // Onde cada linha começa dentro do texto — é o que permite achar em qual
-  // delas o cursor está.
-  const linhas = [];
-  let inicio = 0;
-
-  for (const conteudo of texto.split('\n')) {
-    linhas.push({ conteudo, inicio });
-    inicio += conteudo.length + 1; // +1 pela quebra de linha
+  if (!bloco) {
+    bloco = document.createElement('p');
+    bloco.className = 'bloco-digitacao';
+    destino.prepend(bloco);
   }
 
-  const atual = Math.max(
-    0,
-    linhas.findLastIndex((linha) => linha.inicio <= posicao)
-  );
+  // Cursor atrás da âncora quer dizer texto novo no mesmo lugar: recomeça.
+  let ancora = ancoras.get(destino) ?? 0;
+  if (posicao < ancora) ancora = 0;
 
-  // A janela acompanha o cursor, mas nunca passa do fim do texto.
-  const primeira = Math.min(
-    Math.max(0, atual - 1),
-    Math.max(0, linhas.length - linhasVisiveis)
-  );
+  desenharDe(bloco, texto, ancora, posicao, errouAqui);
 
-  const linhasNovas = document.createDocumentFragment();
+  let linha = linhaDoCursor(bloco);
 
-  for (const linha of linhas.slice(primeira, primeira + linhasVisiveis)) {
-    const elementoLinha = document.createElement('p');
-    elementoLinha.className = 'linha-digitacao';
+  // Passou do limite: poda o que já saiu de vista, cortando no começo de uma
+  // linha para o resto quebrar exatamente como estava.
+  if (linha >= LINHAS_ANTES_DE_PODAR) {
+    const corte = comecoDaLinha(bloco, ancora, linha - 1);
 
-    let indice = linha.inicio;
-    for (const letra of linha.conteudo) {
-      elementoLinha.append(criarLetra(letra, indice, posicao, errouAqui));
-      indice += 1;
+    if (corte !== null) {
+      ancora = corte;
+      desenharDe(bloco, texto, ancora, posicao, errouAqui);
+      linha = linhaDoCursor(bloco);
     }
-
-    linhasNovas.append(elementoLinha);
   }
 
-  // As linhas entram antes do campo invisível, que fica sempre por último.
-  destino.prepend(linhasNovas);
+  ancoras.set(destino, ancora);
+
+  destino.style.setProperty('--linhas-visiveis', linhasVisiveis);
+  bloco.style.transform = `translateY(${-Math.max(0, linha - 1) * alturaDaLinha(bloco)}px)`;
+}
+
+function desenharDe(bloco, texto, inicio, posicao, errouAqui) {
+  const fim = Math.min(texto.length, posicao + DEPOIS_DO_CURSOR);
+  const letras = document.createDocumentFragment();
+
+  for (let i = inicio; i < fim; i += 1) {
+    letras.append(criarLetra(texto[i], i, posicao, errouAqui));
+  }
+
+  bloco.replaceChildren(letras);
+}
+
+function alturaDaLinha(bloco) {
+  return parseFloat(getComputedStyle(bloco).lineHeight) || 1;
+}
+
+/**
+ * Em que linha VISUAL o cursor foi parar.
+ *
+ * A conta sai do próprio desenho, e não de quantos caracteres cabem:
+ * offsetTop diz onde a letra da vez caiu depois de o navegador quebrar o
+ * texto. É isso que faz redimensionar a janela mudar só onde a linha dobra,
+ * e nunca o que é preciso digitar.
+ */
+function linhaDoCursor(bloco) {
+  const atual = bloco.querySelector('.letra--atual, .letra--errada');
+  if (!atual) return 0;
+
+  return Math.round((atual.offsetTop - bloco.offsetTop) / alturaDaLinha(bloco));
+}
+
+/** O índice, no texto, da primeira letra de uma linha visual. */
+function comecoDaLinha(bloco, inicio, linha) {
+  const altura = alturaDaLinha(bloco);
+  const letras = bloco.children;
+
+  for (let i = 0; i < letras.length; i += 1) {
+    if (Math.round((letras[i].offsetTop - bloco.offsetTop) / altura) === linha) {
+      return inicio + i;
+    }
+  }
+
+  return null;
 }
 
 function criarLetra(letra, indice, posicao, errouAqui) {

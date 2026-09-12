@@ -157,9 +157,13 @@
   resize: none;
 }
 
-.linha-digitacao {
-  max-width: none;
+/* O texto inteiro num parágrafo só, que dobra sozinho na largura da caixa.
+   O deslocamento vertical é escrito pelo motor, para a linha do cursor ficar
+   na segunda das três visíveis. */
+.bloco-digitacao {
   margin: 0;
+  transition: transform var(--transicao);
+
   font-family: var(--fonte-mono);
   /* ~32px. A cor das letras que faltam só tem contraste suficiente em texto
      grande — por isso o tamanho mínimo é regra, não enfeite (ver CLAUDE.md,
@@ -172,7 +176,11 @@
   /* Alinhadas à esquerda ENTRE SI: o bloco todo é que fica centralizado.
      Centralizar linha a linha faria o começo de cada uma dançar. */
   text-align: left;
-  white-space: pre-wrap;
+
+  /* normal, e não pre-wrap: o texto é contínuo e precisa dobrar entre as
+     palavras, como qualquer parágrafo. */
+  white-space: normal;
+  overflow-wrap: normal;
 }
 
 /* Letra já digitada corretamente. */
@@ -327,14 +335,53 @@
   min-width: 0;
 }
 
-/* O bloco de texto tem a largura do próprio texto e fica centralizado; as
-   linhas, dentro dele, continuam alinhadas à esquerda. */
+/* A CAIXA DO TEXTO — a largura é de cada TELA, e nunca a do teclado.
+
+   Antes esta caixa era `width: fit-content`: ela nascia com a largura da
+   linha mais longa do conteúdo. Como cada tela tem conteúdo de comprimento
+   diferente, as três nunca tiveram a mesma largura — e amarrar todas ao
+   teclado, como cheguei a fazer, errava todas.
+
+   Com o texto contínuo, `fit-content` deixou de servir: uma string sem
+   quebras se estica até o limite que encontrar. Então a medida virou
+   explícita, em caracteres, reproduzindo o que cada tela já tinha.
+
+   O padrão aqui é o do teste de nivelamento, cujas linhas têm 43 a 52
+   caracteres: elas já passavam da coluna e já quebravam por largura. Ele
+   continua ocupando a coluna inteira, como sempre ocupou.
+
+   A fonte é declarada aqui só para o `ch` medir o caractere monoespaçado
+   certo — quem desenha o texto é o .bloco-digitacao lá dentro. */
 .licao-texto > [data-papel='texto'] {
-  width: fit-content;
+  font-family: var(--fonte-mono);
+  font-size: var(--tamanho-texto-licao);
+
+  width: 100%;
   max-width: 100%;
-  /* Três linhas de altura fixa: a caixa não muda de tamanho quando a janela
-     do texto anda, e nada abaixo dela dança na tela. */
-  min-height: calc(3 * 1.7 * var(--tamanho-texto-licao));
+
+  /* Três linhas de altura fixa, e o resto escondido: é a janela que
+     acompanha o cursor. A caixa não muda de tamanho quando o texto anda, e
+     nada abaixo dela dança na tela. */
+  height: calc(var(--linhas-visiveis, 3) * 1.7 * var(--tamanho-texto-licao));
+  overflow: hidden;
+}
+
+/* Lição: 24 caracteres. É a mediana E a média da linha mais longa das 90
+   lições escritas — ou seja, a largura que a caixa tinha na lição típica
+   quando ela vinha do `fit-content`. Bem mais estreita que o teclado, e
+   centralizada sobre ele pelo .licao-texto. */
+.licao .licao-texto > [data-papel='texto'] {
+  max-width: calc(24 * (1ch + 0.02em));
+}
+
+/* Treino livre: 28. O gerador corta as linhas em 30 caracteres, mas para na
+   palavra que não cabe — então a mais longa dava 28 na prática, que foi o
+   que medi na caixa antiga. Larga, mas nunca encostando no teclado.
+
+   Depois da regra da lição, e não antes: a sessão do treino livre tem as
+   duas classes, e as duas regras têm a mesma especificidade. */
+.livre-sessao .licao-texto > [data-papel='texto'] {
+  max-width: calc(28 * (1ch + 0.02em));
 }
 
 .licao-espera {
@@ -992,7 +1039,29 @@
   padding-block: var(--esp-6);
 }
 
+/* Só a tela de ESCOLHA sobe: o respiro que ela ganhou entre a descrição e o
+   "O QUE TREINAR" é devolvido aqui em cima, e o que está abaixo fica parado.
+
+   Pelo :has, e não numa classe nova no HTML, porque o .livre é o mesmo
+   contêiner do resumo da sessão — e lá o espaçamento já está certo. */
+.livre:has(.livre-escolha) {
+  padding-top: calc(var(--esp-6) - var(--esp-5));
+}
+
 /* --- A escolha: duas colunas, como a tela de entrada -------------------- */
+
+/* Respiro entre o subtítulo e o "O QUE TREINAR".
+
+   Num seletor de par, e não na classe .subtitulo: ela também é usada no
+   resumo da sessão, onde o espaçamento já está certo.
+
+   Este --esp-5 e o que o .livre desconta acima do título são o MESMO valor,
+   de propósito: o bloco do título sobe exatamente o que o vão cresce, e
+   nada daqui para baixo se mexe. Mudar um sem mudar o outro desloca a tela
+   inteira. */
+.subtitulo + .livre-escolha {
+  margin-top: var(--esp-5);
+}
 
 .livre-escolha {
   display: grid;
