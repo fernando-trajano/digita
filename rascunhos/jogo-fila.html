@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rascunho — Fila</title>
+
+<script>
+  document.documentElement.dataset.tema =
+    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+</script>
+
+<style>
+/* ==========================================================================
+   RASCUNHO — o jogo Fila.
+
+   Arquivo único e autocontido. Nada daqui está ligado ao digita. de verdade.
+
+   Copiados do site, sem alterar nada: as variáveis do tema.css, a
+   tipografia, o desenho das teclas (css/teclado.css) e o das mãos
+   (js/maos.js). Do reset do base.css ficou de fora, de propósito, a media
+   query de prefers-reduced-motion — é regra desta tarefa.
+   ========================================================================== */
+
+/* ==========================================================================
+   tema.css — copiado do site, byte por byte.
+   ========================================================================== */
+
+/* ==========================================================================
+   tema.css — o único arquivo que conhece cores.
+
+   REGRA DO PROJETO: nenhum outro CSS pode escrever uma cor literal (#FFFFFF).
+   Todo o resto do site usa var(--nome-da-variavel). Assim, para mudar a
+   aparência inteira do digita., basta mexer aqui.
+
+   Como funciona o modo claro/escuro:
+   - :root guarda a paleta CLARA (o padrão).
+   - :root[data-tema="escuro"] regrava só as cores que mudam.
+   - Um script pequeno no <head> do index.html escolhe o tema antes da página
+     aparecer, para não piscar branco em quem usa o modo escuro.
+   ========================================================================== */
+
+:root {
+  /* Avisa ao navegador qual é o tema, para barras de rolagem e campos de
+     formulário combinarem com a página. */
+  color-scheme: light;
+
+  /* --- Superfícies e texto (modo claro) ------------------------------- */
+  --cor-fundo: #FFFFFF;             /* fundo da página */
+  --cor-superficie: #F4F4F5;        /* áreas destacadas e teclas neutras */
+  --cor-borda: #E4E4E7;             /* bordas e linhas finas */
+  --cor-texto: #18181B;             /* texto principal */
+  --cor-texto-secundario: #52525B;  /* texto secundário */
+  --cor-texto-discreto: #71717A;    /* legendas e textos discretos */
+  --cor-letra-pendente: #8E8E96;    /* letras ainda não digitadas (fonte grande) */
+  --cor-licao-feita: #444444;       /* nome de uma lição já feita, na trilha */
+
+  --cor-botao-fundo: #18181B;
+  --cor-botao-texto: #FFFFFF;
+  --cor-botao-secundario-borda: #D4D4D8;
+
+  /* --- Cores dos dedos (fundo da tecla / texto da tecla) --------------- */
+  --dedo-minimo-fundo: #EDE9FE;     /* mínimo — violeta */
+  --dedo-minimo-texto: #5B21B6;
+
+  --dedo-anelar-fundo: #DBEAFE;     /* anelar — azul */
+  --dedo-anelar-texto: #1E40AF;
+
+  --dedo-medio-fundo: #CCFBF1;      /* médio — verde-água */
+  --dedo-medio-texto: #115E59;
+
+  --dedo-indicador-fundo: #DCFCE7;  /* indicador — verde */
+  --dedo-indicador-texto: #166534;
+
+  --dedo-neutro-fundo: #F4F4F5;     /* polegar e teclas neutras — cinza */
+  --dedo-neutro-texto: #52525B;
+
+  /* --- Erro ------------------------------------------------------------ */
+  --cor-erro-fundo: #FEE2E2;
+  --cor-erro-texto: #B91C1C;
+
+  /* --- Fontes do sistema (nada é baixado) ------------------------------ */
+  /* Títulos e texto usam a mesma família: a diferença vem do peso e do
+     tamanho, não de uma fonte decorativa. */
+  --fonte-titulo: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-texto: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --peso-titulo: 600;
+  --espacamento-titulo: -0.02em;
+
+  /* --- Espaçamentos ---------------------------------------------------- */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+  --esp-8: 4rem;
+
+  /* --- Formas e medidas ------------------------------------------------ */
+  --raio-p: 6px;
+  --raio-m: 10px;
+  --raio-g: 16px;
+  --borda: 1px solid var(--cor-borda);
+  --largura-max: 1100px;        /* largura máxima do conteúdo */
+  --largura-teclado-max: 960px; /* largura máxima do teclado na lição */
+
+  /* O texto da lição: grande o bastante para as letras que faltam terem
+     contraste, e para se enxergar sem baixar os olhos do teclado. */
+  --tamanho-texto-licao: clamp(1.6rem, 4cqw, 2.4rem);
+
+  /* As duas mãos juntas, ao lado do texto da lição. */
+  --largura-maos: 107px;
+
+  /* --- Movimento ------------------------------------------------------- */
+  --transicao: 150ms ease;
+
+  /* Só para a troca das ilustrações do treino livre: um fade de 150ms fica
+     nervoso quando o desenho inteiro troca. */
+  --transicao-lenta: 250ms ease;
+}
+
+/* ==========================================================================
+   Modo escuro — só o que muda em relação ao claro.
+   ========================================================================== */
+
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+
+  --cor-fundo: #1F1F1D;
+  --cor-superficie: #2C2C2A;
+  --cor-borda: #444441;
+  --cor-texto: #F1EFE8;
+  --cor-texto-secundario: #B4B2A9;
+  --cor-texto-discreto: #888780;
+  --cor-letra-pendente: #888780;
+  /* No escuro o tom da lição feita precisa CLAREAR, e não escurecer: um
+     cinza-escuro sobre fundo escuro sumiria. */
+  --cor-licao-feita: #B4B2A9;
+
+  --cor-botao-fundo: #F1EFE8;
+  --cor-botao-texto: #2C2C2A;
+  --cor-botao-secundario-borda: #444441;
+
+  --dedo-minimo-fundo: #3C3489;
+  --dedo-minimo-texto: #CECBF6;
+
+  --dedo-anelar-fundo: #0C447C;
+  --dedo-anelar-texto: #B5D4F4;
+
+  --dedo-medio-fundo: #085041;
+  --dedo-medio-texto: #9FE1CB;
+
+  --dedo-indicador-fundo: #27500A;
+  --dedo-indicador-texto: #C0DD97;
+
+  --dedo-neutro-fundo: #444441;
+  --dedo-neutro-texto: #D3D1C7;
+
+  --cor-erro-fundo: #791F1F;
+  --cor-erro-texto: #F7C1C1;
+}
+
+/* Rede de segurança: se o JavaScript não rodar, quem usa o sistema no escuro
+   ainda recebe o tema escuro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema]) {
+    color-scheme: dark;
+
+    --cor-fundo: #1F1F1D;
+    --cor-superficie: #2C2C2A;
+    --cor-borda: #444441;
+    --cor-texto: #F1EFE8;
+    --cor-texto-secundario: #B4B2A9;
+    --cor-texto-discreto: #888780;
+    --cor-letra-pendente: #888780;
+    --cor-licao-feita: #B4B2A9;
+
+    --cor-botao-fundo: #F1EFE8;
+    --cor-botao-texto: #2C2C2A;
+    --cor-botao-secundario-borda: #444441;
+
+    --dedo-minimo-fundo: #3C3489;
+    --dedo-minimo-texto: #CECBF6;
+
+    --dedo-anelar-fundo: #0C447C;
+    --dedo-anelar-texto: #B5D4F4;
+
+    --dedo-medio-fundo: #085041;
+    --dedo-medio-texto: #9FE1CB;
+
+    --dedo-indicador-fundo: #27500A;
+    --dedo-indicador-texto: #C0DD97;
+
+    --dedo-neutro-fundo: #444441;
+    --dedo-neutro-texto: #D3D1C7;
+
+    --cor-erro-fundo: #791F1F;
+    --cor-erro-texto: #F7C1C1;
+  }
+}
+
+/* ==========================================================================
+   base.css e componentes.css — o que esta tela usa, copiado do site.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-texto);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; }
+
+h1, h2 {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  line-height: 1.2;
+  letter-spacing: var(--espacamento-titulo);
+}
+
+h1 { font-size: clamp(1.9rem, 1.4rem + 2vw, 2.6rem); }
+p { max-width: 62ch; }
+a { color: inherit; text-underline-offset: 0.2em; }
+
+:focus-visible {
+  outline: 2px solid var(--cor-texto);
+  outline-offset: 2px;
+  border-radius: var(--raio-p);
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  padding: var(--esp-4) var(--esp-5);
+  border-bottom: var(--borda);
+  background-color: var(--cor-fundo);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+  font-family: var(--fonte-titulo);
+  font-size: 1.25rem;
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--espacamento-titulo);
+  text-decoration: none;
+  color: inherit;
+}
+
+.marca-icone { width: 22px; height: 22px; flex: 0 0 auto; }
+.marca-ponto { color: var(--cor-texto-discreto); }
+.cabecalho-acoes { display: flex; align-items: center; gap: var(--esp-3); }
+
+.botao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: var(--borda);
+  border-radius: var(--raio-p);
+  background-color: transparent;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.botao-icone svg { width: 1.125rem; height: 1.125rem; }
+.botao-icone:hover { color: var(--cor-texto); border-color: var(--cor-texto-secundario); }
+
+.rascunho-aviso {
+  max-width: none;
+  padding: var(--esp-2) var(--esp-5);
+  border-bottom: var(--borda);
+  color: var(--cor-texto-discreto);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.conteudo {
+  flex: 1;
+  width: 100%;
+  max-width: var(--largura-max);
+  margin-inline: auto;
+  padding: var(--esp-6) var(--esp-5) var(--esp-7);
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  padding: var(--esp-3) var(--esp-5);
+  border: 1px solid var(--cor-botao-secundario-borda);
+  border-radius: var(--raio-p);
+  background-color: transparent;
+  color: var(--cor-texto);
+  font-size: 0.95rem;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--transicao), border-color var(--transicao);
+}
+
+.botao:hover { border-color: var(--cor-texto-secundario); }
+
+.botao--principal {
+  border-color: var(--cor-botao-fundo);
+  background-color: var(--cor-botao-fundo);
+  color: var(--cor-botao-texto);
+}
+
+.botao--principal:hover { opacity: 0.88; }
+.ajuda { color: var(--cor-texto-discreto); font-size: 0.9rem; }
+
+.sem-teclado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-4);
+  max-width: 40rem;
+  padding-block: var(--esp-6);
+}
+
+/* ==========================================================================
+   A tela de início do jogo — o mesmo vocabulário da escolha do treino livre:
+   rótulo em versalete, opções em texto na mesma linha, um botão principal.
+   ========================================================================== */
+
+.fila-inicio { max-width: 40rem; }
+
+.fila-inicio .subtitulo {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-secundario);
+}
+
+.fila-grupo { margin-top: var(--esp-6); }
+
+.fila-rotulo {
+  margin-bottom: var(--esp-3);
+  color: var(--cor-texto-discreto);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Os níveis: as mesmas opções em texto das durações do treino livre. Cada
+   um já é a entrada da partida — por isso nenhum fica marcado como
+   "escolhido": o sublinhado aparece só sob o mouse ou o foco, e diz "é
+   aqui que se clica". */
+.fila-niveis { display: flex; flex-wrap: wrap; gap: var(--esp-5); }
+
+.fila-nivel {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto-secundario);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color var(--transicao);
+}
+
+.fila-nivel:hover,
+.fila-nivel:focus-visible {
+  color: var(--cor-texto);
+  box-shadow: inset 0 -2px 0 var(--cor-texto);
+}
+
+.fila-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-5);
+  margin-top: var(--esp-6);
+}
+
+.fila-voltar {
+  color: var(--cor-texto-discreto);
+  font-size: 0.85rem;
+}
+
+.fila-voltar:hover { color: var(--cor-texto); }
+
+/* ==========================================================================
+   A PARTIDA
+
+   Tudo — a pilha, as teclas que caem e o teclado — é medido na mesma
+   unidade, --u, o lado de uma tecla. É isso que faz a tecla que cai
+   encaixar exatamente na tecla do teclado: as duas têm o mesmo tamanho e
+   as posições saem da mesma conta.
+
+   A unidade sai da ALTURA da tela: a partida inteira precisa caber sem
+   rolar numa tela de notebook (~800px). A conta do divisor:
+
+     a pilha        8 posições × 1,15u (o degrau)          =  9,2u
+     a folga        entre a linha de acerto e o teclado    =  0,6u
+     o teclado      3 fileiras × 1,12u (o passo) − 0,12u   =  3,24u
+     a sobra        embaixo do teclado                     =  0,16u
+                                                   total   = 13,2u
+
+   Os 16rem descontados da altura são o resto da página: o cabeçalho, a
+   linha do topo da partida e as margens.
+
+   O teto de 3,2rem é o mesmo da tecla da lição (--tecla-da-licao, no
+   telas.css do site): em tela grande, a tecla do jogo chega ao tamanho da
+   tecla da lição, e não passa dele.
+   ========================================================================== */
+
+.fila-jogo {
+  --u: clamp(1.6rem, calc((100vh - 16rem) / 13.2), 3.2rem);
+  --vao: calc(var(--u) * 0.12);          /* entre teclas do teclado */
+  --passo: calc(var(--u) + var(--vao));   /* de uma tecla à seguinte */
+  --degrau: calc(var(--u) * 1.15);        /* de uma posição da pilha à outra */
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-4);
+}
+
+/* A linha do topo: tempo, acertos e combo, e o "Encerrar". Só texto. */
+.fila-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  width: 100%;
+  max-width: 42rem;
+}
+
+.medidas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-5);
+  color: var(--cor-texto-discreto);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.medida strong {
+  margin-right: var(--esp-1);
+  color: var(--cor-texto);
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.fila-encerrar {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto-discreto);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.fila-encerrar:hover { color: var(--cor-texto); }
+
+/* O palco: a pilha em cima, o teclado embaixo, as mãos dos lados. Ele é o
+   referencial de todas as posições absolutas — teclas que caem, teclas do
+   teclado e a tecla que voa até o teclado no acerto. */
+.fila-palco {
+  position: relative;
+  width: calc(10.25 * var(--passo));
+  height: calc(8 * var(--degrau) + var(--u) * 4);
+}
+
+/* --- A pilha: 8 posições (CAPACIDADE, no JS) ---------------------------- */
+
+/* Sem caixa em volta: o campo é definido só pela linha de acerto embaixo e
+   pelas duas posições de cima, marcadas de leve. */
+.fila-campo {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(8 * var(--degrau));
+}
+
+/* A linha de acerto: onde a fila apoia, e de onde a tecla sai no acerto. */
+.fila-linha-acerto {
+  position: absolute;
+  inset: auto 0 calc(var(--u) * 0.06) 0;
+  border-top: 2px solid var(--cor-texto-secundario);
+  opacity: 0.55;
+}
+
+/* As duas posições de cima: o limite. Um traço fino embaixo delas e outro
+   no topo, e nada de barra de vida — a própria pilha é o medidor. */
+.fila-limite {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(2 * var(--degrau));
+  border-top: 1px solid var(--cor-texto-discreto);
+  border-bottom: 1px dashed var(--cor-borda);
+  opacity: 0.6;
+}
+
+/* --- O teclado: só as três fileiras de letras --------------------------- */
+
+.fila-teclado {
+  position: absolute;
+  left: 0;
+  top: calc(8 * var(--degrau) + var(--u) * 0.6);
+  width: calc(10 * var(--passo) - var(--vao));
+  height: calc(3 * var(--passo) - var(--vao));
+}
+
+/* O mesmo desenho de tecla do teclado das lições (css/teclado.css). */
+.tecla {
+  position: absolute;
+  width: var(--u);
+  height: var(--u);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: var(--borda);
+  border-radius: var(--raio-p);
+  background-color: var(--dedo-neutro-fundo);
+  color: var(--dedo-neutro-texto);
+
+  font-family: var(--fonte-mono);
+  font-size: calc(var(--u) * 0.4);
+  line-height: 1;
+  user-select: none;
+
+  transition: background-color var(--transicao), color var(--transicao);
+}
+
+/* O risquinho do F e do J. */
+.tecla--referencia::after {
+  content: '';
+  position: absolute;
+  bottom: calc(var(--u) * 0.12);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(var(--u) * 0.3);
+  height: 2px;
+  border-radius: 2px;
+  background-color: currentColor;
+  opacity: 0.7;
+}
+
+/* A tecla da vez: a de baixo da pilha, na cor do dedo — igual à lição. */
+.tecla--ativa {
+  border-color: var(--cor-texto);
+  border-width: 2px;
+  font-weight: 600;
+}
+
+.tecla--minimo    { background-color: var(--dedo-minimo-fundo);    color: var(--dedo-minimo-texto); }
+.tecla--anelar    { background-color: var(--dedo-anelar-fundo);    color: var(--dedo-anelar-texto); }
+.tecla--medio     { background-color: var(--dedo-medio-fundo);     color: var(--dedo-medio-texto); }
+.tecla--indicador { background-color: var(--dedo-indicador-fundo); color: var(--dedo-indicador-texto); }
+
+.tecla--erro { animation: piscar-erro 400ms ease; }
+
+@keyframes piscar-erro {
+  0%, 100% { background-color: var(--dedo-neutro-fundo); color: var(--dedo-neutro-texto); }
+  20%, 70% { background-color: var(--cor-erro-fundo); color: var(--cor-erro-texto); }
+}
+
+/* --- A tecla que cai ----------------------------------------------------
+
+   É uma TECLA, não uma caixa nova: o mesmo desenho do teclado, com o
+   contorno na cor do dedo. Sem preenchimento colorido — o contorno e a
+   letra carregam a cor, como nas ilustrações.
+   ------------------------------------------------------------------------ */
+
+.fila-peca {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--u);
+  height: var(--u);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1.5px solid currentColor;
+  border-radius: var(--raio-p);
+  background-color: var(--cor-fundo);
+
+  font-family: var(--fonte-mono);
+  font-size: calc(var(--u) * 0.45);
+  line-height: 1;
+  user-select: none;
+  will-change: transform, opacity;
+}
+
+.fila-peca--minimo    { color: var(--dedo-minimo-texto); }
+.fila-peca--anelar    { color: var(--dedo-anelar-texto); }
+.fila-peca--medio     { color: var(--dedo-medio-texto); }
+.fila-peca--indicador { color: var(--dedo-indicador-texto); }
+
+/* A de baixo — a da vez — ganha o traço mais grosso. */
+.fila-peca--vez { border-width: 2.5px; font-weight: 600; }
+
+.fila-peca--erro { animation: peca-erro 400ms ease; }
+
+@keyframes peca-erro {
+  20%, 70% { background-color: var(--cor-erro-fundo); }
+}
+
+/* O aviso de pausa, no meio da pilha. Só texto. */
+.fila-pausa {
+  position: absolute;
+  inset: 40% 0 auto 0;
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: none;
+}
+
+/* Antes do primeiro toque: uma linha discreta no mesmo lugar, que some
+   quando a partida começa. */
+.fila-espera {
+  position: absolute;
+  inset: 40% 0 auto 0;
+  color: var(--cor-texto-discreto);
+  font-size: 0.85rem;
+  text-align: center;
+  max-width: none;
+}
+
+/* --- As mãos, dos lados do teclado, como nas lições -------------------- */
+
+.maos { display: contents; }
+
+.mao {
+  position: absolute;
+  top: calc(8 * var(--degrau) + var(--u) * 0.6);
+  height: calc(1.6 * var(--u));
+  width: auto;
+  overflow: visible;
+}
+
+.mao--esquerda { right: calc(100% + var(--u) * 0.5); }
+.mao--direita  { left: calc(10 * var(--passo) - var(--vao) + var(--u) * 0.5); }
+
+.mao-contorno { fill: none; stroke: var(--cor-texto-secundario); }
+.mao-bolinha { fill: none; transition: fill var(--transicao); }
+.mao-bolinha--minimo    { fill: var(--dedo-minimo-texto); }
+.mao-bolinha--anelar    { fill: var(--dedo-anelar-texto); }
+.mao-bolinha--medio     { fill: var(--dedo-medio-texto); }
+.mao-bolinha--indicador { fill: var(--dedo-indicador-texto); }
+
+/* ==========================================================================
+   O fim da partida — texto, e nada mais.
+   ========================================================================== */
+
+.fila-fim { max-width: 34rem; }
+
+.fila-fim .subtitulo {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-secundario);
+}
+
+.fila-numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-6) var(--esp-7);
+  margin: var(--esp-5) 0;
+  padding-block: var(--esp-5);
+  border-top: var(--borda);
+  border-bottom: var(--borda);
+}
+
+.fila-numero {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.fila-numero small {
+  color: var(--cor-texto-discreto);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="icone-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+  </symbol>
+  <symbol id="icone-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
+  </symbol>
+  <symbol id="icone-som" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"></path>
+    <path d="M16 9.2a4 4 0 0 1 0 5.6"></path>
+    <path d="M18.6 6.6a7.5 7.5 0 0 1 0 10.8"></path>
+  </symbol>
+  <symbol id="icone-mudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"></path>
+    <path d="M16.5 9.5l5 5M21.5 9.5l-5 5"></path>
+  </symbol>
+</svg>
+
+<header class="cabecalho">
+  <a class="marca" href="jogos.html">
+    <svg class="marca-icone" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true">
+      <rect x="10" y="10" width="80" height="80" rx="18" fill="none" stroke="currentColor" stroke-width="9"/>
+      <circle cx="50" cy="50" r="10" fill="currentColor"/>
+    </svg>
+    <span>digita<span class="marca-ponto">.</span></span>
+  </a>
+
+  <nav class="cabecalho-acoes">
+    <button type="button" class="botao-icone" id="botao-som" aria-pressed="false" aria-label="Silenciar os sons">
+      <svg aria-hidden="true"><use href="#icone-som"></use></svg>
+    </button>
+    <button type="button" class="botao-icone" id="botao-tema" aria-label="Alternar entre modo claro e escuro">
+      <svg aria-hidden="true"><use href="#icone-lua"></use></svg>
+    </button>
+  </nav>
+</header>
+
+<p class="rascunho-aviso">Rascunho — não faz parte do site. Cores, fontes, teclas e mãos copiadas do digita. de verdade.</p>
+
+<main class="conteudo" id="tela"></main>
+
+<script>
+/* ==========================================================================
+   RASCUNHO — Fila.
+
+   As letras nascem no topo numa taxa que acelera com o tempo, e descem até
+   encostar na pilha. Você digita sempre a de BAIXO: é uma fila única, nunca
+   há dúvida sobre qual é a próxima. A pilha encostar no topo acaba a
+   partida. Não existe ganhar — existe sobreviver.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   AS REGRAS, em números. Tudo o que muda o equilíbrio do jogo está aqui.
+   -------------------------------------------------------------------------- */
+
+/**
+ * Posições da pilha. As duas de cima são o limite, marcadas de leve.
+ * O CSS usa o mesmo número (procure "8 *" em .fila-palco, .fila-campo,
+ * .fila-teclado e .mao): mudando aqui, mude lá também.
+ */
+const CAPACIDADE = 8;
+
+/** Nunca menos que isto na tela: quem joga nunca fica sem o que digitar. */
+const MINIMO_VISIVEL = 3;
+
+/** Velocidade da queda e do degrau, em posições por segundo. */
+const VELOCIDADE_DE_QUEDA = 16;
+
+/** Quanto dura o voo da tecla até o teclado, no acerto, em segundos. */
+const DURACAO_DO_VOO = 0.16;
+
+/** O intervalo entre nascimentos nunca desce abaixo disto, em segundos. */
+const INTERVALO_MINIMO = 0.28;
+
+/**
+ * Os níveis mudam DUAS coisas, e só elas:
+ *
+ *   inicial    o intervalo entre uma letra e a próxima no começo, em s
+ *   meiaVida   em quantos segundos esse intervalo cai pela metade — é a
+ *              rapidez da aceleração
+ *
+ * A conta é intervalo(t) = inicial × 0,5^(t / meiaVida), com o piso acima.
+ * No médio, por exemplo: 1,0s no começo, 0,5s com um minuto, 0,25s... até o
+ * piso de 0,28s, perto dos dois minutos.
+ */
+const NIVEIS = {
+  facil:   { nome: 'Fácil',   inicial: 1.4,  meiaVida: 90 },
+  medio:   { nome: 'Médio',   inicial: 1.0,  meiaVida: 60 },
+  dificil: { nome: 'Difícil', inicial: 0.75, meiaVida: 40 },
+};
+
+/** Só letras minúsculas: sem maiúscula, sem acento, sem pontuação, sem número. */
+const LETRAS = 'abcdefghijklmnopqrstuvwxyz';
+
+/* --------------------------------------------------------------------------
+   Dedos — copiado de dados/layouts/dedos.js (só as letras).
+   -------------------------------------------------------------------------- */
+
+const DEDO_DA_LETRA = {
+  q: ['esquerda', 'minimo'], a: ['esquerda', 'minimo'], z: ['esquerda', 'minimo'],
+  w: ['esquerda', 'anelar'], s: ['esquerda', 'anelar'], x: ['esquerda', 'anelar'],
+  e: ['esquerda', 'medio'],  d: ['esquerda', 'medio'],  c: ['esquerda', 'medio'],
+  r: ['esquerda', 'indicador'], t: ['esquerda', 'indicador'], f: ['esquerda', 'indicador'],
+  g: ['esquerda', 'indicador'], v: ['esquerda', 'indicador'], b: ['esquerda', 'indicador'],
+  y: ['direita', 'indicador'], u: ['direita', 'indicador'], h: ['direita', 'indicador'],
+  j: ['direita', 'indicador'], n: ['direita', 'indicador'], m: ['direita', 'indicador'],
+  i: ['direita', 'medio'],   k: ['direita', 'medio'],
+  o: ['direita', 'anelar'],  l: ['direita', 'anelar'],
+  p: ['direita', 'minimo'],
+};
+
+/* --------------------------------------------------------------------------
+   O TECLADO ILUSTRADO — só as três fileiras de letras. Sem a barra de
+   espaço: nesta versão o espaço não cai como letra, e apertá-lo não faz
+   nada.
+
+   As posições estão em PASSOS (lado de uma tecla mais o vão). O
+   deslocamento de cada fileira é o de um teclado de verdade: a fileira do
+   A começa um quarto de tecla à direita da do Q, e a do Z, três quartos.
+   -------------------------------------------------------------------------- */
+
+const FILEIRAS = [
+  { deslocamento: 0,    teclas: 'qwertyuiop' },
+  { deslocamento: 0.25, teclas: 'asdfghjkl' },
+  { deslocamento: 0.75, teclas: 'zxcvbnm' },
+];
+
+/* --------------------------------------------------------------------------
+   AS PISTAS
+
+   Cada dedo tem uma pista horizontal, e a letra cai na pista do dedo que a
+   digita: a posição lateral dela já diz qual dedo usar. As pistas ficam em
+   cima da tecla de descanso de cada dedo, na fileira do meio.
+
+   O indicador cuida de DUAS colunas (F e G; H e J), então a pista dele fica
+   no meio das duas. Isso o afasta um passo e meio da pista do médio, e três
+   e meio da do mínimo — não há como confundir as três.
+
+   O mínimo direito não tem tecla de descanso desenhada (o Ç e o ; ficam de
+   fora, porque só caem letras). A pista dele fica onde ela estaria, um
+   passo depois do L: a mesma distância que separa as outras pistas vizinhas.
+   -------------------------------------------------------------------------- */
+
+const PISTAS = {
+  'esquerda-minimo':    0.25 + 0,
+  'esquerda-anelar':    0.25 + 1,
+  'esquerda-medio':     0.25 + 2,
+  'esquerda-indicador': 0.25 + 3.5,
+  'direita-indicador':  0.25 + 5.5,
+  'direita-medio':      0.25 + 7,
+  'direita-anelar':     0.25 + 8,
+  'direita-minimo':     0.25 + 9,
+};
+
+/* --------------------------------------------------------------------------
+   As mãos — o caminho e as bolinhas são os de js/maos.js, sem alterar.
+   -------------------------------------------------------------------------- */
+
+const CONTORNO =
+  'M22 150 L22 138 C14 128 10 116 10 100 L10 56 A8 8 0 0 1 26 56 L26 76 ' +
+  'A1.5 1.5 0 0 0 29 76 L29 34 A8 8 0 0 1 45 34 L45 70 A1.5 1.5 0 0 0 48 70 ' +
+  'L48 26 A8 8 0 0 1 64 26 L64 70 A1.5 1.5 0 0 0 67 70 L67 34 A8 8 0 0 1 83 34 ' +
+  'L83 90 Q83.5 95.5 86 92.6 L100.3 78.3 A8 8 0 0 1 111.7 89.7 L91.7 109.7 ' +
+  'C86 116 78 126 76 138 L76 150';
+
+const BOLINHAS = [
+  { dedo: 'minimo', cx: 18, cy: 40 },
+  { dedo: 'anelar', cx: 37, cy: 18 },
+  { dedo: 'medio', cx: 56, cy: 10 },
+  { dedo: 'indicador', cx: 75, cy: 18 },
+  { dedo: 'polegar', cx: 117.4, cy: 72.6 },
+];
+
+/* ==========================================================================
+   SOM — Web Audio. O contexto só nasce no primeiro som, e o primeiro som só
+   acontece depois de uma tecla: nada toca antes da primeira interação.
+   ========================================================================== */
+
+let audio = null;
+
+function tocar({ onda = 'sine', frequencia, duracao, ganho }) {
+  if (estadoSalvo.mudo) return;
+
+  const Contexto = window.AudioContext || window.webkitAudioContext;
+  if (!Contexto) return;
+
+  audio = audio ?? new Contexto();
+  if (audio.state === 'suspended') audio.resume();
+
+  const agora = audio.currentTime;
+  const oscilador = audio.createOscillator();
+  const envelope = audio.createGain();
+
+  oscilador.type = onda;
+  oscilador.frequency.value = frequencia;
+
+  envelope.gain.setValueAtTime(0.0001, agora);
+  envelope.gain.exponentialRampToValueAtTime(ganho, agora + 0.006);
+  envelope.gain.exponentialRampToValueAtTime(0.0001, agora + duracao);
+
+  oscilador.connect(envelope).connect(audio.destination);
+  oscilador.start(agora);
+  oscilador.stop(agora + duracao + 0.02);
+}
+
+/**
+ * O clique do acerto: o "seco" do site (seno, 1050 Hz, 35 ms). A altura
+ * SOBE com o combo — um semitom a cada dois acertos seguidos, até uma
+ * quinta acima. É o clique e o tom que sobe numa coisa só: dois sons por
+ * acerto, no ritmo de quem digita rápido, virariam barulho.
+ */
+function tocarAcerto(combo) {
+  const semitons = Math.min(7, Math.floor(combo / 2));
+  tocar({ frequencia: 1050 * 2 ** (semitons / 12), duracao: 0.035, ganho: 0.1 });
+}
+
+/** O erro do site: grave, curto e baixo. */
+function tocarErro() {
+  tocar({ frequencia: 180, duracao: 0.12, ganho: 0.09 });
+}
+
+/* ==========================================================================
+   O QUE FICA SALVO — simulado em digita:jogos, e só lá.
+   ========================================================================== */
+
+const CHAVE = 'digita:jogos';
+
+function lerSalvo() {
+  try {
+    return JSON.parse(localStorage.getItem(CHAVE) || '{}');
+  } catch (erro) {
+    return {};
+  }
+}
+
+let estadoSalvo = lerSalvo();
+if (!NIVEIS[estadoSalvo.nivelFila]) estadoSalvo.nivelFila = 'medio';
+
+function guardar(mudancas) {
+  estadoSalvo = { ...lerSalvo(), ...estadoSalvo, ...mudancas };
+  try {
+    localStorage.setItem(CHAVE, JSON.stringify(estadoSalvo));
+  } catch (erro) {
+    /* sem localStorage: vale só nesta visita */
+  }
+}
+
+const tela = document.querySelector('#tela');
+
+/* ==========================================================================
+   TELA 1 — o começo: o nível
+   ========================================================================== */
+
+function mostrarInicio() {
+  encerrarPartida();
+
+  tela.replaceChildren();
+  tela.insertAdjacentHTML('beforeend', `
+    <div class="fila-inicio">
+      <h1>Fila</h1>
+      <p class="subtitulo">As letras não param de chegar. Digite rápido para não deixar a pilha encostar no topo.</p>
+      <p class="ajuda" style="margin-top: var(--esp-3)">
+        Digite sempre a letra de baixo. A posição dela na tela é a do dedo que a digita.
+      </p>
+
+      <div class="fila-grupo">
+        <p class="fila-rotulo">Nível</p>
+        <div class="fila-niveis">
+          ${Object.entries(NIVEIS).map(([id, nivel]) => `
+            <button type="button" class="fila-nivel" data-nivel="${id}">${nivel.nome}</button>`).join('')}
+        </div>
+      </div>
+
+      <div class="fila-acoes">
+        <a class="fila-voltar" href="jogos.html">Voltar aos jogos</a>
+      </div>
+    </div>
+  `);
+
+  // Clicar no nível já entra na partida — não há um segundo clique.
+  for (const botao of tela.querySelectorAll('[data-nivel]')) {
+    botao.addEventListener('click', () => {
+      guardar({ nivelFila: botao.dataset.nivel });
+      mostrarPartida();
+    });
+  }
+}
+
+/* ==========================================================================
+   TELA 2 — a partida
+   ========================================================================== */
+
+let partida = null;
+
+function encerrarPartida() {
+  if (!partida) return;
+
+  cancelAnimationFrame(partida.quadro);
+  window.removeEventListener('keydown', partida.aoTeclar);
+  window.removeEventListener('blur', partida.aoSair);
+  document.removeEventListener('visibilitychange', partida.aoSair);
+  window.removeEventListener('resize', partida.aoRedimensionar);
+  partida = null;
+}
+
+function mostrarPartida() {
+  encerrarPartida();
+
+  const nivel = NIVEIS[estadoSalvo.nivelFila];
+
+  tela.replaceChildren();
+  tela.insertAdjacentHTML('beforeend', `
+    <div class="fila-jogo">
+      <div class="fila-topo">
+        <div class="medidas">
+          <span class="medida"><strong data-papel="tempo">0:00</strong> tempo</span>
+          <span class="medida"><strong data-papel="acertos">0</strong> acertos</span>
+          <span class="medida"><strong data-papel="combo">0</strong> combo</span>
+        </div>
+        <button type="button" class="fila-encerrar" data-acao="encerrar">Encerrar</button>
+      </div>
+
+      <div class="fila-palco" data-papel="palco">
+        <div class="fila-campo">
+          <div class="fila-limite" aria-hidden="true"></div>
+          <div class="fila-linha-acerto" aria-hidden="true"></div>
+          <p class="fila-espera" data-papel="espera">A fila começa quando você digitar a primeira letra.</p>
+          <p class="fila-pausa" data-papel="pausa" hidden>Pausado. Aperte qualquer tecla para continuar.</p>
+        </div>
+        <div class="fila-teclado" data-papel="teclado" aria-hidden="true"></div>
+        <div class="maos" data-papel="maos" aria-hidden="true"></div>
+      </div>
+
+      <p class="apenas-leitor-de-tela" data-papel="legenda" role="status"
+         style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)"></p>
+    </div>
+  `);
+
+  const partes = {
+    palco: tela.querySelector('[data-papel="palco"]'),
+    teclado: tela.querySelector('[data-papel="teclado"]'),
+    maos: tela.querySelector('[data-papel="maos"]'),
+    pausa: tela.querySelector('[data-papel="pausa"]'),
+    espera: tela.querySelector('[data-papel="espera"]'),
+    tempo: tela.querySelector('[data-papel="tempo"]'),
+    acertos: tela.querySelector('[data-papel="acertos"]'),
+    combo: tela.querySelector('[data-papel="combo"]'),
+    legenda: tela.querySelector('[data-papel="legenda"]'),
+  };
+
+  desenharTeclado(partes.teclado);
+  desenharMaos(partes.maos);
+
+  /* ------------------------------------------------------------------------
+     A MEDIDA — em pixels, lida do próprio desenho.
+
+     Tudo no CSS está em --u, uma unidade que acompanha a altura da tela.
+     Aqui ela é convertida em pixels uma vez, e de novo quando a janela muda
+     de tamanho, para as teclas que caem usarem exatamente a mesma conta.
+     ------------------------------------------------------------------------ */
+
+  let m = medir();
+
+  function medir() {
+    const u = partes.teclado.querySelector('.tecla').getBoundingClientRect().width;
+    const vao = u * 0.12;
+
+    return {
+      u,
+      passo: u + vao,
+      degrau: u * 1.15,
+      alturaDoCampo: CAPACIDADE * u * 1.15,
+      topoDoTeclado: CAPACIDADE * u * 1.15 + u * 0.6,
+    };
+  }
+
+  /** O x (canto esquerdo, em px) da pista de um dedo. */
+  const xDaPista = (pista) => PISTAS[pista] * m.passo;
+
+  /** O y (topo, em px) de uma posição da pilha; 0 é a de baixo. */
+  const yDaPosicao = (posicao) => m.alturaDoCampo - (posicao + 1) * m.degrau;
+
+  /** Onde fica a tecla de uma letra no teclado desenhado. */
+  function lugarNoTeclado(letra) {
+    const fileira = FILEIRAS.findIndex((f) => f.teclas.includes(letra));
+    const coluna = FILEIRAS[fileira].teclas.indexOf(letra);
+
+    return {
+      x: (FILEIRAS[fileira].deslocamento + coluna) * m.passo,
+      y: m.topoDoTeclado + fileira * m.passo,
+    };
+  }
+
+  /* ------------------------------------------------------------------------
+     O ESTADO DA PARTIDA
+     ------------------------------------------------------------------------ */
+
+  const fila = [];      // da de baixo para a de cima; a [0] é a da vez
+  const voando = [];    // as que acabaram de ser acertadas, a caminho do teclado
+
+  let relogio = 0;      // o tempo de JOGO, em segundos, desde o primeiro toque
+  let proximoNascimento = nivel.inicial;
+  let ultimoQuadro = null;
+  let comecou = false;  // a partida espera parada até a primeira letra
+  let pausado = false;
+  let terminou = false;
+  let fimEm = null;          // quando a pilha encostou, em performance.now()
+  let esperaDoFim = 0;       // quanto mostrar a pilha cheia antes do resumo, em ms
+  let resultado = null;
+
+  let acertos = 0;
+  let erros = 0;
+  let nascidas = 0;
+  let combo = 0;
+  let comboMaximo = 0;
+
+  let ultimaLetra = '';
+  let vezAnterior = null;
+
+  function intervalo() {
+    return Math.max(INTERVALO_MINIMO, nivel.inicial * 0.5 ** (relogio / nivel.meiaVida));
+  }
+
+  /** Uma letra nova, no topo — nunca a mesma duas vezes seguidas. */
+  function nascer() {
+    let letra;
+    do {
+      letra = LETRAS[Math.floor(Math.random() * LETRAS.length)];
+    } while (letra === ultimaLetra);
+    ultimaLetra = letra;
+
+    const [mao, dedo] = DEDO_DA_LETRA[letra];
+
+    const elemento = document.createElement('div');
+    elemento.className = `fila-peca fila-peca--${dedo}`;
+    elemento.textContent = letra;
+    partes.palco.append(elemento);
+
+    // Nasce acima do topo, e acima da anterior se ela ainda estiver lá em
+    // cima: as que nascem juntas não caem uma por cima da outra.
+    const acimaDaAnterior = fila.length ? fila.at(-1).y + 1 : -Infinity;
+
+    fila.push({
+      letra,
+      pista: `${mao}-${dedo}`,
+      mao,
+      dedo,
+      y: Math.max(CAPACIDADE + 0.3, acimaDaAnterior),
+      elemento,
+    });
+
+    nascidas += 1;
+  }
+
+  // As primeiras letras já nascem apoiadas na pilha, cada uma no seu lugar:
+  // quem vai jogar vê o que vem antes de começar, e nada cai enquanto a
+  // partida espera o primeiro toque.
+  while (fila.length < MINIMO_VISIVEL) nascer();
+  fila.forEach((peca, posicao) => { peca.y = posicao; });
+
+  /* ------------------------------------------------------------------------
+     O QUADRO — o relógio do jogo.
+
+     O tempo sai de performance.now(), e nunca da contagem de quadros: numa
+     tela de 120 Hz e numa de 60 Hz o jogo anda igual. O passo de cada
+     quadro tem teto de 0,1s — sem isso, voltar para a aba depois de um
+     minuto faria nascer um minuto de letras de uma vez.
+     ------------------------------------------------------------------------ */
+
+  function quadro(agora) {
+    const passo = ultimoQuadro === null ? 0 : Math.min(0.1, (agora - ultimoQuadro) / 1000);
+    ultimoQuadro = agora;
+
+    // Antes do primeiro toque, nada anda: nem o relógio, nem as letras, e
+    // nenhuma nasce.
+    if (comecou && !pausado && !terminou) {
+      relogio += passo;
+      alimentar();
+      mover(passo);
+      conferirFim();
+    }
+
+    avancarVoos(passo);
+    desenhar();
+
+    // Terminada a partida, a pilha cheia fica um instante na tela antes do
+    // resumo. A espera é medida pelo mesmo relógio, e não por um timer.
+    if (terminou) {
+      fimEm = fimEm ?? agora;
+      if (agora - fimEm >= esperaDoFim) {
+        encerrarPartida();
+        mostrarFim(resultado);
+        return;
+      }
+    }
+
+    partida.quadro = requestAnimationFrame(quadro);
+  }
+
+  function alimentar() {
+    // Quem joga nunca fica sem o que digitar.
+    while (fila.length < MINIMO_VISIVEL) nascer();
+
+    if (relogio >= proximoNascimento) {
+      if (fila.length < CAPACIDADE) nascer();
+      proximoNascimento = relogio + intervalo();
+    }
+  }
+
+  /** Cada letra desce até a posição que é dela na fila. */
+  function mover(passo) {
+    fila.forEach((peca, posicao) => {
+      peca.y = Math.max(posicao, peca.y - VELOCIDADE_DE_QUEDA * passo);
+    });
+  }
+
+  /** A pilha encostou no topo: a última posição está ocupada e parada. */
+  function conferirFim() {
+    const topo = fila[CAPACIDADE - 1];
+    if (topo && topo.y <= CAPACIDADE - 1 + 0.001) terminar();
+  }
+
+  function avancarVoos(passo) {
+    for (const voo of [...voando]) {
+      voo.t += passo / DURACAO_DO_VOO;
+
+      if (voo.t >= 1) {
+        voo.elemento.remove();
+        voando.splice(voando.indexOf(voo), 1);
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     O DESENHO
+     ------------------------------------------------------------------------ */
+
+  function desenhar() {
+    fila.forEach((peca, posicao) => {
+      const x = xDaPista(peca.pista);
+      const y = yDaPosicao(peca.y);
+
+      peca.elemento.style.transform = `translate(${x}px, ${y}px)`;
+      // Acima do topo ela ainda não apareceu.
+      peca.elemento.style.opacity = peca.y > CAPACIDADE - 0.1 ? '0' : '1';
+      peca.elemento.classList.toggle('fila-peca--vez', posicao === 0);
+    });
+
+    // O voo até o teclado: sai da linha de acerto e encaixa na tecla,
+    // apagando no último terço.
+    for (const voo of voando) {
+      const t = 1 - (1 - voo.t) ** 3; // desacelera ao chegar
+      const x = voo.de.x + (voo.para.x - voo.de.x) * t;
+      const y = voo.de.y + (voo.para.y - voo.de.y) * t;
+
+      voo.elemento.style.transform = `translate(${x}px, ${y}px)`;
+      voo.elemento.style.opacity = String(Math.min(1, (1 - voo.t) * 3));
+    }
+
+    partes.tempo.textContent = formatarTempo(relogio);
+    partes.acertos.textContent = acertos;
+    partes.combo.textContent = combo;
+
+    apontarVez();
+  }
+
+  /** A tecla da vez acesa no teclado, e a bolinha no dedo — como na lição. */
+  function apontarVez() {
+    const vez = fila[0] ?? null;
+    if (vez === vezAnterior) return;
+    vezAnterior = vez;
+
+    limparDestaque(partes.teclado);
+    limparDedos(partes.maos);
+
+    if (!vez) {
+      partes.legenda.textContent = '';
+      return;
+    }
+
+    const tecla = partes.teclado.querySelector(`[data-letra="${vez.letra}"]`);
+    tecla.classList.add('tecla--ativa', `tecla--${vez.dedo}`);
+    destacarDedo(partes.maos, vez.mao, vez.dedo);
+
+    partes.legenda.textContent = `Próxima: ${vez.letra.toUpperCase()} · ${NOMES_DE_DEDO[vez.dedo]} ${vez.mao === 'esquerda' ? 'esquerdo' : 'direito'}`;
+  }
+
+  /* ------------------------------------------------------------------------
+     O TECLADO DE QUEM JOGA
+     ------------------------------------------------------------------------ */
+
+  function aoTeclar(evento) {
+    if (evento.ctrlKey || evento.metaKey || evento.altKey) return;
+
+    // O espaço rolaria a página no meio da partida — e, fora isso, não faz
+    // nada: não há espaço nesta versão.
+    if (evento.key === ' ') evento.preventDefault();
+
+    if (terminou) return;
+
+    if (pausado) {
+      continuar();
+      return;
+    }
+
+    if (evento.repeat) return;
+
+    const letra = evento.key.length === 1 ? evento.key.toLowerCase() : '';
+    if (!LETRAS.includes(letra) || !letra) return;
+
+    const vez = fila[0];
+    if (!vez) return;
+
+    // O primeiro toque de letra dá a largada — e já conta, certo ou errado.
+    // O relógio começa daqui, e não da abertura da tela.
+    if (!comecou) {
+      comecou = true;
+      ultimoQuadro = null;
+      partes.espera.hidden = true;
+    }
+
+    if (letra === vez.letra) acertar();
+    else errar(letra);
+  }
+
+  function acertar() {
+    const peca = fila.shift();
+
+    acertos += 1;
+    combo += 1;
+    comboMaximo = Math.max(comboMaximo, combo);
+
+    // A tecla sai da linha de acerto e encaixa na tecla do teclado. As de
+    // cima descem um degrau sozinhas, porque a posição de cada uma é o
+    // lugar dela na fila.
+    voando.push({
+      elemento: peca.elemento,
+      de: { x: xDaPista(peca.pista), y: yDaPosicao(peca.y) },
+      para: lugarNoTeclado(peca.letra),
+      t: 0,
+    });
+
+    peca.elemento.classList.remove('fila-peca--vez');
+
+    tocarAcerto(combo);
+  }
+
+  /** O erro custa só o tempo perdido: a letra fica, e nada é tirado. */
+  function errar(letraApertada) {
+    erros += 1;
+    combo = 0;
+
+    const vez = fila[0];
+    vez.elemento.classList.remove('fila-peca--erro');
+    void vez.elemento.offsetWidth;
+    vez.elemento.classList.add('fila-peca--erro');
+
+    const apertada = partes.teclado.querySelector(`[data-letra="${letraApertada}"]`);
+    if (apertada) {
+      apertada.classList.remove('tecla--erro');
+      void apertada.offsetWidth;
+      apertada.classList.add('tecla--erro');
+    }
+
+    tocarErro();
+  }
+
+  /* ------------------------------------------------------------------------
+     PAUSA — sair da janela no meio da partida não pode custar a partida.
+     ------------------------------------------------------------------------ */
+
+  function aoSair() {
+    // Antes da largada não há o que pausar: nada está andando.
+    if (!comecou || terminou || document.visibilityState === 'visible' && document.hasFocus()) return;
+    pausado = true;
+    partes.pausa.hidden = false;
+  }
+
+  function continuar() {
+    pausado = false;
+    partes.pausa.hidden = true;
+    ultimoQuadro = null;
+  }
+
+  function aoRedimensionar() {
+    m = medir();
+  }
+
+  /* ------------------------------------------------------------------------
+     O FIM
+     ------------------------------------------------------------------------ */
+
+  function terminar({ imediato = false } = {}) {
+    if (terminou) return;
+    terminou = true;
+    esperaDoFim = imediato ? 0 : 700;
+
+    resultado = {
+      acertos,
+      total: nascidas,
+      precisao: acertos + erros ? Math.round((acertos / (acertos + erros)) * 100) : 100,
+      comboMaximo,
+      tempo: relogio,
+    };
+
+    partes.pausa.hidden = true;
+  }
+
+  tela.querySelector('[data-acao="encerrar"]')
+    .addEventListener('click', () => terminar({ imediato: true }));
+
+  window.addEventListener('keydown', aoTeclar);
+  window.addEventListener('blur', aoSair);
+  document.addEventListener('visibilitychange', aoSair);
+  window.addEventListener('resize', aoRedimensionar);
+
+  partida = {
+    quadro: requestAnimationFrame(quadro),
+    aoTeclar,
+    aoSair,
+    aoRedimensionar,
+    // Só para inspecionar o rascunho pelo console; o jogo não usa.
+    espiar: () => ({
+      comecou, relogio, intervalo: intervalo(), fila: fila.map((p) => p.letra).join(''),
+      alturas: fila.map((p) => +p.y.toFixed(2)), acertos, erros, nascidas,
+    }),
+  };
+}
+
+/* --------------------------------------------------------------------------
+   O teclado e as mãos
+   -------------------------------------------------------------------------- */
+
+function desenharTeclado(destino) {
+  destino.replaceChildren();
+
+  FILEIRAS.forEach((fileira, f) => {
+    [...fileira.teclas].forEach((letra, c) => {
+      const tecla = document.createElement('div');
+      tecla.className = 'tecla';
+      tecla.dataset.letra = letra;
+      tecla.textContent = letra.toUpperCase();
+      tecla.style.left = `calc(${fileira.deslocamento + c} * var(--passo))`;
+      tecla.style.top = `calc(${f} * var(--passo))`;
+      if (letra === 'f' || letra === 'j') tecla.classList.add('tecla--referencia');
+      destino.append(tecla);
+    });
+  });
+}
+
+function limparDestaque(teclado) {
+  teclado.querySelectorAll('.tecla--ativa').forEach((tecla) => {
+    tecla.classList.remove('tecla--ativa', 'tecla--minimo', 'tecla--anelar', 'tecla--medio', 'tecla--indicador');
+  });
+}
+
+function svg(tipo, atributos) {
+  const elemento = document.createElementNS('http://www.w3.org/2000/svg', tipo);
+  for (const [nome, valor] of Object.entries(atributos)) {
+    if (valor !== null && valor !== undefined) elemento.setAttribute(nome, valor);
+  }
+  return elemento;
+}
+
+function desenharMaos(destino) {
+  destino.replaceChildren();
+
+  for (const mao of ['esquerda', 'direita']) {
+    const desenho = svg('svg', {
+      viewBox: '-5 0 130 150', class: `mao mao--${mao}`, fill: 'none', 'aria-hidden': 'true',
+    });
+    const grupo = svg('g', { transform: mao === 'direita' ? 'translate(120, 0) scale(-1, 1)' : null });
+
+    grupo.append(svg('path', {
+      class: 'mao-contorno', d: CONTORNO, fill: 'none', 'stroke-width': '1.5',
+      'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'vector-effect': 'non-scaling-stroke',
+    }));
+
+    for (const { dedo, cx, cy } of BOLINHAS) {
+      grupo.append(svg('circle', { class: 'mao-bolinha', 'data-mao': mao, 'data-dedo': dedo, cx, cy, r: 7 }));
+    }
+
+    desenho.append(grupo);
+    destino.append(desenho);
+  }
+}
+
+function limparDedos(maos) {
+  maos.querySelectorAll('.mao-bolinha').forEach((b) => {
+    b.classList.remove('mao-bolinha--minimo', 'mao-bolinha--anelar', 'mao-bolinha--medio', 'mao-bolinha--indicador');
+  });
+}
+
+function destacarDedo(maos, mao, dedo) {
+  maos.querySelector(`[data-mao="${mao}"][data-dedo="${dedo}"]`)?.classList.add(`mao-bolinha--${dedo}`);
+}
+
+const NOMES_DE_DEDO = { minimo: 'mínimo', anelar: 'anelar', medio: 'médio', indicador: 'indicador' };
+
+function formatarTempo(segundos) {
+  const s = Math.floor(segundos);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+}
+
+/* ==========================================================================
+   TELA 3 — o fim. Sem PPM: o ritmo de chegada é do jogo, não de quem joga.
+   ========================================================================== */
+
+function mostrarFim(r) {
+  tela.replaceChildren();
+  tela.insertAdjacentHTML('beforeend', `
+    <div class="fila-fim">
+      <h1>A pilha encostou no topo.</h1>
+      <p class="subtitulo">Fila · ${NIVEIS[estadoSalvo.nivelFila].nome}</p>
+
+      <div class="fila-numeros">
+        <div>
+          <p class="fila-numero">${r.acertos}<small> / ${r.total}</small></p>
+          <p class="ajuda">letras acertadas</p>
+        </div>
+        <div>
+          <p class="fila-numero">${r.precisao}%</p>
+          <p class="ajuda">precisão</p>
+        </div>
+        <div>
+          <p class="fila-numero">${r.comboMaximo}</p>
+          <p class="ajuda">combo máximo</p>
+        </div>
+        <div>
+          <p class="fila-numero">${formatarTempo(r.tempo)}</p>
+          <p class="ajuda">sobrevivido</p>
+        </div>
+      </div>
+
+      <div class="fila-acoes">
+        <button type="button" class="botao botao--principal" data-acao="de-novo">Jogar de novo</button>
+        <button type="button" class="botao" data-acao="voltar">Trocar o nível</button>
+        <a class="fila-voltar" href="jogos.html">Voltar aos jogos</a>
+      </div>
+    </div>
+  `);
+
+  tela.querySelector('[data-acao="de-novo"]').addEventListener('click', mostrarPartida);
+  tela.querySelector('[data-acao="voltar"]').addEventListener('click', mostrarInicio);
+}
+
+/* ==========================================================================
+   Cabeçalho, aviso do celular e início
+   ========================================================================== */
+
+const botaoSom = document.querySelector('#botao-som');
+
+function escreverSom() {
+  botaoSom.querySelector('use').setAttribute('href', estadoSalvo.mudo ? '#icone-mudo' : '#icone-som');
+  botaoSom.setAttribute('aria-pressed', String(!!estadoSalvo.mudo));
+  botaoSom.setAttribute('aria-label', estadoSalvo.mudo ? 'Ligar os sons' : 'Silenciar os sons');
+}
+
+// O botão não pode ficar com o foco: o espaço e as letras seguintes
+// apertariam o botão em vez de ir para o jogo.
+botaoSom.addEventListener('mousedown', (e) => e.preventDefault());
+botaoSom.addEventListener('click', () => {
+  guardar({ mudo: !estadoSalvo.mudo });
+  escreverSom();
+});
+
+const botaoTema = document.querySelector('#botao-tema');
+
+function escreverTema() {
+  const escuro = document.documentElement.dataset.tema === 'escuro';
+  botaoTema.querySelector('use').setAttribute('href', escuro ? '#icone-sol' : '#icone-lua');
+}
+
+botaoTema.addEventListener('mousedown', (e) => e.preventDefault());
+botaoTema.addEventListener('click', () => {
+  const escuro = document.documentElement.dataset.tema === 'escuro';
+  document.documentElement.dataset.tema = escuro ? 'claro' : 'escuro';
+  escreverTema();
+});
+
+function pareceSemTecladoFisico() {
+  return window.matchMedia('(hover: none)').matches && window.matchMedia('(pointer: coarse)').matches;
+}
+
+function mostrarAvisoSemTeclado() {
+  tela.replaceChildren();
+  tela.insertAdjacentHTML('beforeend', `
+    <div class="sem-teclado">
+      <h1>O digita. foi feito para computador com teclado.</h1>
+      <p class="subtitulo">Ele ensina a digitar com os dez dedos, mostrando qual dedo usar em cada tecla. Num celular ou tablet sem teclado, não há o que treinar.</p>
+      <p class="ajuda">Abra este endereço no seu computador para começar.</p>
+      <button type="button" class="botao" data-acao="continuar">Tenho um teclado conectado — quero entrar assim mesmo</button>
+    </div>
+  `);
+  tela.querySelector('[data-acao="continuar"]').addEventListener('click', mostrarInicio);
+}
+
+escreverSom();
+escreverTema();
+
+if (pareceSemTecladoFisico()) mostrarAvisoSemTeclado();
+else mostrarInicio();
+</script>
+
+</body>
+</html>

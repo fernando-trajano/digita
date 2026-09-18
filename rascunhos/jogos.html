@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rascunho — Jogos</title>
+
+<!-- O tema antes de a página aparecer, para não piscar branco no escuro.
+     Rascunho: segue o sistema; o botão do cabeçalho troca só nesta aba. -->
+<script>
+  document.documentElement.dataset.tema =
+    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+</script>
+
+<style>
+/* ==========================================================================
+   RASCUNHO — o menu de Jogos.
+
+   Arquivo único e autocontido, para aprovar visual e interação antes de
+   mexer no site. Nada daqui está ligado ao digita. de verdade.
+
+   A estrutura é a da tela de escolha do Treino livre, que já está no ar, e
+   as medidas foram COPIADAS de lá, sem recalcular nada: duas colunas, lista
+   em linhas finas, bolinha no escolhido, ilustração com cross-fade — o
+   max-width de 340px, o recuo de -28px, o reset no breakpoint de 60rem e o
+   par de espaçamentos que mantém a coluna parada.
+
+   Do reset do base.css ficou de fora, de propósito, a media query de
+   prefers-reduced-motion: é regra desta tarefa não trazê-la para os jogos.
+   ========================================================================== */
+
+/* ==========================================================================
+   tema.css — copiado do site, byte por byte.
+   ========================================================================== */
+
+/* ==========================================================================
+   tema.css — o único arquivo que conhece cores.
+
+   REGRA DO PROJETO: nenhum outro CSS pode escrever uma cor literal (#FFFFFF).
+   Todo o resto do site usa var(--nome-da-variavel). Assim, para mudar a
+   aparência inteira do digita., basta mexer aqui.
+
+   Como funciona o modo claro/escuro:
+   - :root guarda a paleta CLARA (o padrão).
+   - :root[data-tema="escuro"] regrava só as cores que mudam.
+   - Um script pequeno no <head> do index.html escolhe o tema antes da página
+     aparecer, para não piscar branco em quem usa o modo escuro.
+   ========================================================================== */
+
+:root {
+  /* Avisa ao navegador qual é o tema, para barras de rolagem e campos de
+     formulário combinarem com a página. */
+  color-scheme: light;
+
+  /* --- Superfícies e texto (modo claro) ------------------------------- */
+  --cor-fundo: #FFFFFF;             /* fundo da página */
+  --cor-superficie: #F4F4F5;        /* áreas destacadas e teclas neutras */
+  --cor-borda: #E4E4E7;             /* bordas e linhas finas */
+  --cor-texto: #18181B;             /* texto principal */
+  --cor-texto-secundario: #52525B;  /* texto secundário */
+  --cor-texto-discreto: #71717A;    /* legendas e textos discretos */
+  --cor-letra-pendente: #8E8E96;    /* letras ainda não digitadas (fonte grande) */
+  --cor-licao-feita: #444444;       /* nome de uma lição já feita, na trilha */
+
+  --cor-botao-fundo: #18181B;
+  --cor-botao-texto: #FFFFFF;
+  --cor-botao-secundario-borda: #D4D4D8;
+
+  /* --- Cores dos dedos (fundo da tecla / texto da tecla) --------------- */
+  --dedo-minimo-fundo: #EDE9FE;     /* mínimo — violeta */
+  --dedo-minimo-texto: #5B21B6;
+
+  --dedo-anelar-fundo: #DBEAFE;     /* anelar — azul */
+  --dedo-anelar-texto: #1E40AF;
+
+  --dedo-medio-fundo: #CCFBF1;      /* médio — verde-água */
+  --dedo-medio-texto: #115E59;
+
+  --dedo-indicador-fundo: #DCFCE7;  /* indicador — verde */
+  --dedo-indicador-texto: #166534;
+
+  --dedo-neutro-fundo: #F4F4F5;     /* polegar e teclas neutras — cinza */
+  --dedo-neutro-texto: #52525B;
+
+  /* --- Erro ------------------------------------------------------------ */
+  --cor-erro-fundo: #FEE2E2;
+  --cor-erro-texto: #B91C1C;
+
+  /* --- Fontes do sistema (nada é baixado) ------------------------------ */
+  /* Títulos e texto usam a mesma família: a diferença vem do peso e do
+     tamanho, não de uma fonte decorativa. */
+  --fonte-titulo: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-texto: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --peso-titulo: 600;
+  --espacamento-titulo: -0.02em;
+
+  /* --- Espaçamentos ---------------------------------------------------- */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+  --esp-8: 4rem;
+
+  /* --- Formas e medidas ------------------------------------------------ */
+  --raio-p: 6px;
+  --raio-m: 10px;
+  --raio-g: 16px;
+  --borda: 1px solid var(--cor-borda);
+  --largura-max: 1100px;        /* largura máxima do conteúdo */
+  --largura-teclado-max: 960px; /* largura máxima do teclado na lição */
+
+  /* O texto da lição: grande o bastante para as letras que faltam terem
+     contraste, e para se enxergar sem baixar os olhos do teclado. */
+  --tamanho-texto-licao: clamp(1.6rem, 4cqw, 2.4rem);
+
+  /* As duas mãos juntas, ao lado do texto da lição. */
+  --largura-maos: 107px;
+
+  /* --- Movimento ------------------------------------------------------- */
+  --transicao: 150ms ease;
+
+  /* Só para a troca das ilustrações do treino livre: um fade de 150ms fica
+     nervoso quando o desenho inteiro troca. */
+  --transicao-lenta: 250ms ease;
+}
+
+/* ==========================================================================
+   Modo escuro — só o que muda em relação ao claro.
+   ========================================================================== */
+
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+
+  --cor-fundo: #1F1F1D;
+  --cor-superficie: #2C2C2A;
+  --cor-borda: #444441;
+  --cor-texto: #F1EFE8;
+  --cor-texto-secundario: #B4B2A9;
+  --cor-texto-discreto: #888780;
+  --cor-letra-pendente: #888780;
+  /* No escuro o tom da lição feita precisa CLAREAR, e não escurecer: um
+     cinza-escuro sobre fundo escuro sumiria. */
+  --cor-licao-feita: #B4B2A9;
+
+  --cor-botao-fundo: #F1EFE8;
+  --cor-botao-texto: #2C2C2A;
+  --cor-botao-secundario-borda: #444441;
+
+  --dedo-minimo-fundo: #3C3489;
+  --dedo-minimo-texto: #CECBF6;
+
+  --dedo-anelar-fundo: #0C447C;
+  --dedo-anelar-texto: #B5D4F4;
+
+  --dedo-medio-fundo: #085041;
+  --dedo-medio-texto: #9FE1CB;
+
+  --dedo-indicador-fundo: #27500A;
+  --dedo-indicador-texto: #C0DD97;
+
+  --dedo-neutro-fundo: #444441;
+  --dedo-neutro-texto: #D3D1C7;
+
+  --cor-erro-fundo: #791F1F;
+  --cor-erro-texto: #F7C1C1;
+}
+
+/* Rede de segurança: se o JavaScript não rodar, quem usa o sistema no escuro
+   ainda recebe o tema escuro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema]) {
+    color-scheme: dark;
+
+    --cor-fundo: #1F1F1D;
+    --cor-superficie: #2C2C2A;
+    --cor-borda: #444441;
+    --cor-texto: #F1EFE8;
+    --cor-texto-secundario: #B4B2A9;
+    --cor-texto-discreto: #888780;
+    --cor-letra-pendente: #888780;
+    --cor-licao-feita: #B4B2A9;
+
+    --cor-botao-fundo: #F1EFE8;
+    --cor-botao-texto: #2C2C2A;
+    --cor-botao-secundario-borda: #444441;
+
+    --dedo-minimo-fundo: #3C3489;
+    --dedo-minimo-texto: #CECBF6;
+
+    --dedo-anelar-fundo: #0C447C;
+    --dedo-anelar-texto: #B5D4F4;
+
+    --dedo-medio-fundo: #085041;
+    --dedo-medio-texto: #9FE1CB;
+
+    --dedo-indicador-fundo: #27500A;
+    --dedo-indicador-texto: #C0DD97;
+
+    --dedo-neutro-fundo: #444441;
+    --dedo-neutro-texto: #D3D1C7;
+
+    --cor-erro-fundo: #791F1F;
+    --cor-erro-texto: #F7C1C1;
+  }
+}
+
+/* ==========================================================================
+   base.css — o que esta tela usa, copiado do site.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-texto);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg { display: block; max-width: 100%; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+h1, h2, h3 {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  line-height: 1.2;
+  letter-spacing: var(--espacamento-titulo);
+}
+
+h1 { font-size: clamp(1.9rem, 1.4rem + 2vw, 2.6rem); }
+
+p { max-width: 62ch; }
+
+a { color: inherit; text-underline-offset: 0.2em; }
+
+:focus-visible {
+  outline: 2px solid var(--cor-texto);
+  outline-offset: 2px;
+  border-radius: var(--raio-p);
+}
+
+/* --- Cabeçalho (o do site) --------------------------------------------- */
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+
+  padding: var(--esp-4) var(--esp-5);
+  border-bottom: var(--borda);
+  background-color: var(--cor-fundo);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+
+  font-family: var(--fonte-titulo);
+  font-size: 1.25rem;
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--espacamento-titulo);
+  text-decoration: none;
+  color: inherit;
+}
+
+.marca-icone { width: 22px; height: 22px; flex: 0 0 auto; }
+.marca-ponto { color: var(--cor-texto-discreto); }
+
+.cabecalho-acoes { display: flex; align-items: center; gap: var(--esp-3); }
+
+.botao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: var(--borda);
+  border-radius: var(--raio-p);
+  background-color: transparent;
+  color: var(--cor-texto-secundario);
+
+  cursor: pointer;
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.botao-icone svg { width: 1.125rem; height: 1.125rem; }
+.botao-icone:hover { color: var(--cor-texto); border-color: var(--cor-texto-secundario); }
+
+/* Só do rascunho: uma linha avisando que isto não é o site. */
+.rascunho-aviso {
+  max-width: none;
+  padding: var(--esp-2) var(--esp-5);
+  border-bottom: var(--borda);
+  color: var(--cor-texto-discreto);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.conteudo {
+  flex: 1;
+  width: 100%;
+  max-width: var(--largura-max);
+  margin-inline: auto;
+  padding: var(--esp-7) var(--esp-5) var(--esp-8);
+}
+
+/* --- Botões (componentes.css) ------------------------------------------- */
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+
+  padding: var(--esp-3) var(--esp-5);
+  border: 1px solid var(--cor-botao-secundario-borda);
+  border-radius: var(--raio-p);
+  background-color: transparent;
+  color: var(--cor-texto);
+
+  font-size: 0.95rem;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--transicao), border-color var(--transicao);
+}
+
+.botao:hover { border-color: var(--cor-texto-secundario); }
+
+.botao--principal {
+  border-color: var(--cor-botao-fundo);
+  background-color: var(--cor-botao-fundo);
+  color: var(--cor-botao-texto);
+}
+
+.botao--principal:hover { opacity: 0.88; }
+
+.ajuda { color: var(--cor-texto-discreto); font-size: 0.9rem; }
+
+/* ==========================================================================
+   A tela de escolha — copiada da do Treino livre (css/telas.css).
+   As classes mudaram de "livre-" para "jogos-"; os valores, não.
+   ========================================================================== */
+
+.jogos {
+  max-width: var(--largura-max);
+  margin-inline: auto;
+  padding-block: var(--esp-6);
+}
+
+/* O mesmo par de espaçamentos do treino livre: o bloco do título sobe
+   exatamente o que o vão abaixo da descrição cresce, e da lista para baixo
+   nada se mexe. Os dois --esp-5 precisam andar juntos. */
+.jogos:has(.jogos-escolha) {
+  padding-top: calc(var(--esp-6) - var(--esp-5));
+}
+
+.subtitulo + .jogos-escolha {
+  margin-top: var(--esp-5);
+}
+
+.jogos-escolha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--esp-8);
+  align-items: start;
+  padding-block: var(--esp-5) var(--esp-6);
+}
+
+.jogos-grupo {
+  margin-bottom: var(--esp-6);
+}
+
+.jogos-rotulo {
+  margin-bottom: var(--esp-3);
+  color: var(--cor-texto-discreto);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* --- Os jogos: linhas finas, sem caixa ---------------------------------- */
+
+.jogos-lista {
+  border-top: var(--borda);
+}
+
+.jogos-item {
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  align-items: start;
+  gap: var(--esp-4);
+
+  width: 100%;
+  padding: var(--esp-4) 0;
+
+  border: 0;
+  border-bottom: var(--borda);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.jogos-item-marca {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.45rem;
+}
+
+.jogos-item-ponto {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--cor-texto-discreto);
+  border-radius: 50%;
+  transition: border-color var(--transicao), background-color var(--transicao);
+}
+
+.jogos-item[aria-pressed='true'] .jogos-item-ponto {
+  border-color: var(--cor-texto);
+  background-color: var(--cor-texto);
+}
+
+.jogos-item-nome {
+  display: block;
+  font-weight: 600;
+  transition: color var(--transicao);
+}
+
+.jogos-item-descricao {
+  display: block;
+  margin-top: 2px;
+  color: var(--cor-texto-discreto);
+  font-size: 0.85rem;
+}
+
+.jogos-item[aria-pressed='true'] .jogos-item-nome { color: var(--cor-texto); }
+.jogos-item:not([aria-pressed='true']) .jogos-item-nome { color: var(--cor-texto-secundario); }
+
+/* O gesto do hover — depois das duas regras acima, que empatam com ele em
+   especificidade. */
+.jogos-item-texto { transition: transform var(--transicao); }
+.jogos-item:hover .jogos-item-texto { transform: translateX(4px); }
+.jogos-item:hover .jogos-item-nome { color: var(--cor-texto); }
+.jogos-item:hover .jogos-item-ponto { border-color: var(--cor-texto); }
+
+/* --- As ilustrações: EXATAMENTE as do treino livre ----------------------- */
+
+.ilustracoes {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  max-width: 340px;
+  margin-top: var(--esp-6);
+  margin-left: -28px;
+}
+
+.ilustracao {
+  position: absolute;
+  inset: 0;
+
+  display: block;
+  width: 100%;
+  height: auto;
+
+  color: var(--cor-texto-secundario);
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transicao-lenta);
+}
+
+.ilustracao--ativa { opacity: 1; }
+
+@media (max-width: 60rem) {
+  .jogos-escolha {
+    grid-template-columns: 1fr;
+    gap: var(--esp-6);
+  }
+
+  .ilustracoes {
+    max-width: 340px;
+    margin-left: 0;
+  }
+}
+
+/* --- O aviso do celular (o mesmo do site) ------------------------------- */
+
+.sem-teclado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-4);
+  max-width: 40rem;
+  padding-block: var(--esp-6);
+}
+</style>
+</head>
+<body>
+
+<!-- Ícones copiados do index.html do site. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="icone-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+  </symbol>
+  <symbol id="icone-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
+  </symbol>
+  <symbol id="icone-som" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"></path>
+    <path d="M16 9.2a4 4 0 0 1 0 5.6"></path>
+    <path d="M18.6 6.6a7.5 7.5 0 0 1 0 10.8"></path>
+  </symbol>
+  <symbol id="icone-mudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"></path>
+    <path d="M16.5 9.5l5 5M21.5 9.5l-5 5"></path>
+  </symbol>
+</svg>
+
+<header class="cabecalho">
+  <a class="marca" href="#">
+    <svg class="marca-icone" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true">
+      <rect x="10" y="10" width="80" height="80" rx="18" fill="none" stroke="currentColor" stroke-width="9"/>
+      <circle cx="50" cy="50" r="10" fill="currentColor"/>
+    </svg>
+    <span>digita<span class="marca-ponto">.</span></span>
+  </a>
+
+  <nav class="cabecalho-acoes">
+    <button type="button" class="botao-icone" id="botao-som" aria-pressed="false" aria-label="Silenciar os sons">
+      <svg aria-hidden="true"><use href="#icone-som"></use></svg>
+    </button>
+    <button type="button" class="botao-icone" id="botao-tema" aria-label="Alternar entre modo claro e escuro">
+      <svg aria-hidden="true"><use href="#icone-lua"></use></svg>
+    </button>
+  </nav>
+</header>
+
+<p class="rascunho-aviso">Rascunho — não faz parte do site. Cores, fontes e medidas copiadas do digita. de verdade.</p>
+
+<main class="conteudo" id="tela"></main>
+
+<script>
+/* ==========================================================================
+   RASCUNHO — o menu de Jogos.
+   ========================================================================== */
+
+/* Os três jogos, na ordem em que aparecem. O id é também o sufixo da classe
+   da ilustração (.ilustracao--fila) e do arquivo do jogo (jogo-fila.html). */
+const JOGOS = [
+  {
+    id: 'cobra',
+    nome: 'Cobra',
+    descricao: 'A cobra vem atrás em velocidade constante. Cada acerto te afasta, cada erro te aproxima.',
+  },
+  {
+    id: 'fila',
+    nome: 'Fila',
+    descricao: 'As letras não param de chegar. Digite rápido para não deixar a pilha encostar no topo.',
+  },
+  {
+    id: 'cadeia',
+    nome: 'Cadeia',
+    descricao: 'A sequência aparece por um instante e some. Digite de memória.',
+  },
+];
+
+/* As ilustrações — entram INLINE, e não por <img src>, porque é isso que as
+   faz herdar currentColor e acompanhar o tema. Os desenhos são os arquivos
+   de rascunhos/ilustracoes/ sem mudar um valor; só o bloco <metadata> de
+   proveniência ficou de fora, porque não desenha nada. */
+const ILUSTRACOES = `
+<svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg"
+     class="ilustracao ilustracao--fila" aria-hidden="true"
+     style="font-family: var(--fonte-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" xmlns:c2pa="http://c2pa.org/manifest">
+
+  <!-- A pilha: teclas em ziguezague descendo. A de baixo é a próxima a
+       digitar, e está quase encostando na linha. As de cima acabaram de
+       nascer, por isso vão ficando mais claras. -->
+  <g fill="none" stroke="currentColor" stroke-width="1.8">
+    <rect x="144" y="152" width="44" height="44" rx="8" opacity="0.9"/>
+    <rect x="96"  y="106" width="44" height="44" rx="8" opacity="0.66"/>
+    <rect x="180" y="60"  width="44" height="44" rx="8" opacity="0.44"/>
+    <rect x="128" y="14"  width="44" height="44" rx="8" opacity="0.26"/>
+  </g>
+
+  <g fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central"
+     font-size="20">
+    <text x="166" y="175" opacity="0.9">f</text>
+    <text x="118"  y="129" opacity="0.66">j</text>
+    <text x="202" y="83"  opacity="0.44">d</text>
+    <text x="150" y="37"  opacity="0.26">k</text>
+  </g>
+
+  <!-- A linha de acerto: onde a tecla encaixa e desaparece. -->
+  <path d="M34 208 L286 208" fill="none" stroke="currentColor"
+        stroke-width="2.4" stroke-linecap="round" opacity="0.55"/>
+</svg>
+
+<svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg"
+     class="ilustracao ilustracao--cobra" aria-hidden="true" xmlns:c2pa="http://c2pa.org/manifest">
+
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- Rastro: o que a cobra já passou, sumindo para trás. -->
+    <path d="M14 178 C24 166, 34 172, 42 166" stroke-width="1.4" opacity="0.18"/>
+    <path d="M22 196 C32 186, 40 190, 48 184" stroke-width="1.2" opacity="0.12"/>
+
+    <!-- A cobra: um traço só, serpenteando da esquerda para a direita.
+         A cabeça aponta para o ponto do jogador. -->
+    <path d="M28 168 C68 116, 96 206, 136 154 C176 102, 204 192, 244 142"
+          stroke-width="2.6" opacity="0.85"/>
+  </g>
+
+  <!-- O jogador: um ponto à frente, sempre escapando. -->
+  <circle cx="288" cy="112" r="6.5" fill="currentColor" opacity="0.95"/>
+
+  <!-- A distância entre os dois: o fôlego que o jogo mede. -->
+  <path d="M256 132 L274 120" fill="none" stroke="currentColor"
+        stroke-width="1.2" stroke-linecap="round" opacity="0.28"/>
+</svg>
+
+<svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg"
+     class="ilustracao ilustracao--cadeia" aria-hidden="true"
+     style="font-family: var(--fonte-mono, ui-monospace, SFMono-Regular, Menlo, monospace)" xmlns:c2pa="http://c2pa.org/manifest">
+
+  <!-- Três rodadas, uma por linha: a sequência cresce de baixo para cima
+       a cada acerto. Dentro de cada linha, as letras somem da esquerda
+       para a direita — é o que você digita de memória. -->
+  <g fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central"
+     font-size="26">
+
+    <text x="44"  y="62" opacity="0.85">f</text>
+    <text x="80"  y="62" opacity="0.50">j</text>
+    <text x="116" y="62" opacity="0.18">d</text>
+
+    <text x="44"  y="126" opacity="0.85">k</text>
+    <text x="80"  y="126" opacity="0.68">a</text>
+    <text x="116" y="126" opacity="0.50">s</text>
+    <text x="152" y="126" opacity="0.30">d</text>
+    <text x="188" y="126" opacity="0.12">f</text>
+
+    <text x="44"  y="190" opacity="0.85">j</text>
+    <text x="80"  y="190" opacity="0.74">f</text>
+    <text x="116" y="190" opacity="0.60">k</text>
+    <text x="152" y="190" opacity="0.46">l</text>
+    <text x="188" y="190" opacity="0.32">a</text>
+    <text x="224" y="190" opacity="0.20">s</text>
+    <text x="260" y="190" opacity="0.10">d</text>
+  </g>
+</svg>
+`;
+
+/* --------------------------------------------------------------------------
+   O que fica salvo — simulado em digita:jogos, e só lá.
+   O rascunho não escreve em nenhuma chave do site de verdade.
+   -------------------------------------------------------------------------- */
+
+const CHAVE = 'digita:jogos';
+
+function lerSalvo() {
+  try {
+    const salvo = JSON.parse(localStorage.getItem(CHAVE) || '{}');
+    return {
+      jogo: JOGOS.some((j) => j.id === salvo.jogo) ? salvo.jogo : JOGOS[0].id,
+      mudo: salvo.mudo === true,
+    };
+  } catch (erro) {
+    return { jogo: JOGOS[0].id, mudo: false };
+  }
+}
+
+let estado = lerSalvo();
+
+function guardar(mudancas) {
+  estado = { ...estado, ...mudancas };
+  try {
+    localStorage.setItem(CHAVE, JSON.stringify(estado));
+  } catch (erro) {
+    /* sem localStorage: vale só nesta visita */
+  }
+}
+
+const tela = document.querySelector('#tela');
+
+/* ==========================================================================
+   A tela de escolha
+   ========================================================================== */
+
+function mostrarEscolha() {
+  tela.replaceChildren();
+  tela.insertAdjacentHTML('beforeend', `
+    <div class="jogos">
+      <h1>Jogos</h1>
+      <p class="subtitulo">Treinar se divertindo, sem a cara de lição.</p>
+
+      <div class="jogos-escolha">
+        <div>
+          <div class="jogos-grupo">
+            <p class="jogos-rotulo">O que jogar</p>
+            <div class="jogos-lista">
+              ${JOGOS.map((jogo) => `
+                <button type="button" class="jogos-item" data-jogo="${jogo.id}" aria-pressed="false">
+                  <span class="jogos-item-marca"><span class="jogos-item-ponto"></span></span>
+                  <span class="jogos-item-texto">
+                    <span class="jogos-item-nome">${jogo.nome}</span>
+                    <span class="jogos-item-descricao">${jogo.descricao}</span>
+                  </span>
+                </button>`).join('')}
+            </div>
+          </div>
+
+          <button type="button" class="botao botao--principal" data-acao="jogar">Jogar</button>
+        </div>
+
+        <div>
+          <div class="ilustracoes" data-papel="ilustracoes">${ILUSTRACOES}</div>
+        </div>
+      </div>
+    </div>
+  `);
+
+  const ilustracoes = tela.querySelector('[data-papel="ilustracoes"]');
+
+  /* ------------------------------------------------------------------------
+     Atualizar NO LUGAR, e não redesenhar a tela a cada clique.
+
+     Redesenhar mataria o cross-fade: a ilustração antiga seria destruída e a
+     nova nasceria já opaca. É o mesmo cuidado da tela do treino livre.
+     ------------------------------------------------------------------------ */
+
+  function atualizarEscolha() {
+    for (const botao of tela.querySelectorAll('[data-jogo]')) {
+      botao.setAttribute('aria-pressed', String(botao.dataset.jogo === estado.jogo));
+    }
+
+    mostrarIlustracao(estado.jogo);
+  }
+
+  /** Acende uma ilustração e apaga as outras. O fade é do CSS. */
+  function mostrarIlustracao(id) {
+    for (const desenho of ilustracoes.querySelectorAll('.ilustracao')) {
+      desenho.classList.toggle('ilustracao--ativa', desenho.classList.contains(`ilustracao--${id}`));
+    }
+  }
+
+  for (const botao of tela.querySelectorAll('[data-jogo]')) {
+    botao.addEventListener('click', () => {
+      guardar({ jogo: botao.dataset.jogo });
+      atualizarEscolha();
+    });
+
+    // Prévia: o mouse mostra a ilustração daquele jogo; ao sair, volta para
+    // a do jogo escolhido — nunca para o vazio.
+    botao.addEventListener('mouseenter', () => mostrarIlustracao(botao.dataset.jogo));
+    botao.addEventListener('mouseleave', () => mostrarIlustracao(estado.jogo));
+  }
+
+  // Cada jogo é um rascunho próprio, construído nas etapas seguintes.
+  tela.querySelector('[data-acao="jogar"]').addEventListener('click', () => {
+    window.location.href = `jogo-${estado.jogo}.html`;
+  });
+
+  atualizarEscolha();
+}
+
+/* ==========================================================================
+   O aviso do celular — o mesmo palpite do site (js/telas/sem-teclado.js):
+   sem mouse pairando e com ponteiro grosso, é um aparelho de toque.
+   ========================================================================== */
+
+function pareceSemTecladoFisico() {
+  return window.matchMedia('(hover: none)').matches
+    && window.matchMedia('(pointer: coarse)').matches;
+}
+
+function mostrarAvisoSemTeclado() {
+  tela.replaceChildren();
+  tela.insertAdjacentHTML('beforeend', `
+    <div class="sem-teclado">
+      <h1>O digita. foi feito para computador com teclado.</h1>
+      <p class="subtitulo">Ele ensina a digitar com os dez dedos, mostrando qual dedo usar em cada tecla. Num celular ou tablet sem teclado, não há o que treinar.</p>
+      <p class="ajuda">Abra este endereço no seu computador para começar.</p>
+      <button type="button" class="botao" data-acao="continuar">Tenho um teclado conectado — quero entrar assim mesmo</button>
+    </div>
+  `);
+
+  tela.querySelector('[data-acao="continuar"]').addEventListener('click', mostrarEscolha);
+}
+
+/* ==========================================================================
+   Cabeçalho: som e tema
+   ========================================================================== */
+
+/* Nada toca neste menu — mas o botão de mudo fica sempre à vista, e a
+   escolha vale para os jogos, que leem a mesma chave. */
+const botaoSom = document.querySelector('#botao-som');
+
+function escreverSom() {
+  botaoSom.querySelector('use').setAttribute('href', estado.mudo ? '#icone-mudo' : '#icone-som');
+  botaoSom.setAttribute('aria-pressed', String(estado.mudo));
+  botaoSom.setAttribute('aria-label', estado.mudo ? 'Ligar os sons' : 'Silenciar os sons');
+}
+
+botaoSom.addEventListener('click', () => {
+  guardar({ mudo: !estado.mudo });
+  escreverSom();
+});
+
+/* O tema troca só nesta aba: o rascunho não escreve em digita:config. */
+const botaoTema = document.querySelector('#botao-tema');
+
+function escreverTema() {
+  const escuro = document.documentElement.dataset.tema === 'escuro';
+  botaoTema.querySelector('use').setAttribute('href', escuro ? '#icone-sol' : '#icone-lua');
+}
+
+botaoTema.addEventListener('click', () => {
+  const escuro = document.documentElement.dataset.tema === 'escuro';
+  document.documentElement.dataset.tema = escuro ? 'claro' : 'escuro';
+  escreverTema();
+});
+
+escreverSom();
+escreverTema();
+
+if (pareceSemTecladoFisico()) mostrarAvisoSemTeclado();
+else mostrarEscolha();
+</script>
+
+</body>
+</html>
