@@ -19,6 +19,12 @@ import {
   encerrarTreinoLivre,
   retraduzirTreinoLivre,
 } from './telas/treino-livre.js';
+import {
+  mostrarJogos,
+  abrirMenuDeJogos,
+  encerrarJogo,
+  retraduzirJogo,
+} from './telas/jogos.js';
 import { mostrarInicio } from './telas/inicio.js';
 import { mostrarNivelamento, encerrarNivelamento } from './telas/nivelamento.js';
 import { registrarResultado, licaoParaContinuar, nivelamento } from './progresso.js';
@@ -152,11 +158,13 @@ document.addEventListener('idioma-mudou', (evento) => {
 let telaAtual = telaDeEntrada;
 
 function irPara(desenhar) {
-  // Sair de uma lição, de um teste ou de um treino precisa desligar os
-  // ouvintes e o relógio deles; as outras telas não deixam nada para trás.
+  // Sair de uma lição, de um teste, de um treino ou de um jogo precisa
+  // desligar os ouvintes e o relógio deles; as outras telas não deixam nada
+  // para trás.
   encerrarLicao();
   encerrarNivelamento();
   encerrarTreinoLivre();
+  encerrarJogo();
 
   telaAtual = desenhar;
   desenhar(tela);
@@ -166,7 +174,7 @@ function irPara(desenhar) {
  * As seções que já existem. As outras aparecem no menu marcadas como
  * "em breve"; esta lista cresce a cada passo do plano.
  */
-const SECOES_DISPONIVEIS = new Set(['inicio', 'trilha', 'treino']);
+const SECOES_DISPONIVEIS = new Set(['inicio', 'trilha', 'treino', 'jogos']);
 
 /** A tela de entrada, com o botão que leva ao treino. */
 function telaDeEntrada(destino) {
@@ -219,11 +227,27 @@ function telaDeTreinoLivre(destino) {
   mostrarTreinoLivre(destino, { aoSair: () => irPara(telaDeInicio) });
 }
 
+/**
+ * Os jogos: o menu, e as telas de cada um.
+ *
+ * Quem sabe em qual delas se está é o próprio js/telas/jogos.js — é o que
+ * deixa trocar o idioma no resumo de uma partida sem voltar ao menu.
+ */
+function telaDeJogos(destino) {
+  mostrarJogos(destino);
+}
+
 /** Os atalhos da tela inicial. */
 function navegar(secao) {
   if (secao === 'inicio') irPara(telaDeInicio);
   if (secao === 'trilha') irPara(telaDeTrilha);
   if (secao === 'treino') irPara(telaDeTreinoLivre);
+
+  if (secao === 'jogos') {
+    // Vindo da tela inicial, a entrada é sempre pelo menu.
+    abrirMenuDeJogos();
+    irPara(telaDeJogos);
+  }
 }
 
 /** Abre uma lição e cuida do que acontece quando ela termina. */
@@ -302,6 +326,7 @@ document.addEventListener('idioma-mudou', () => {
   // métricas continuam intactos.
   if (retraduzirLicao()) return;
   if (retraduzirTreinoLivre()) return;
+  if (retraduzirJogo()) return;
 
   telaAtual(tela);
 });

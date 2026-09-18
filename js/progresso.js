@@ -141,6 +141,39 @@ export function totalConcluidas() {
   return Object.values(progresso()).filter((licao) => licao.concluida).length;
 }
 
+/**
+ * A média de quem ainda não tem média. Vinte palavras por minuto é o ritmo
+ * de quem já sabe onde ficam as teclas mas ainda procura algumas.
+ */
+const PPM_DE_PARTIDA = 20;
+
+/**
+ * A média de PPM de quem joga — é por ela que a Cobra acerta a velocidade.
+ *
+ * Vem da melhor marca de cada lição concluída: é o ritmo que a pessoa já
+ * mostrou que tem, lição por lição. Quem ainda não concluiu nenhuma mas fez
+ * o teste de nivelamento usa o resultado dele. Quem não tem nenhum dos dois
+ * recebe um valor de partida, dito com todas as letras na tela — nunca um
+ * número inventado como se fosse dele.
+ *
+ * @returns {{ppm: number, origem: 'licoes'|'teste'|'padrao'}}
+ */
+export function ppmMedio() {
+  const marcas = Object.values(progresso())
+    .filter((licao) => licao.concluida && licao.melhorPpm > 0)
+    .map((licao) => licao.melhorPpm);
+
+  if (marcas.length) {
+    const soma = marcas.reduce((total, ppm) => total + ppm, 0);
+    return { ppm: Math.round(soma / marcas.length), origem: 'licoes' };
+  }
+
+  const teste = nivelamento();
+  if (teste?.fezTeste && teste.ppm > 0) return { ppm: Math.round(teste.ppm), origem: 'teste' };
+
+  return { ppm: PPM_DE_PARTIDA, origem: 'padrao' };
+}
+
 /* --------------------------------------------------------------------------
    Escrita
    -------------------------------------------------------------------------- */

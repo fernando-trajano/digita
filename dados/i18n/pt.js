@@ -208,6 +208,86 @@ export const pt = {
     },
   },
 
+  jogos: {
+    // O menu
+    titulo: 'Jogos',
+    subtitulo: 'Treinar se divertindo, sem a cara de lição.',
+    oQueJogar: 'O que jogar',
+    jogar: 'Jogar',
+
+    // O que os três jogos dividem
+    nivel: 'Nível',
+    niveis: {
+      facil: 'Fácil',
+      medio: 'Médio',
+      dificil: 'Difícil',
+    },
+    voltar: 'Voltar aos jogos',
+    encerrar: 'Encerrar',
+    pausado: 'Pausado. Aperte qualquer tecla para continuar.',
+    encerrada: 'Partida encerrada.',
+    deNovo: 'Jogar de novo',
+    trocarNivel: 'Trocar o nível',
+    tempo: 'tempo',
+    acertos: 'acertos',
+    combo: 'combo',
+    precisao: 'precisão',
+    comboMaximo: 'combo máximo',
+
+    cobra: {
+      nome: 'Cobra',
+      descricao: 'A cobra vem atrás em velocidade constante. Cada acerto te afasta, cada erro te aproxima.',
+      ajuda:
+        'Modo Fuga, sem fim. Quanto mais rápido o acerto, maior o salto; a cada {combo} acertos seguidos, um fôlego extra. Quando a cobra chega perto, ela acelera.',
+      // A linha da média, na tela do nível. A velocidade só aparece com o
+      // mouse (ou o foco) sobre um nível; a média aparece sempre.
+      mediaLicoes: 'Sua média nas lições: {ppm} PPM.',
+      mediaTeste: 'Sua média no teste de nivelamento: {ppm} PPM.',
+      mediaPadrao: 'Você ainda não tem média nas lições: o jogo usa {ppm} PPM.',
+      velocidade: 'No nível {nivel}, a cobra corre a {ppm} PPM.',
+      espera: 'A cobra sai quando você digitar a primeira letra.',
+      metros: 'metros',
+      campo: 'Texto da Cobra',
+      saiu: 'A cobra saiu.',
+      perto: 'A cobra está perto.',
+      fim: 'A cobra te alcançou.',
+      modo: 'Fuga',
+      distancia: 'distância percorrida',
+      ppmESuaMedia: 'PPM · sua média é {ppm}',
+      sobrevivido: 'tempo sobrevivido',
+    },
+
+    fila: {
+      nome: 'Fila',
+      descricao: 'As letras não param de chegar. Digite rápido para não deixar a pilha encostar no topo.',
+      ajuda: 'Digite sempre a letra de baixo. A posição dela na tela é a do dedo que a digita.',
+      espera: 'A fila começa quando você digitar a primeira letra.',
+      fim: 'A pilha encostou no topo.',
+      acertadas: 'letras acertadas',
+      sobrevivido: 'sobrevivido',
+    },
+
+    cadeia: {
+      nome: 'Cadeia',
+      descricao: 'A sequência aparece por um instante e some. Digite de memória.',
+      ajuda: 'Enquanto você digita, a tela fica vazia: o resultado só aparece no fim da sequência.',
+      letras: 'letras',
+      melhor: 'melhor',
+      certo: 'Certo',
+      errou: 'Errou',
+      pausado: 'Pausado. Aperte qualquer tecla para continuar — a sequência aparece de novo.',
+      // Ditos só para quem usa leitor de tela.
+      memorize: 'Memorize: {letras}',
+      digite: 'Digite as {quantas} letras.',
+      leitorCerto: 'Certo.',
+      leitorErrou: 'Errou. Era {certa}; você digitou {digitada}.',
+      fim: 'Fim da cadeia.',
+      maisLonga: 'sequência mais longa',
+      rodadas: 'rodadas',
+      serie: 'maior série de acertos seguidos',
+    },
+  },
+
   painel: {
     titulo: 'Seu progresso',
     dia: 'dia seguido praticando',

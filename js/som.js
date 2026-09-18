@@ -21,6 +21,8 @@
      clique      a cada tecla certa — DESLIGADO por padrão
      erro        a cada tecla errada — ligado, e bem discreto
      conclusão   ao terminar uma lição
+
+   Os jogos têm os sons deles, no fim do arquivo, feitos das mesmas receitas.
    ========================================================================== */
 
 import { config } from './estado.js';
@@ -110,20 +112,67 @@ export function tocarErro() {
   tocarTom({ onda: 'sine', frequencia: 180, duracao: 0.12, ganho: 0.09 });
 }
 
+/** Dó, mi e sol — um acorde maior, que soa como "deu certo". */
+const ACORDE = [523.25, 659.25, 783.99];
+
 /** Ao terminar uma lição: três notas subindo, bem curtas. */
 export function tocarConclusao() {
   if (!ligado()) return;
 
-  // Dó, mi e sol — um acorde maior, que soa como "deu certo".
-  const notas = [523.25, 659.25, 783.99];
+  tocarNotas(ACORDE, { duracao: 0.18, ganho: 0.09, intervalo: 0.09 });
+}
 
+/** Toca notas em sequência, uma a cada `intervalo` segundos. */
+function tocarNotas(notas, { duracao, ganho, intervalo, atraso = 0 }) {
   notas.forEach((frequencia, indice) => {
-    tocarTom({
-      onda: 'sine',
-      frequencia,
-      duracao: 0.18,
-      ganho: 0.09,
-      atraso: indice * 0.09,
-    });
+    tocarTom({ onda: 'sine', frequencia, duracao, ganho, atraso: atraso + indice * intervalo });
   });
+}
+
+/* --------------------------------------------------------------------------
+   Os sons dos jogos
+
+   Nos jogos o som nasce LIGADO, como pede o briefing. Por isso estes sons
+   não olham as escolhas das lições (clique desligado, erro ligado): só o
+   botão de mudo do cabeçalho os cala.
+   -------------------------------------------------------------------------- */
+
+/**
+ * O toque de uma tecla: o clique seco.
+ * @param {number} [semitons]  quantos semitons acima — a Fila sobe o tom
+ *                             conforme o combo cresce
+ */
+export function tocarToqueDeJogo(semitons = 0) {
+  if (!ligado()) return;
+
+  const seco = ESTILOS_DE_CLIQUE.seco;
+  tocarTom({ ...seco, frequencia: seco.frequencia * 2 ** (semitons / 12) });
+}
+
+/** O erro de sempre: grave, curto e baixo. */
+export function tocarErroDeJogo(atraso = 0) {
+  if (!ligado()) return;
+
+  tocarTom({ onda: 'sine', frequencia: 180, duracao: 0.12, ganho: 0.09, atraso });
+}
+
+/** Deu certo: o acorde da conclusão de lição. */
+export function tocarSucessoDeJogo(atraso = 0) {
+  if (!ligado()) return;
+
+  tocarNotas(ACORDE, { duracao: 0.18, ganho: 0.09, intervalo: 0.09, atraso });
+}
+
+/** O fôlego do combo na Cobra: as duas notas de cima do acorde, rápidas. */
+export function tocarFolego() {
+  if (!ligado()) return;
+
+  tocarNotas(ACORDE.slice(1), { duracao: 0.12, ganho: 0.07, intervalo: 0.07, atraso: 0.04 });
+}
+
+/** A Cobra alcançou: o acorde ao contrário, mais grave. */
+export function tocarCaptura() {
+  if (!ligado()) return;
+
+  tocarNotas([392.0, 329.63, 261.63], { duracao: 0.2, ganho: 0.08, intervalo: 0.12 });
 }

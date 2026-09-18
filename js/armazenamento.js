@@ -23,6 +23,7 @@ export const CHAVES = {
   estatisticas: `${PREFIXO}estatisticas`,
   nivelamento: `${PREFIXO}nivelamento`,
   livre: `${PREFIXO}livre`,
+  jogos: `${PREFIXO}jogos`,
 };
 
 /**

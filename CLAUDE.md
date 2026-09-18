@@ -344,7 +344,9 @@ Não construir agora, mesmo que pareça fácil:
 - Estatísticas: evolução, mapa de calor do teclado, precisão por dedo.
 - ~~Treino livre~~ — **feito depois da v1** (ver PLANO.md). O que ficou de fora dele:
   pesar a lentidão por tecla, e não só os erros.
-- Jogos: "palavras caindo" primeiro, cobrinha depois.
+- ~~Jogos~~ — **feitos depois da v1**: Cobra (só o modo Fuga), Fila e Cadeia (ver
+  PLANO.md). O que ficou de fora deles: os modos Corrida, Reflexo e Desafio do dia da
+  Cobra, a variante da Fila com palavras e recordes salvos.
 - Conquistas e tela de configurações.
 - Meta diária de 15 minutos com sequência de dias, modo adaptativo e desafio do dia.
 - Na trilha de acentos: detectar se o usuário de Windows está com o layout **US padrão

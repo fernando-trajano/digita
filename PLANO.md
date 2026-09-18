@@ -91,7 +91,8 @@ Digita/
 │   ├── base.css               # reset, tipografia, layout da página, cabeçalho
 │   ├── componentes.css        # botões, cartões, selos, barra de progresso, estrelas
 │   ├── teclado.css            # teclado na tela + desenho das mãos
-│   └── telas.css              # o que é específico de cada tela
+│   ├── telas.css              # o que é específico de cada tela
+│   └── jogos.css              # as partidas dos jogos (o menu usa o do treino livre)
 │
 ├── js/
 │   ├── app.js                 # ponto de entrada: liga tudo e mostra a 1ª tela
@@ -106,14 +107,21 @@ Digita/
 │   ├── metricas.js            # PPM, precisão, teclas com mais erros
 │   ├── progresso.js           # concluir lição, estrelas, desbloqueio, sequência de dias
 │   ├── som.js                 # Web Audio API, mudo, volume
-│   └── telas/
-│       ├── sem-teclado.js     # aviso amigável em celular/tablet sem teclado físico
-│       ├── entrada.js         # teclado + sistema + detecção + dica de acentuação
-│       ├── nivelamento.js     # "já digita sem olhar?" / teste de 1 minuto
-│       ├── inicio.js          # continuar, sequência de dias, atalhos
-│       ├── trilha.js          # as 7 trilhas e suas lições
-│       ├── licao.js           # a tela de digitação em si
-│       └── resultado.js       # PPM, precisão, estrelas, repetir/próxima
+│   ├── telas/
+│   │   ├── sem-teclado.js     # aviso amigável em celular/tablet sem teclado físico
+│   │   ├── entrada.js         # teclado + sistema + detecção + dica de acentuação
+│   │   ├── nivelamento.js     # "já digita sem olhar?" / teste de 1 minuto
+│   │   ├── inicio.js          # continuar, sequência de dias, atalhos
+│   │   ├── trilha.js          # as 7 trilhas e suas lições
+│   │   ├── licao.js           # a tela de digitação em si
+│   │   ├── resultado.js       # PPM, precisão, estrelas, repetir/próxima
+│   │   ├── treino-livre.js    # treino sem nota (depois da v1)
+│   │   └── jogos.js           # o menu de jogos e as telas de cada jogo (depois da v1)
+│   └── jogos/
+│       ├── comum.js           # tela do nível, tela do fim, relógio, pausa
+│       ├── cobra.js           # Cobra, modo Fuga
+│       ├── fila.js            # Fila
+│       └── cadeia.js          # Cadeia
 │
 ├── dados/                     # CONTEÚDO separado da LÓGICA (dá para editar sem medo)
 │   ├── layouts/
@@ -123,6 +131,8 @@ Digita/
 │   ├── i18n/
 │   │   ├── pt.js              # todos os textos em português
 │   │   └── en.js              # todos os textos em inglês
+│   ├── treino-livre.js        # palavras e exercícios do treino livre (e da Cobra)
+│   ├── jogos.js               # a lista dos jogos, na ordem do menu
 │   └── licoes/
 │       ├── indice.js          # as 7 trilhas: ordem, metas, quais estão liberadas
 │       ├── conferencia.js     # as duas verificações automáticas de conteúdo
@@ -235,6 +245,9 @@ Todas com o prefixo `digita:`:
 | `digita:progresso` | por lição: melhor PPM, melhor precisão, estrelas, concluída |
 | `digita:sequencia` | dias praticando seguidos, última data |
 | `digita:estatisticas` | erros por tecla (base para as estatísticas do futuro) |
+| `digita:nivelamento` | a resposta do nivelamento e o resultado do teste |
+| `digita:livre` | a última escolha do treino livre (modo, duração, texto próprio) |
+| `digita:jogos` | o último jogo escolhido no menu |
 
 Botões para exportar e importar o progresso em arquivo (passo 17).
 
@@ -470,5 +483,36 @@ Ficou para depois: pesar também a **lentidão** por tecla. Hoje `digita:estatis
 guarda erros; medir o tempo de cada tecla é mudança no motor e nas métricas, e não neste
 lote.
 
-Ainda **fora**: estatísticas, jogos, conquistas, configurações e teclado numérico como
-trilha.
+## Depois da versão 1 — Jogos
+
+Desenhados em quatro rascunhos aprovados um a um (`rascunhos/jogos.html`,
+`jogo-fila.html`, `jogo-cadeia.html`, `jogo-cobra.html` — no histórico do Git, commit
+`3d9fd3b`, e apagados depois de aplicados) e levados para o site.
+
+- [x] **Menu de jogos** — a mesma tela de escolha do treino livre, com as mesmas classes:
+      lista em linhas finas, ponto no escolhido, ilustração com cross-fade. Ordem: Cobra,
+      Fila, Cadeia.
+- [x] **Cobra** (só o modo Fuga) — a cobra anda em velocidade constante e o ponto foge a
+      cada acerto; acerto rápido salta mais, erro recua, 10 acertos seguidos dão fôlego, e
+      perto do ponto a cobra acelera. A velocidade é uma FRAÇÃO da média de PPM de quem
+      joga (0,8 · 1,1 · 1,3), nunca um PPM fixo. A média vem de `ppmMedio()` em
+      `progresso.js`: melhor PPM das lições concluídas; senão, o teste de nivelamento;
+      senão, 20 PPM, dito na tela. O alerta de proximidade é só peso e opacidade do traço,
+      sem cor nova — no digita. a cor quer dizer dedo.
+- [x] **Fila** — letras caindo na pista do dedo, pilha de 8 posições, teclado só com as
+      três fileiras de letras (sem barra de espaço) e as mãos dos lados. A partida espera
+      parada até a primeira letra. A tecla do jogo chega a 3,2rem, o teto da tecla da lição.
+- [x] **Cadeia** — a sequência aparece e some; digita-se de memória, com a tela vazia. O
+      toque é o mesmo som para tecla certa e errada; o veredito só vem no fim.
+
+Regras que valem para os três: o relógio sai do `performance.now()` do
+`requestAnimationFrame` (nada de contar quadros nem de `setInterval`); sair da janela pausa;
+clicar no nível já entra na partida; trocar o idioma no meio não recomeça nada. Os sons dos
+jogos nascem ligados e só o mudo do cabeçalho os cala (`som.js`, seção dos jogos). Os jogos
+não têm nota: nada deles entra no progresso.
+
+Ficou para depois: os modos **Corrida**, **Reflexo** e **Desafio do dia** da Cobra, a
+variante da Fila **com palavras** (é para ela que o espaço está reservado) e **recordes**
+salvos.
+
+Ainda **fora**: estatísticas, conquistas, configurações e teclado numérico como trilha.

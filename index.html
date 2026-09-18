@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="./css/componentes.css">
   <link rel="stylesheet" href="./css/teclado.css">
   <link rel="stylesheet" href="./css/telas.css">
+  <link rel="stylesheet" href="./css/jogos.css">
 </head>
 <body>
 
@@ -167,6 +168,76 @@
       <!-- A última linha, curta, e o cursor no fim dela. -->
       <path d="M46 212 L118 212" stroke-width="2.4" opacity="0.52"/>
       <path d="M132 199 L132 225" stroke-width="2.8" opacity="0.9"/>
+      </g>
+    </symbol>
+
+    <!-- As três ilustrações dos Jogos, com as mesmas regras das do Treino
+         livre: monocromáticas, em currentColor, e o mesmo viewBox nas três. -->
+    <symbol id="ilustracao-jogo-cobra" viewBox="0 0 320 240">
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Rastro: o que a cobra já passou, sumindo para trás. -->
+      <path d="M14 178 C24 166, 34 172, 42 166" stroke-width="1.4" opacity="0.18"/>
+      <path d="M22 196 C32 186, 40 190, 48 184" stroke-width="1.2" opacity="0.12"/>
+
+      <!-- A cobra: um traço só, serpenteando da esquerda para a direita.
+      A cabeça aponta para o ponto do jogador. -->
+      <path d="M28 168 C68 116, 96 206, 136 154 C176 102, 204 192, 244 142"
+      stroke-width="2.6" opacity="0.85"/>
+      </g>
+
+      <!-- O jogador: um ponto à frente, sempre escapando. -->
+      <circle cx="288" cy="112" r="6.5" fill="currentColor" opacity="0.95"/>
+
+      <!-- A distância entre os dois: o fôlego que o jogo mede. -->
+      <path d="M256 132 L274 120" fill="none" stroke="currentColor"
+      stroke-width="1.2" stroke-linecap="round" opacity="0.28"/>
+    </symbol>
+
+    <symbol id="ilustracao-jogo-fila" viewBox="0 0 320 240" style="font-family: var(--fonte-mono)">
+      <!-- A pilha: teclas em ziguezague descendo. A de baixo é a próxima a
+      digitar, e está quase encostando na linha. As de cima acabaram de
+      nascer, por isso vão ficando mais claras. -->
+      <g fill="none" stroke="currentColor" stroke-width="1.8">
+      <rect x="144" y="152" width="44" height="44" rx="8" opacity="0.9"/>
+      <rect x="96"  y="106" width="44" height="44" rx="8" opacity="0.66"/>
+      <rect x="180" y="60"  width="44" height="44" rx="8" opacity="0.44"/>
+      <rect x="128" y="14"  width="44" height="44" rx="8" opacity="0.26"/>
+      </g>
+
+      <g fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central" font-size="20">
+      <text x="166" y="175" opacity="0.9">f</text>
+      <text x="118" y="129" opacity="0.66">j</text>
+      <text x="202" y="83"  opacity="0.44">d</text>
+      <text x="150" y="37"  opacity="0.26">k</text>
+      </g>
+
+      <!-- A linha de acerto: onde a tecla encaixa e desaparece. -->
+      <path d="M34 208 L286 208" fill="none" stroke="currentColor"
+      stroke-width="2.4" stroke-linecap="round" opacity="0.55"/>
+    </symbol>
+
+    <symbol id="ilustracao-jogo-cadeia" viewBox="0 0 320 240" style="font-family: var(--fonte-mono)">
+      <!-- Três rodadas, uma por linha: a sequência cresce de baixo para cima
+      a cada acerto. Dentro de cada linha, as letras somem da esquerda para
+      a direita — é o que você digita de memória. -->
+      <g fill="currentColor" stroke="none" text-anchor="middle" dominant-baseline="central" font-size="26">
+      <text x="44"  y="62" opacity="0.85">f</text>
+      <text x="80"  y="62" opacity="0.50">j</text>
+      <text x="116" y="62" opacity="0.18">d</text>
+
+      <text x="44"  y="126" opacity="0.85">k</text>
+      <text x="80"  y="126" opacity="0.68">a</text>
+      <text x="116" y="126" opacity="0.50">s</text>
+      <text x="152" y="126" opacity="0.30">d</text>
+      <text x="188" y="126" opacity="0.12">f</text>
+
+      <text x="44"  y="190" opacity="0.85">j</text>
+      <text x="80"  y="190" opacity="0.74">f</text>
+      <text x="116" y="190" opacity="0.60">k</text>
+      <text x="152" y="190" opacity="0.46">l</text>
+      <text x="188" y="190" opacity="0.32">a</text>
+      <text x="224" y="190" opacity="0.20">s</text>
+      <text x="260" y="190" opacity="0.10">d</text>
       </g>
     </symbol>
 

@@ -1,0 +1,552 @@
+/* ==========================================================================
+   jogos.css — as telas dos jogos: Cobra, Fila e Cadeia.
+   Só usa variáveis do tema.css.
+
+   O menu de jogos não aparece aqui: ele é a tela de escolha do treino livre
+   com outros itens, e usa as classes de lá (telas.css, seção Treino livre).
+
+   Duas regras que valem para os três jogos, como para o resto do site: sem
+   caixas em volta das seções, e sem sombras nem gradientes. O sublinhado dos
+   níveis é um box-shadow sem desfoque — o mesmo traço das durações do treino
+   livre, e não uma sombra.
+   ========================================================================== */
+
+/* ==========================================================================
+   O que os três dividem
+   ========================================================================== */
+
+/* --- O começo: o nível --------------------------------------------------- */
+
+.jogo-inicio {
+  max-width: 40rem;
+  padding-block: var(--esp-5);
+}
+
+.jogo-inicio .subtitulo,
+.jogo-fim .subtitulo {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-secundario);
+}
+
+.jogo-inicio .ajuda {
+  margin-top: var(--esp-3);
+}
+
+.jogo-grupo {
+  margin-top: var(--esp-6);
+}
+
+/* Os níveis: opções em texto na mesma linha, como as durações do treino
+   livre. Cada um já é a entrada da partida — por isso nenhum fica marcado
+   como "escolhido", e o sublinhado aparece só sob o mouse ou o foco: ele
+   quer dizer "é aqui que se clica". */
+.jogo-niveis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-5);
+}
+
+.jogo-nivel {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto-secundario);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color var(--transicao);
+}
+
+.jogo-nivel:hover,
+.jogo-nivel:focus-visible {
+  color: var(--cor-texto);
+  box-shadow: inset 0 -2px 0 var(--cor-texto);
+}
+
+/* "Voltar aos jogos": um link discreto, e não um botão — não é a ação
+   principal de nenhuma das telas em que aparece. */
+.jogo-voltar {
+  margin-top: var(--esp-6);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto-discreto);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.jogo-voltar:hover {
+  color: var(--cor-texto);
+}
+
+/* --- A partida ----------------------------------------------------------- */
+
+/* A partida respira menos, como a tela de lição: tudo precisa caber sem
+   rolar numa tela de notebook. */
+.conteudo:has(.jogo-partida) {
+  padding-block: var(--esp-5);
+}
+
+.jogo-partida {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-4);
+}
+
+/* A linha do topo: as medidas e o "Encerrar". Só texto. */
+.jogo-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  width: 100%;
+  max-width: 42rem;
+}
+
+.jogo-encerrar {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto-discreto);
+  font: inherit;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.jogo-encerrar:hover {
+  color: var(--cor-texto);
+}
+
+/* --- O fim: texto, e nada mais ------------------------------------------- */
+
+/* Larga o bastante para os cinco números da Cobra caberem numa linha só. */
+.jogo-fim {
+  max-width: 50rem;
+  padding-block: var(--esp-5);
+}
+
+.jogo-numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-6);
+  margin: var(--esp-5) 0;
+  padding-block: var(--esp-5);
+  border-top: var(--borda);
+  border-bottom: var(--borda);
+}
+
+.jogo-numero {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.jogo-numero small {
+  color: var(--cor-texto-discreto);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.jogo-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3) var(--esp-5);
+  margin-top: var(--esp-6);
+}
+
+.jogo-acoes .jogo-voltar {
+  margin-top: 0;
+}
+
+/* ==========================================================================
+   COBRA — a pista em cima, o texto embaixo
+   ========================================================================== */
+
+.cobra-jogo {
+  /* O tamanho da letra da lição (--tamanho-texto-licao) é medido na
+     largura desta área, como na tela de lição. */
+  container-type: inline-size;
+}
+
+.cobra-jogo .jogo-topo {
+  max-width: 62rem;
+}
+
+/* A linha da média, embaixo dos níveis. */
+.cobra-conta {
+  margin-top: var(--esp-4);
+}
+
+.cobra-conta strong {
+  color: var(--cor-texto);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- A pista --------------------------------------------------------------
+
+   Um SVG só, desenhado em traço fino como as ilustrações: o chão, as marcas
+   de distância, a cobra e o ponto. As posições são escritas pelo JS a cada
+   quadro. */
+
+.cobra-pista {
+  width: 100%;
+  max-width: 62rem;
+  height: auto;
+  overflow: hidden;
+}
+
+.cobra-chao,
+.cobra-marca {
+  stroke: var(--cor-borda);
+  stroke-width: 1;
+}
+
+.cobra-marca--grande {
+  stroke: var(--cor-texto-discreto);
+}
+
+.cobra-rotulo-marca {
+  fill: var(--cor-texto-discreto);
+  font-family: var(--fonte-texto);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A cobra: um traço. A cor, a espessura e a opacidade não estão aqui — elas
+   dependem da distância e são escritas pelo JS, sempre misturando
+   --cor-texto-secundario e --cor-texto. Nenhuma cor nova. */
+.cobra-corpo {
+  fill: none;
+  stroke: var(--cor-texto-secundario);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* O ponto de quem joga. A cor é a do PRÓXIMO dedo, escrita pelo JS. */
+.cobra-jogador {
+  fill: var(--dedo-neutro-texto);
+}
+
+/* --- O aviso (Caps Lock, pausa) e o texto -------------------------------- */
+
+.cobra-aviso {
+  max-width: none;
+  min-height: 1.4em;
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* O texto corre numa linha só, como uma fita: o cursor fica parado a 40% da
+   largura e as letras andam para a esquerda a cada acerto — o mesmo sentido
+   em que o ponto foge. As letras usam as classes da lição (letra--certa,
+   letra--atual…), que estão no telas.css. */
+.cobra-texto {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 62rem;
+  overflow: hidden;
+}
+
+.cobra-linha {
+  max-width: none;
+  margin: 0;
+  font-family: var(--fonte-mono);
+  font-size: var(--tamanho-texto-licao);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  white-space: pre;
+  transform: translateX(calc(40cqw - var(--posicao, 0) * (1ch + 0.02em)));
+  transition: transform var(--transicao);
+}
+
+.cobra-dica {
+  max-width: none;
+  min-height: 1.5em;
+  text-align: center;
+}
+
+/* ==========================================================================
+   FILA
+
+   Tudo — a pilha, as teclas que caem e o teclado — é medido na mesma
+   unidade, --u, o lado de uma tecla. É isso que faz a tecla que cai
+   encaixar exatamente na tecla do teclado: as duas têm o mesmo tamanho e
+   as posições saem da mesma conta.
+
+   A unidade sai da ALTURA da tela: a partida inteira precisa caber sem
+   rolar numa tela de notebook (~800px). A conta do divisor:
+
+     a pilha        8 posições × 1,15u (o degrau)          =  9,2u
+     a folga        entre a linha de acerto e o teclado    =  0,6u
+     o teclado      3 fileiras × 1,12u (o passo) − 0,12u   =  3,24u
+     a sobra        embaixo do teclado                     =  0,16u
+                                                   total   = 13,2u
+
+   Os 16rem descontados da altura são o resto da página: o cabeçalho, a
+   linha do topo da partida, as margens e o rodapé.
+
+   O teto de 3,2rem é o mesmo da tecla da lição (--tecla-da-licao, no
+   telas.css): em tela grande, a tecla do jogo chega ao tamanho da tecla da
+   lição, e não passa dele.
+
+   As 8 posições são a CAPACIDADE do js/jogos/fila.js. Mudando lá, mude
+   aqui — procure "8 *".
+   ========================================================================== */
+
+.fila-jogo {
+  --u: clamp(1.6rem, calc((100vh - 16rem) / 13.2), 3.2rem);
+  --vao: calc(var(--u) * 0.12); /* entre teclas do teclado */
+  --passo: calc(var(--u) + var(--vao)); /* de uma tecla à seguinte */
+  --degrau: calc(var(--u) * 1.15); /* de uma posição da pilha à outra */
+}
+
+/* O palco: a pilha em cima, o teclado embaixo, as mãos dos lados. Ele é o
+   referencial de todas as posições absolutas — teclas que caem, teclas do
+   teclado e a tecla que voa até o teclado no acerto. */
+.fila-palco {
+  position: relative;
+  width: calc(10.25 * var(--passo));
+  height: calc(8 * var(--degrau) + var(--u) * 4);
+}
+
+/* --- A pilha ------------------------------------------------------------- */
+
+/* Sem caixa em volta: o campo é definido só pela linha de acerto embaixo e
+   pelas duas posições de cima, marcadas de leve. */
+.fila-campo {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(8 * var(--degrau));
+}
+
+/* A linha de acerto: onde a fila apoia, e de onde a tecla sai no acerto. */
+.fila-linha-acerto {
+  position: absolute;
+  inset: auto 0 calc(var(--u) * 0.06) 0;
+  border-top: 2px solid var(--cor-texto-secundario);
+  opacity: 0.55;
+}
+
+/* As duas posições de cima: o limite. Um traço fino embaixo delas e outro
+   no topo, e nada de barra de vida — a própria pilha é o medidor. */
+.fila-limite {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: calc(2 * var(--degrau));
+  border-top: 1px solid var(--cor-texto-discreto);
+  border-bottom: 1px dashed var(--cor-borda);
+  opacity: 0.6;
+}
+
+/* O aviso de pausa e o de antes do primeiro toque, no meio da pilha. */
+.fila-pausa,
+.fila-espera {
+  position: absolute;
+  inset: 40% 0 auto 0;
+  max-width: none;
+  text-align: center;
+}
+
+.fila-pausa {
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+.fila-espera {
+  color: var(--cor-texto-discreto);
+  font-size: 0.85rem;
+}
+
+/* --- O teclado: só as três fileiras de letras ---------------------------- */
+
+/* As teclas são as do teclado da lição (teclado.css): o mesmo desenho, as
+   mesmas cores de dedo, o mesmo piscar de erro. Aqui só muda o tamanho, que
+   passa a ser o --u, e a posição, que é absoluta — cada tecla no ponto
+   exato em que a tecla que cai vai encaixar. */
+.fila-teclado {
+  /* As duas variáveis de que a tecla do teclado.css precisa. Faltando uma,
+     a conta da largura dela fica inválida e a tecla encolhe até a letra. */
+  --tecla: var(--u);
+  --tecla-vao: var(--vao);
+
+  position: absolute;
+  left: 0;
+  top: calc(8 * var(--degrau) + var(--u) * 0.6);
+  width: calc(10 * var(--passo) - var(--vao));
+  height: calc(3 * var(--passo) - var(--vao));
+}
+
+.fila-teclado .tecla {
+  position: absolute;
+}
+
+/* --- A tecla que cai ------------------------------------------------------
+
+   É uma TECLA, não uma caixa nova: o mesmo desenho do teclado, com o
+   contorno na cor do dedo. Sem preenchimento colorido — o contorno e a
+   letra carregam a cor, como nas ilustrações.
+   ------------------------------------------------------------------------ */
+
+.fila-peca {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--u);
+  height: var(--u);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1.5px solid currentColor;
+  border-radius: var(--raio-p);
+  background-color: var(--cor-fundo);
+
+  font-family: var(--fonte-mono);
+  font-size: calc(var(--u) * 0.45);
+  line-height: 1;
+  user-select: none;
+  will-change: transform, opacity;
+}
+
+.fila-peca--minimo {
+  color: var(--dedo-minimo-texto);
+}
+
+.fila-peca--anelar {
+  color: var(--dedo-anelar-texto);
+}
+
+.fila-peca--medio {
+  color: var(--dedo-medio-texto);
+}
+
+.fila-peca--indicador {
+  color: var(--dedo-indicador-texto);
+}
+
+/* A de baixo — a da vez — ganha o traço mais grosso. */
+.fila-peca--vez {
+  border-width: 2.5px;
+  font-weight: 600;
+}
+
+.fila-peca--erro {
+  animation: peca-erro 400ms ease;
+}
+
+@keyframes peca-erro {
+  20%,
+  70% {
+    background-color: var(--cor-erro-fundo);
+  }
+}
+
+/* --- As mãos, dos lados do teclado, como nas lições ----------------------
+
+   O desenho e as bolinhas são os de js/maos.js. Aqui só a posição: na
+   altura do teclado, a meia tecla de cada lado dele. As regras gerais de
+   .mao (telas.css) são as da tela de lição, e estas as substituem. */
+
+.fila-palco .mao {
+  top: calc(8 * var(--degrau) + var(--u) * 0.6);
+  height: calc(1.6 * var(--u));
+  overflow: visible;
+}
+
+.fila-palco .mao--esquerda {
+  left: auto;
+  right: calc(100% + var(--u) * 0.5);
+}
+
+.fila-palco .mao--direita {
+  right: auto;
+  left: calc(10 * var(--passo) - var(--vao) + var(--u) * 0.5);
+}
+
+/* ==========================================================================
+   CADEIA — a tela quase vazia é o efeito, e não uma falta
+   ========================================================================== */
+
+/* O palco: um espaço fixo que ocupa o resto da altura da tela, para a
+   sequência aparecer perto do meio dela — onde o olho já está. A altura não
+   muda entre os estados, para nada pular quando a sequência aparece ou
+   some. */
+.cadeia-palco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-4);
+
+  width: 100%;
+  min-height: clamp(20rem, calc(100vh - 21rem), 34rem);
+}
+
+/* A sequência e a resposta: uma letra por caixinha, separadas por um vão.
+   O vão (e não letter-spacing) é o que deixa o fundo de erro em volta só da
+   letra errada, sem sobrar para a direita. */
+.cadeia-sequencia,
+.cadeia-resposta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3em;
+  max-width: none;
+  min-height: 1.2em;
+  font-family: var(--fonte-mono);
+  line-height: 1.2;
+}
+
+/* A sequência: a letra grande e monoespaçada da lição, um pouco maior — ela
+   fica pouco tempo na tela e precisa ser lida de relance. */
+.cadeia-sequencia {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+}
+
+/* No resultado, a resposta aparece embaixo da sequência, menor, com as
+   letras erradas nas cores de erro do site. */
+.cadeia-resposta {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--cor-texto-secundario);
+}
+
+.cadeia-letra--errada {
+  padding-inline: 0.12em;
+  margin-inline: -0.12em;
+  border-radius: var(--raio-p);
+  background-color: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+}
+
+.cadeia-veredito {
+  max-width: none;
+  min-height: 1.6em;
+  color: var(--cor-texto-discreto);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cadeia-pausa {
+  max-width: none;
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+/* Na pausa, o aviso fica sozinho no meio do palco, no lugar da sequência. */
+.cadeia-palco:has(.cadeia-pausa:not([hidden])) > :not(.cadeia-pausa) {
+  display: none;
+}
