@@ -183,6 +183,24 @@ a {
   text-align: center;
 }
 
+/* O crédito de autoria anda junto: se não couber ao lado da frase, desce
+   inteiro para a linha de baixo. Numa tela estreita demais até para ele
+   sozinho, ele ainda quebra por dentro — nunca é cortado. */
+.rodape-autoria {
+  display: inline-block;
+}
+
+/* Mesma cor e mesmo tamanho do resto do rodapé; o sublinhado só aparece
+   sob o mouse, como nos outros links discretos do site. */
+.rodape-autor {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rodape-autor:hover {
+  text-decoration: underline;
+}
+
 /* --- Utilitários ------------------------------------------------------- */
 
 /* Some da tela, mas continua sendo lido por leitores de tela. */

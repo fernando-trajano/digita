@@ -5,7 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>digita. · solte os dedos</title>
   <meta name="description" content="Treino de digitação em português do Brasil, com foco em acentos, Ç e nas diferenças entre o teclado ABNT2 e o americano.">
+  <meta name="author" content="Fernando Rodrigo Trajano da Silva">
+  <link rel="canonical" href="https://fernando-trajano.github.io/digita/">
 
+  <!-- Prévia ao compartilhar o link (LinkedIn, WhatsApp etc.) -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:url" content="https://fernando-trajano.github.io/digita/">
+  <meta property="og:title" content="digita. · solte os dedos">
+  <meta property="og:description" content="Treino de digitação em português do Brasil, com foco em acentos, Ç e nas diferenças entre o teclado ABNT2 e o americano.">
+
+  <!-- Dados estruturados: diz ao Google o que é o site e quem o criou -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "digita.",
+    "url": "https://fernando-trajano.github.io/digita/",
+    "description": "Treino de digitação em português do Brasil, com foco em acentos, Ç e nas diferenças entre o teclado ABNT2 e o americano.",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Web",
+    "inLanguage": "pt-BR",
+    "creator": {
+      "@type": "Person",
+      "name": "Fernando Rodrigo Trajano da Silva",
+      "url": "https://github.com/fernando-trajano"
+    }
+  }
+  </script>
   <!-- Escolhe o tema ANTES de a página aparecer, para não piscar branco em
        quem usa o modo escuro. É o único JavaScript fora da pasta js/, e ele
        precisa estar aqui: qualquer coisa carregada depois já seria tarde.
@@ -299,8 +326,13 @@
 
   </main>
 
-  <footer class="rodape" data-i18n="rodape.texto">
-    Feito em português, sem depender de nada externo.
+  <!-- A frase e o "por" vêm das traduções; o nome não, porque é o mesmo nos
+       dois idiomas. O crédito fica num bloco próprio: quando não cabe ao
+       lado da frase, desce inteiro para a linha de baixo, em vez de partir
+       o nome no meio. O "·" é só enfeite, e o leitor de tela o pula. -->
+  <footer class="rodape">
+    <span data-i18n="rodape.texto">Feito em português.</span>
+    <span class="rodape-autoria"><span aria-hidden="true">·</span> <span data-i18n="rodape.por">por</span> <a class="rodape-autor" href="https://github.com/fernando-trajano" target="_blank" rel="noopener">Fernando Rodrigo Trajano da Silva</a></span>
   </footer>
 
   <script type="module" src="./js/app.js"></script>

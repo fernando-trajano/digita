@@ -26,7 +26,9 @@ export const pt = {
   },
 
   rodape: {
-    texto: 'Feito em português, sem depender de nada externo.',
+    texto: 'Feito em português.',
+    // Antes do nome do autor, que é o mesmo nos dois idiomas e mora no HTML.
+    por: 'por',
   },
 
 

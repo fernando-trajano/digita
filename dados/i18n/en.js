@@ -20,7 +20,8 @@ export const en = {
   },
 
   rodape: {
-    texto: 'Built in Portuguese, with no external dependencies.',
+    texto: 'Built in Portuguese.',
+    por: 'by',
   },
 
 
