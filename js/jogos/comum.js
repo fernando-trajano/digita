@@ -16,9 +16,44 @@
    ========================================================================== */
 
 import { t } from '../i18n.js';
+import { juntarPorTecla } from '../metricas.js';
+import { somarTeclas } from '../progresso.js';
 
 /** Os três níveis, na ordem em que aparecem. */
 export const NIVEIS = ['facil', 'medio', 'dificil'];
+
+/* --------------------------------------------------------------------------
+   As teclas, para as estatísticas
+   -------------------------------------------------------------------------- */
+
+/**
+ * Conta acertos e erros de cada letra durante a partida.
+ *
+ * Os jogos entram no mapa de calor e na precisão por dedo — mas NÃO na curva
+ * de evolução: na Fila o ritmo é do jogo, e na Cadeia se digita de memória.
+ *
+ * `gravar` soma tudo em digita:estatisticas uma vez só, por mais que seja
+ * chamada: a partida pode acabar de três jeitos (a cobra alcança, o
+ * "Encerrar", a saída pelo cabeçalho), e todos passam por ela.
+ */
+export function criarContagemDeTeclas() {
+  const acertos = new Map();
+  const erros = new Map();
+  let gravada = false;
+
+  const somar = (mapa, letra) => mapa.set(letra, (mapa.get(letra) ?? 0) + 1);
+
+  return {
+    acerto: (letra) => somar(acertos, letra),
+    erro: (letra) => somar(erros, letra),
+
+    gravar() {
+      if (gravada) return;
+      gravada = true;
+      somarTeclas(juntarPorTecla(acertos, erros));
+    },
+  };
+}
 
 /* --------------------------------------------------------------------------
    O relógio

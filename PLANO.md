@@ -92,7 +92,8 @@ Digita/
 │   ├── componentes.css        # botões, cartões, selos, barra de progresso, estrelas
 │   ├── teclado.css            # teclado na tela + desenho das mãos
 │   ├── telas.css              # o que é específico de cada tela
-│   └── jogos.css              # as partidas dos jogos (o menu usa o do treino livre)
+│   ├── jogos.css              # as partidas dos jogos (o menu usa o do treino livre)
+│   └── estatisticas.css       # evolução, mapa de calor e precisão por dedo
 │
 ├── js/
 │   ├── app.js                 # ponto de entrada: liga tudo e mostra a 1ª tela
@@ -116,7 +117,8 @@ Digita/
 │   │   ├── licao.js           # a tela de digitação em si
 │   │   ├── resultado.js       # PPM, precisão, estrelas, repetir/próxima
 │   │   ├── treino-livre.js    # treino sem nota (depois da v1)
-│   │   └── jogos.js           # o menu de jogos e as telas de cada jogo (depois da v1)
+│   │   ├── jogos.js           # o menu de jogos e as telas de cada jogo (depois da v1)
+│   │   └── estatisticas.js    # evolução, mapa de calor, precisão por dedo (depois da v1)
 │   └── jogos/
 │       ├── comum.js           # tela do nível, tela do fim, relógio, pausa
 │       ├── cobra.js           # Cobra, modo Fuga
@@ -244,7 +246,8 @@ Todas com o prefixo `digita:`:
 | `digita:config` | idioma, layout do teclado, sistema, tema, som, volume |
 | `digita:progresso` | por lição: melhor PPM, melhor precisão, estrelas, concluída |
 | `digita:sequencia` | dias praticando seguidos, última data |
-| `digita:estatisticas` | erros por tecla (base para as estatísticas do futuro) |
+| `digita:estatisticas` | `errosPorTecla`: erros por caractere, só das lições (pesa o Adaptativo e o painel) · `porTecla`: acertos e erros por caractere, de lições, treino livre e jogos (mapa de calor e precisão por dedo) |
+| `digita:historico` | `{ sessoes: [...] }` — uma entrada por sessão de lição ou de treino livre (data, ppm, precisão, origem, id, segundos); no máximo 200 |
 | `digita:nivelamento` | a resposta do nivelamento e o resultado do teste |
 | `digita:livre` | a última escolha do treino livre (modo, duração, texto próprio) |
 | `digita:jogos` | o último jogo escolhido no menu |
@@ -479,9 +482,9 @@ errada em `digita:estatisticas`, e as palavras que a usam saem mais. Onde o port
 forma palavra — W, K e Y — entram os vaivéns de sílaba (`sws`, `kjk`), a mesma saída das
 lições. O conteúdo fica em `dados/treino-livre.js`, separado da lógica como as lições.
 
-Ficou para depois: pesar também a **lentidão** por tecla. Hoje `digita:estatisticas` só
-guarda erros; medir o tempo de cada tecla é mudança no motor e nas métricas, e não neste
-lote.
+Ficou para depois: pesar também a **lentidão** por tecla. `digita:estatisticas` guarda
+erros e, desde as Estatísticas, acertos — mas não o tempo de cada tecla; medi-lo é mudança
+no motor e nas métricas, e não neste lote.
 
 ## Depois da versão 1 — Jogos
 
@@ -515,4 +518,40 @@ Ficou para depois: os modos **Corrida**, **Reflexo** e **Desafio do dia** da Cob
 variante da Fila **com palavras** (é para ela que o espaço está reservado) e **recordes**
 salvos.
 
-Ainda **fora**: estatísticas, conquistas, configurações e teclado numérico como trilha.
+## Depois da versão 1 — Estatísticas
+
+Desenhada num rascunho aprovado (`rascunhos/estatisticas.html`) e levada para o site. O
+atalho "Estatísticas" da tela inicial deixou de ser "em breve".
+
+- [x] **Evolução** — gráfico de linha em SVG desenhado à mão: PPM (traço principal, uma
+      marquinha por sessão) e precisão (traço mais claro) na mesma caixa, cada uma com a
+      sua escala — PPM de 0 a um quarto acima do melhor, precisão de 50% a 100% —, para as
+      duas linhas não se enroscarem. Eixo do tempo real. Períodos de 7 dias, 30 dias e
+      tudo. Acima, o melhor PPM, a média das últimas 10 sessões e o total.
+- [x] **Mapa de calor** — o teclado das lições, no formato e no sistema de
+      `digita:config`. Cada tecla com dados leva a cor de fundo do seu dedo, com a
+      opacidade proporcional à taxa de erro (sólida a partir de 12%); o rótulo fica
+      sempre na cor forte do dedo. Tecla com menos de 10 toques fica neutra. Uma linha
+      fixa embaixo do teclado mostra os números da tecla sob o mouse.
+- [x] **Precisão por dedo** — dez linhas, barra fina na cor do dedo, de 0 a 100%. O espaço
+      conta para os dois polegares.
+- [x] **Tela vazia** (nada ainda: uma frase e o botão para a próxima lição) e **pouco
+      dado** (menos de 3 sessões: mapa e dedos, mas uma linha no lugar da curva).
+
+**Os dados.** Duas coisas passaram a ser gravadas:
+
+- `digita:historico` — uma sessão por lição concluída ou por treino livre encerrado
+  (`registrarSessao`, em `progresso.js`). Sessão com menos de 15 segundos não entra. Os
+  **jogos ficam fora**: na Fila o ritmo é do jogo, e na Cadeia se digita de memória.
+- `porTecla`, dentro de `digita:estatisticas` — acertos e erros de cada caractere
+  (`somarTeclas`). Lições, treino livre **e jogos** alimentam. Começou do zero: os erros
+  antigos (`errosPorTecla`) não têm os acertos que os acompanharam, e misturá-los daria
+  uma taxa inventada. Para isso o `metricas.js` passou a contar o acerto por letra.
+
+A estatística é guardada por **caractere**, e não por tecla física: sobrevive a uma troca
+de teclado. A tela traduz caractere em tecla com o layout do momento (`passosDaLetra`), e
+uma letra acentuada conta para as duas teclas do gesto (o acento e a letra).
+
+O teste de nivelamento não entra em nenhuma das duas — ficou como estava.
+
+Ainda **fora**: conquistas, configurações e teclado numérico como trilha.

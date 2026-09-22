@@ -341,7 +341,9 @@ para texto pequeno. Regra:
 
 Não construir agora, mesmo que pareça fácil:
 
-- Estatísticas: evolução, mapa de calor do teclado, precisão por dedo.
+- ~~Estatísticas~~ — **feitas depois da v1**: evolução, mapa de calor do teclado e
+  precisão por dedo (ver PLANO.md). O que ficou de fora: pesar a lentidão por tecla, e
+  o teste de nivelamento na curva de evolução.
 - ~~Treino livre~~ — **feito depois da v1** (ver PLANO.md). O que ficou de fora dele:
   pesar a lentidão por tecla, e não só os erros.
 - ~~Jogos~~ — **feitos depois da v1**: Cobra (só o modo Fuga), Fila e Cadeia (ver

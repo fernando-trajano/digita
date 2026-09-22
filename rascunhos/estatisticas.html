@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rascunho — Estatísticas</title>
+
+<script>
+  document.documentElement.dataset.tema =
+    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+</script>
+
+<style>
+/* ==========================================================================
+   RASCUNHO — a tela de Estatísticas.
+
+   Arquivo único e autocontido. Nada daqui está ligado ao digita. de verdade.
+
+   Copiados do site, sem alterar nada: as variáveis do tema.css, a
+   tipografia e o teclado inteiro (teclado.css aqui embaixo, e os arquivos
+   de layout e o teclado.js lá no script). Do reset do base.css ficou de
+   fora, de propósito, a media query de prefers-reduced-motion — é regra
+   desta tarefa.
+
+   Nenhuma cor literal e nenhum token de cor novo: o mapa de calor usa as
+   cores de dedo que já existem, e os gráficos usam as cores de texto.
+   ========================================================================== */
+
+/* ==========================================================================
+   tema.css — copiado do site, byte por byte.
+   ========================================================================== */
+
+/* ==========================================================================
+   tema.css — o único arquivo que conhece cores.
+
+   REGRA DO PROJETO: nenhum outro CSS pode escrever uma cor literal (#FFFFFF).
+   Todo o resto do site usa var(--nome-da-variavel). Assim, para mudar a
+   aparência inteira do digita., basta mexer aqui.
+
+   Como funciona o modo claro/escuro:
+   - :root guarda a paleta CLARA (o padrão).
+   - :root[data-tema="escuro"] regrava só as cores que mudam.
+   - Um script pequeno no <head> do index.html escolhe o tema antes da página
+     aparecer, para não piscar branco em quem usa o modo escuro.
+   ========================================================================== */
+
+:root {
+  /* Avisa ao navegador qual é o tema, para barras de rolagem e campos de
+     formulário combinarem com a página. */
+  color-scheme: light;
+
+  /* --- Superfícies e texto (modo claro) ------------------------------- */
+  --cor-fundo: #FFFFFF;             /* fundo da página */
+  --cor-superficie: #F4F4F5;        /* áreas destacadas e teclas neutras */
+  --cor-borda: #E4E4E7;             /* bordas e linhas finas */
+  --cor-texto: #18181B;             /* texto principal */
+  --cor-texto-secundario: #52525B;  /* texto secundário */
+  --cor-texto-discreto: #71717A;    /* legendas e textos discretos */
+  --cor-letra-pendente: #8E8E96;    /* letras ainda não digitadas (fonte grande) */
+  --cor-licao-feita: #444444;       /* nome de uma lição já feita, na trilha */
+
+  --cor-botao-fundo: #18181B;
+  --cor-botao-texto: #FFFFFF;
+  --cor-botao-secundario-borda: #D4D4D8;
+
+  /* --- Cores dos dedos (fundo da tecla / texto da tecla) --------------- */
+  --dedo-minimo-fundo: #EDE9FE;     /* mínimo — violeta */
+  --dedo-minimo-texto: #5B21B6;
+
+  --dedo-anelar-fundo: #DBEAFE;     /* anelar — azul */
+  --dedo-anelar-texto: #1E40AF;
+
+  --dedo-medio-fundo: #CCFBF1;      /* médio — verde-água */
+  --dedo-medio-texto: #115E59;
+
+  --dedo-indicador-fundo: #DCFCE7;  /* indicador — verde */
+  --dedo-indicador-texto: #166534;
+
+  --dedo-neutro-fundo: #F4F4F5;     /* polegar e teclas neutras — cinza */
+  --dedo-neutro-texto: #52525B;
+
+  /* --- Erro ------------------------------------------------------------ */
+  --cor-erro-fundo: #FEE2E2;
+  --cor-erro-texto: #B91C1C;
+
+  /* --- Fontes do sistema (nada é baixado) ------------------------------ */
+  /* Títulos e texto usam a mesma família: a diferença vem do peso e do
+     tamanho, não de uma fonte decorativa. */
+  --fonte-titulo: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-texto: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --peso-titulo: 600;
+  --espacamento-titulo: -0.02em;
+
+  /* --- Espaçamentos ---------------------------------------------------- */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+  --esp-8: 4rem;
+
+  /* --- Formas e medidas ------------------------------------------------ */
+  --raio-p: 6px;
+  --raio-m: 10px;
+  --raio-g: 16px;
+  --borda: 1px solid var(--cor-borda);
+  --largura-max: 1100px;        /* largura máxima do conteúdo */
+  --largura-teclado-max: 960px; /* largura máxima do teclado na lição */
+
+  /* O texto da lição: grande o bastante para as letras que faltam terem
+     contraste, e para se enxergar sem baixar os olhos do teclado. */
+  --tamanho-texto-licao: clamp(1.6rem, 4cqw, 2.4rem);
+
+  /* As duas mãos juntas, ao lado do texto da lição. */
+  --largura-maos: 107px;
+
+  /* --- Movimento ------------------------------------------------------- */
+  --transicao: 150ms ease;
+
+  /* Só para a troca das ilustrações do treino livre: um fade de 150ms fica
+     nervoso quando o desenho inteiro troca. */
+  --transicao-lenta: 250ms ease;
+}
+
+/* ==========================================================================
+   Modo escuro — só o que muda em relação ao claro.
+   ========================================================================== */
+
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+
+  --cor-fundo: #1F1F1D;
+  --cor-superficie: #2C2C2A;
+  --cor-borda: #444441;
+  --cor-texto: #F1EFE8;
+  --cor-texto-secundario: #B4B2A9;
+  --cor-texto-discreto: #888780;
+  --cor-letra-pendente: #888780;
+  /* No escuro o tom da lição feita precisa CLAREAR, e não escurecer: um
+     cinza-escuro sobre fundo escuro sumiria. */
+  --cor-licao-feita: #B4B2A9;
+
+  --cor-botao-fundo: #F1EFE8;
+  --cor-botao-texto: #2C2C2A;
+  --cor-botao-secundario-borda: #444441;
+
+  --dedo-minimo-fundo: #3C3489;
+  --dedo-minimo-texto: #CECBF6;
+
+  --dedo-anelar-fundo: #0C447C;
+  --dedo-anelar-texto: #B5D4F4;
+
+  --dedo-medio-fundo: #085041;
+  --dedo-medio-texto: #9FE1CB;
+
+  --dedo-indicador-fundo: #27500A;
+  --dedo-indicador-texto: #C0DD97;
+
+  --dedo-neutro-fundo: #444441;
+  --dedo-neutro-texto: #D3D1C7;
+
+  --cor-erro-fundo: #791F1F;
+  --cor-erro-texto: #F7C1C1;
+}
+
+/* Rede de segurança: se o JavaScript não rodar, quem usa o sistema no escuro
+   ainda recebe o tema escuro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema]) {
+    color-scheme: dark;
+
+    --cor-fundo: #1F1F1D;
+    --cor-superficie: #2C2C2A;
+    --cor-borda: #444441;
+    --cor-texto: #F1EFE8;
+    --cor-texto-secundario: #B4B2A9;
+    --cor-texto-discreto: #888780;
+    --cor-letra-pendente: #888780;
+    --cor-licao-feita: #B4B2A9;
+
+    --cor-botao-fundo: #F1EFE8;
+    --cor-botao-texto: #2C2C2A;
+    --cor-botao-secundario-borda: #444441;
+
+    --dedo-minimo-fundo: #3C3489;
+    --dedo-minimo-texto: #CECBF6;
+
+    --dedo-anelar-fundo: #0C447C;
+    --dedo-anelar-texto: #B5D4F4;
+
+    --dedo-medio-fundo: #085041;
+    --dedo-medio-texto: #9FE1CB;
+
+    --dedo-indicador-fundo: #27500A;
+    --dedo-indicador-texto: #C0DD97;
+
+    --dedo-neutro-fundo: #444441;
+    --dedo-neutro-texto: #D3D1C7;
+
+    --cor-erro-fundo: #791F1F;
+    --cor-erro-texto: #F7C1C1;
+  }
+}
+
+/* ==========================================================================
+   base.css e componentes.css — o que esta tela usa, copiado do site.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-texto);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; }
+
+h1, h2 {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  line-height: 1.2;
+  letter-spacing: var(--espacamento-titulo);
+}
+
+h1 { font-size: clamp(1.9rem, 1.4rem + 2vw, 2.6rem); }
+p { max-width: 62ch; }
+a { color: inherit; text-underline-offset: 0.2em; }
+
+:focus-visible {
+  outline: 2px solid var(--cor-texto);
+  outline-offset: 2px;
+  border-radius: var(--raio-p);
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  padding: var(--esp-4) var(--esp-5);
+  border-bottom: var(--borda);
+  background-color: var(--cor-fundo);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+  font-family: var(--fonte-titulo);
+  font-size: 1.25rem;
+  font-weight: var(--peso-titulo);
+  letter-spacing: var(--espacamento-titulo);
+  text-decoration: none;
+  color: inherit;
+}
+
+.marca-icone { width: 22px; height: 22px; flex: 0 0 auto; }
+.marca-ponto { color: var(--cor-texto-discreto); }
+.cabecalho-acoes { display: flex; align-items: center; gap: var(--esp-3); }
+
+.botao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: var(--borda);
+  border-radius: var(--raio-p);
+  background-color: transparent;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+  transition: color var(--transicao), border-color var(--transicao);
+}
+
+.botao-icone svg { width: 1.125rem; height: 1.125rem; }
+.botao-icone:hover { color: var(--cor-texto); border-color: var(--cor-texto-secundario); }
+
+.rascunho-aviso {
+  max-width: none;
+  padding: var(--esp-2) var(--esp-5);
+  border-bottom: var(--borda);
+  color: var(--cor-texto-discreto);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.conteudo {
+  flex: 1;
+  width: 100%;
+  max-width: var(--largura-max);
+  margin-inline: auto;
+  padding: var(--esp-6) var(--esp-5) var(--esp-7);
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  padding: var(--esp-3) var(--esp-5);
+  border: 1px solid var(--cor-botao-secundario-borda);
+  border-radius: var(--raio-p);
+  background-color: transparent;
+  color: var(--cor-texto);
+  font-size: 0.95rem;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--transicao), border-color var(--transicao);
+}
+
+.botao:hover { border-color: var(--cor-texto-secundario); }
+
+.botao--principal {
+  border-color: var(--cor-botao-fundo);
+  background-color: var(--cor-botao-fundo);
+  color: var(--cor-botao-texto);
+}
+
+.botao--principal:hover { opacity: 0.88; }
+.ajuda { color: var(--cor-texto-discreto); font-size: 0.9rem; }
+
+.sem-teclado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-4);
+  max-width: 40rem;
+  padding-block: var(--esp-6);
+}
+
+
+h2 { font-size: clamp(1.3rem, 1.15rem + 0.8vw, 1.7rem); }
+
+.secao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding-block: var(--esp-6);
+}
+
+.secao + .secao {
+  border-top: var(--borda);
+}
+
+.apenas-leitor-de-tela {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   teclado.css — copiado do site, byte por byte.
+   ========================================================================== */
+
+/* ==========================================================================
+   teclado.css — o teclado desenhado na tela.
+   Só usa variáveis do tema.css.
+
+   O tamanho de tudo vem de uma variável só: --tecla. Mudando ela, o teclado
+   inteiro cresce ou encolhe junto, sem quebrar o alinhamento das fileiras.
+   ========================================================================== */
+
+.teclado {
+  /* clamp = "no mínimo isto, o ideal é aquilo, no máximo aquele outro".
+     Assim o teclado acompanha a largura da tela sem nunca ficar minúsculo
+     nem gigante. */
+  --tecla: clamp(1.5rem, 3.6vw, 2.6rem);
+  --tecla-vao: 0.25rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--tecla-vao);
+  width: fit-content;
+  max-width: min(100%, var(--largura-teclado-max));
+}
+
+.teclado-fileira {
+  display: flex;
+  gap: var(--tecla-vao);
+}
+
+/* --- A tecla ----------------------------------------------------------- */
+
+.tecla {
+  /* A largura vem da variável --largura, escrita pelo JavaScript em cada
+     tecla: 1 = tecla comum, 2 = o dobro. Os vãos entre as teclas que ela
+     "engole" também entram na conta, senão as fileiras não alinhariam. */
+  width: calc(
+    var(--largura, 1) * var(--tecla) + (var(--largura, 1) - 1) * var(--tecla-vao)
+  );
+  height: var(--tecla);
+  flex: 0 0 auto;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: var(--borda);
+  border-radius: var(--raio-p);
+
+  font-family: var(--fonte-mono);
+  font-size: calc(var(--tecla) * 0.36);
+  line-height: 1;
+  user-select: none;
+
+  transition: background-color var(--transicao), color var(--transicao);
+}
+
+/* O Enter do teclado brasileiro: aquele "L" deitado, de duas alturas.
+   Ele fica no fim da fileira base e sobe para ocupar o espaço que sobra na
+   fileira de cima — que é exatamente como o teclado de verdade é. */
+.tecla--alta {
+  height: calc(var(--tecla) * 2 + var(--tecla-vao));
+  margin-top: calc(-1 * (var(--tecla) + var(--tecla-vao)));
+  align-self: flex-start;
+}
+
+/* Teclas de comando (Tab, Shift, Ctrl…): texto menor, alinhado à esquerda. */
+.tecla--comando {
+  justify-content: flex-start;
+  padding-inline: calc(var(--tecla) * 0.18);
+  font-family: var(--fonte-texto);
+  font-size: calc(var(--tecla) * 0.28);
+}
+
+/* O segundo símbolo da tecla (o que sai com Shift). */
+.tecla-sup {
+  position: absolute;
+  top: calc(var(--tecla) * 0.1);
+  left: calc(var(--tecla) * 0.16);
+  font-size: calc(var(--tecla) * 0.26);
+  opacity: 0.75;
+}
+
+/* Quando a tecla tem dois símbolos, o de baixo desce um pouco para não
+   encostar no de cima. */
+.tecla:has(.tecla-sup) .tecla-rotulo {
+  margin-top: calc(var(--tecla) * 0.3);
+}
+
+/* O risquinho em relevo do F e do J, que serve para achar a posição de
+   descanso sem olhar para o teclado. */
+.tecla--referencia::after {
+  content: '';
+  position: absolute;
+  bottom: calc(var(--tecla) * 0.12);
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: calc(var(--tecla) * 0.3);
+  height: 2px;
+  border-radius: 2px;
+  background-color: currentColor;
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   As mãos, uma de cada lado do teclado.
+
+   Cada mão tem a mesma altura do teclado e largura automática, dada pela
+   proporção do viewBox. O contorno nunca muda de cor: quem indica o dedo é
+   a bolinha na ponta dele.
+   ========================================================================== */
+
+.maos {
+  display: contents;
+}
+
+.mao {
+  height: 100%;
+  width: auto;
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+/* Uma de cada lado, encostadas nas bordas do conjunto. */
+.mao--esquerda {
+  order: -1;
+}
+
+.mao--direita {
+  order: 1;
+}
+
+.mao-contorno {
+  fill: none;
+  stroke: var(--cor-texto-secundario);
+}
+
+/* A bolinha só aparece no dedo da próxima tecla. */
+.mao-bolinha {
+  fill: none;
+  transition: fill var(--transicao);
+}
+
+/* A cor é a mesma do TEXTO da tecla daquele dedo no teclado — o tom forte,
+   não o fundo clarinho. É essa repetição que liga os dois desenhos. */
+.mao-bolinha--minimo {
+  fill: var(--dedo-minimo-texto);
+}
+
+.mao-bolinha--anelar {
+  fill: var(--dedo-anelar-texto);
+}
+
+.mao-bolinha--medio {
+  fill: var(--dedo-medio-texto);
+}
+
+.mao-bolinha--indicador {
+  fill: var(--dedo-indicador-texto);
+}
+
+.mao-bolinha--polegar {
+  fill: var(--dedo-neutro-texto);
+}
+
+/* --- Cores dos dedos ---------------------------------------------------- */
+
+.tecla--neutro {
+  background-color: var(--dedo-neutro-fundo);
+  color: var(--dedo-neutro-texto);
+}
+
+.tecla--minimo {
+  background-color: var(--dedo-minimo-fundo);
+  color: var(--dedo-minimo-texto);
+}
+
+.tecla--anelar {
+  background-color: var(--dedo-anelar-fundo);
+  color: var(--dedo-anelar-texto);
+}
+
+.tecla--medio {
+  background-color: var(--dedo-medio-fundo);
+  color: var(--dedo-medio-texto);
+}
+
+.tecla--indicador {
+  background-color: var(--dedo-indicador-fundo);
+  color: var(--dedo-indicador-texto);
+}
+
+.tecla--polegar {
+  background-color: var(--dedo-neutro-fundo);
+  color: var(--dedo-neutro-texto);
+}
+
+/* --- A tecla da vez ----------------------------------------------------- */
+
+/* No modo cinza, a cor do dedo aparece só nesta tecla — é ela que puxa o
+   olhar. A borda escura garante que dá para achar a tecla mesmo sem
+   distinguir bem as cores, e funciona igual nas cinco cores de dedo,
+   inclusive no cinza da barra de espaço. */
+.tecla--ativa {
+  border-color: var(--cor-texto);
+  border-width: 2px;
+  font-weight: 600;
+}
+
+/* --- A tecla que o usuário precisa apertar para a detecção -------------- */
+
+/* Além de pulsar, a tecla ganha borda escura: quem desligou animações no
+   sistema (ou não enxerga bem o movimento) continua achando a tecla. */
+.tecla--pulsando {
+  border-color: var(--cor-texto);
+  border-width: 2px;
+  animation: pulsar 1.4s ease-in-out infinite;
+}
+
+@keyframes pulsar {
+  0%,
+  100% {
+    background-color: var(--dedo-neutro-fundo);
+  }
+  50% {
+    background-color: var(--dedo-minimo-fundo);
+    color: var(--dedo-minimo-texto);
+  }
+}
+
+/* --- A tecla que se SEGURA: Shift, Option, AltGr ------------------------ */
+
+/* Um modificador não se aperta e solta — segura-se enquanto a outra mão
+   digita. Por isso ele não ganha cor de fundo como a tecla da vez: fundo
+   cheio já quer dizer "aperte aqui". O contorno pulsando devagar, num ciclo
+   de um segundo, é o que diz "fique aqui". A largura da borda fica fixa em
+   2px e só a cor muda, senão o rótulo da tecla tremeria a cada ciclo. */
+.tecla--modificadora {
+  border-width: 2px;
+  animation: pulsar-contorno 1s ease-in-out infinite;
+}
+
+@keyframes pulsar-contorno {
+  0%,
+  100% {
+    border-color: var(--cor-borda);
+  }
+  50% {
+    border-color: var(--cor-texto);
+  }
+}
+
+/* A bolinha do dedo que segura o modificador pulsa no mesmo ritmo da tecla
+   dele. Ao lado da bolinha fixa da letra, as duas juntas contam o gesto
+   inteiro: segure esta, aperte aquela. */
+.mao-bolinha--pulsando {
+  animation: pulsar-bolinha 1s ease-in-out infinite;
+}
+
+@keyframes pulsar-bolinha {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* --- Erro --------------------------------------------------------------- */
+
+.tecla--erro {
+  animation: piscar-erro 400ms ease;
+}
+
+@keyframes piscar-erro {
+  0%,
+  100% {
+    background-color: var(--dedo-neutro-fundo);
+    color: var(--dedo-neutro-texto);
+  }
+  20%,
+  70% {
+    background-color: var(--cor-erro-fundo);
+    color: var(--cor-erro-texto);
+  }
+}
+
+/* ==========================================================================
+   A TELA DE ESTATÍSTICAS
+   ========================================================================== */
+
+.estat > .subtitulo {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-secundario);
+}
+
+/* A primeira seção não leva linha em cima: ela vem logo depois do título. */
+.estat > .subtitulo + .secao {
+  margin-top: var(--esp-4);
+}
+
+/* --- 1. Evolução ---------------------------------------------------------- */
+
+/* Os três números de cima: em texto, com o número em monoespaçada. */
+.estat-numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-6);
+  color: var(--cor-texto-discreto);
+  font-size: 0.85rem;
+}
+
+.estat-numeros strong {
+  margin-right: var(--esp-2);
+  color: var(--cor-texto);
+  font-family: var(--fonte-mono);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* O seletor de período e a legenda, na mesma linha. */
+.estat-controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-3) var(--esp-5);
+  margin-top: var(--esp-3);
+}
+
+/* O período: as mesmas opções em texto das durações do treino livre. */
+.estat-periodos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-5);
+}
+
+.estat-periodo {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto-secundario);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.estat-periodo[aria-pressed='true'] {
+  color: var(--cor-texto);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--cor-texto);
+}
+
+/* A legenda: um traço curto de cada linha, e o nome dela. */
+.estat-legenda {
+  display: flex;
+  gap: var(--esp-5);
+  color: var(--cor-texto-discreto);
+  font-size: 0.8rem;
+}
+
+.estat-legenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+/* Cada item carrega três pistas, e não só a cor: no modo claro os dois
+   traços são escuros sobre branco, e a diferença de cor sozinha quase some.
+   O traço é comprido o bastante para ser visto, a espessura acompanha a da
+   linha no gráfico, e o rótulo "PPM" fica na cor forte enquanto o de
+   precisão fica discreto. Tudo igual nos dois temas — só as cores mudam,
+   pelas próprias variáveis. */
+.estat-legenda span::before {
+  content: '';
+  width: 2rem;
+}
+
+.estat-legenda .legenda-ppm {
+  color: var(--cor-texto);
+}
+
+.estat-legenda .legenda-ppm::before {
+  border-top: 2px solid var(--cor-texto);
+}
+
+.estat-legenda .legenda-precisao::before {
+  border-top: 1.25px solid var(--cor-texto-discreto);
+}
+
+/* O gráfico. O tamanho do desenho é o tamanho real na tela (o JS mede e
+   redesenha), para o texto dos eixos nunca esticar. */
+.estat-grafico {
+  width: 100%;
+  height: 220px;
+  margin-top: var(--esp-2);
+  overflow: visible;
+}
+
+.grafico-base {
+  stroke: var(--cor-borda);
+  stroke-width: 1;
+}
+
+.grafico-rotulo {
+  fill: var(--cor-texto-discreto);
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+}
+
+.grafico-ppm {
+  fill: none;
+  stroke: var(--cor-texto);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.grafico-marca {
+  fill: var(--cor-texto);
+}
+
+.grafico-precisao {
+  fill: none;
+  stroke: var(--cor-texto-discreto);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* O aviso que fica no lugar do gráfico quando não há o que desenhar. */
+.estat-aviso {
+  color: var(--cor-texto-secundario);
+}
+
+.estat-aviso--periodo {
+  margin-top: var(--esp-4);
+}
+
+/* --- 2. Mapa de calor ---------------------------------------------------- */
+
+/* O teclado é o das lições. Cada tecla com dados recebe, por baixo do
+   rótulo, uma camada com a cor de FUNDO do seu dedo — a mesma das fichas de
+   "teclas que mais escapam" — e é a opacidade dessa camada que conta os
+   erros: quase transparente sem erro, sólida com muito erro. O rótulo fica
+   sempre na cor forte do dedo, então dá para saber de que dedo é a tecla
+   mesmo quando ela não tem erro nenhum. */
+.estat-teclado {
+  margin-top: var(--esp-2);
+}
+
+.estat-teclado .tecla--calor {
+  isolation: isolate;
+  background-color: transparent;
+  color: var(--calor-texto);
+}
+
+.estat-teclado .tecla--calor::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--calor-fundo);
+  opacity: var(--calor);
+}
+
+.tecla--calor-minimo    { --calor-fundo: var(--dedo-minimo-fundo);    --calor-texto: var(--dedo-minimo-texto); }
+.tecla--calor-anelar    { --calor-fundo: var(--dedo-anelar-fundo);    --calor-texto: var(--dedo-anelar-texto); }
+.tecla--calor-medio     { --calor-fundo: var(--dedo-medio-fundo);     --calor-texto: var(--dedo-medio-texto); }
+.tecla--calor-indicador { --calor-fundo: var(--dedo-indicador-fundo); --calor-texto: var(--dedo-indicador-texto); }
+.tecla--calor-polegar   { --calor-fundo: var(--dedo-neutro-fundo);    --calor-texto: var(--dedo-neutro-texto); }
+
+/* A tecla sob o mouse: a mesma borda escura da tecla da vez na lição. */
+.estat-teclado .tecla--apontada {
+  border-color: var(--cor-texto);
+}
+
+/* A linha fixa embaixo do teclado. Sem balão, sem caixa: só o texto muda. */
+.estat-linha-tecla {
+  min-height: 1.6em;
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+.estat-linha-tecla .num {
+  color: var(--cor-texto);
+  font-family: var(--fonte-mono);
+}
+
+/* --- 3. Precisão por dedo ----------------------------------------------- */
+
+.estat-dedos {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) 3.5rem;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-4);
+  max-width: 40rem;
+  margin: var(--esp-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Cada linha é um item da lista, mas quem monta as colunas é a grade de
+   fora: o item "some" e as três partes dele viram células. */
+.estat-dedo {
+  display: contents;
+}
+
+.estat-dedo-nome {
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+/* Um respiro entre as duas mãos. */
+.estat-dedo--direita-primeiro > * {
+  margin-top: var(--esp-3);
+}
+
+/* A barra: um trilho fino, e o preenchimento na cor forte do dedo. */
+.estat-dedo-trilho {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background-color: var(--cor-borda);
+  overflow: hidden;
+}
+
+.estat-dedo-barra {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.estat-dedo--minimo    .estat-dedo-barra { background-color: var(--dedo-minimo-texto); }
+.estat-dedo--anelar    .estat-dedo-barra { background-color: var(--dedo-anelar-texto); }
+.estat-dedo--medio     .estat-dedo-barra { background-color: var(--dedo-medio-texto); }
+.estat-dedo--indicador .estat-dedo-barra { background-color: var(--dedo-indicador-texto); }
+.estat-dedo--polegar   .estat-dedo-barra { background-color: var(--dedo-neutro-texto); }
+
+.estat-dedo-valor {
+  color: var(--cor-texto);
+  font-family: var(--fonte-mono);
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.estat-dedo--sem-dados .estat-dedo-valor {
+  color: var(--cor-texto-discreto);
+}
+
+.estat-nota {
+  margin-top: var(--esp-2);
+}
+
+/* --- A tela vazia -------------------------------------------------------- */
+
+.estat-vazia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-5);
+  padding-block: var(--esp-2);
+}
+
+.estat-vazia p {
+  color: var(--cor-texto-secundario);
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="icone-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+  </symbol>
+  <symbol id="icone-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"></path>
+  </symbol>
+  <symbol id="icone-som" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"></path>
+    <path d="M16 9.2a4 4 0 0 1 0 5.6"></path>
+    <path d="M18.6 6.6a7.5 7.5 0 0 1 0 10.8"></path>
+  </symbol>
+  <symbol id="icone-mudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"></path>
+    <path d="M16.5 9.5l5 5M21.5 9.5l-5 5"></path>
+  </symbol>
+</svg>
+
+<header class="cabecalho">
+  <a class="marca" href="jogos.html">
+    <svg class="marca-icone" viewBox="0 0 100 100" width="22" height="22" aria-hidden="true">
+      <rect x="10" y="10" width="80" height="80" rx="18" fill="none" stroke="currentColor" stroke-width="9"/>
+      <circle cx="50" cy="50" r="10" fill="currentColor"/>
+    </svg>
+    <span>digita<span class="marca-ponto">.</span></span>
+  </a>
+
+  <nav class="cabecalho-acoes">
+    <button type="button" class="botao-icone" id="botao-som" aria-pressed="false" aria-label="Silenciar os sons">
+      <svg aria-hidden="true"><use href="#icone-som"></use></svg>
+    </button>
+    <button type="button" class="botao-icone" id="botao-tema" aria-label="Alternar entre modo claro e escuro">
+      <svg aria-hidden="true"><use href="#icone-lua"></use></svg>
+    </button>
+  </nav>
+</header>
+
+<p class="rascunho-aviso">Rascunho — não faz parte do site. Cores, fontes e teclado copiados do digita. de verdade. Dados de exemplo.</p>
+
+
+<main class="conteudo" id="tela"></main>
+
+<script>
+/* ==========================================================================
+   RASCUNHO — Estatísticas.
+
+   PARA VER OS TRÊS ESTADOS DA TELA, mude o endereço:
+
+     estatisticas.html                 cheio: 40 sessões e muitas teclas
+     estatisticas.html?dados=pouco     2 sessões, só a fileira base
+     estatisticas.html?dados=vazio     nada ainda — quem acabou de chegar
+
+   E, para ver o mapa de calor em outro teclado:
+
+     ?teclado=us        o americano (o padrão é o ABNT2)
+     ?sistema=windows   Ctrl e Alt na última fileira (o padrão é o do
+                        navegador, como no site)
+
+   Dá para juntar: estatisticas.html?dados=pouco&teclado=us
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   OS DADOS DE EXEMPLO
+
+   Nada disto é lido do localStorage: o rascunho não toca em nada do site.
+   Os formatos abaixo são os PROPOSTOS para quando a tela for aplicada.
+   -------------------------------------------------------------------------- */
+
+/**
+ * O HISTÓRICO — a chave nova, digita:historico.
+ *
+ * Uma entrada por sessão concluída (lição ou treino livre). É isto que
+ * desenha a curva de evolução. Formato proposto, como fica salvo:
+ *
+ *   digita:historico = {
+ *     sessoes: [
+ *       {
+ *         data: '2026-09-18T22:04:31.000Z',  // quando a sessão terminou
+ *         ppm: 32,                           // palavras por minuto
+ *         precisao: 96,                      // % de toques certos
+ *         origem: 'licao',                   // 'licao' ou 'livre'
+ *         id: 'base-07',                     // a lição, ou o modo do treino livre
+ *         segundos: 284,                     // quanto durou
+ *       },
+ *       …
+ *     ],
+ *   }
+ *
+ * Um objeto com uma lista dentro, e não a lista solta: o armazenamento.js
+ * mistura o que está salvo com um valor padrão, e isso só funciona com
+ * objeto. No máximo 200 sessões — ao gravar a 201ª, a mais antiga sai.
+ *
+ * Jogos NÃO entram aqui: na Fila o ritmo é do jogo, e na Cadeia se digita
+ * de memória. Eles contam só nas teclas (mais abaixo).
+ *
+ * Aqui, para caber no olho, cada sessão é uma linha curta:
+ *   [dias atrás, hora do dia, ppm, precisão, origem]
+ * As datas são contadas a partir de hoje, para os períodos de 7 e 30 dias
+ * sempre terem o que mostrar.
+ */
+const SESSOES_DE_EXEMPLO = [
+  [45, 20, 10, 86, 'licao'],   [42, 22, 12, 89, 'licao'],   [41,  9, 15, 89, 'licao'],
+  [39, 22, 18, 90, 'licao'],   [37,  8, 16, 90, 'licao'],   [37, 22, 19, 89, 'licao'],
+  [36, 13, 22, 90, 'livre'],   [34, 12, 16, 92, 'licao'],   [33, 21, 18, 90, 'licao'],
+  [32, 20, 22, 89, 'licao'],   [31,  9, 21, 89, 'livre'],   [30, 22, 24, 91, 'livre'],
+  [29, 12, 24, 90, 'licao'],   [28, 12, 23, 92, 'licao'],   [27,  8, 24, 89, 'licao'],
+  [25, 21, 22, 92, 'licao'],   [24, 21, 25, 92, 'licao'],   [23, 12, 27, 92, 'livre'],
+  [21, 12, 29, 93, 'livre'],   [20,  9, 23, 91, 'licao'],   [19, 19, 30, 91, 'livre'],
+  [19,  9, 31, 92, 'licao'],   [18, 22, 32, 89, 'licao'],   [17, 19, 29, 94, 'licao'],
+  [13, 13, 27, 94, 'licao'],   [12,  8, 32, 93, 'livre'],   [ 9,  9, 30, 92, 'licao'],
+  [ 9, 12, 30, 93, 'licao'],   [ 8, 20, 30, 95, 'licao'],   [ 8, 13, 29, 93, 'licao'],
+  [ 7, 13, 32, 92, 'licao'],   [ 6,  8, 32, 97, 'licao'],   [ 6, 20, 32, 93, 'livre'],
+  [ 5, 20, 28, 96, 'licao'],   [ 4, 20, 33, 96, 'licao'],   [ 3,  8, 33, 98, 'licao'],
+  [ 3,  9, 30, 96, 'licao'],   [ 2, 13, 33, 95, 'licao'],   [ 1, 20, 32, 96, 'licao'],
+  [ 0, 22, 37, 99, 'licao'],
+];
+
+/** Com pouco dado: as duas primeiras lições. */
+const SESSOES_POUCAS = [
+  [1, 20, 8, 91, 'licao'],
+  [0, 21, 11, 94, 'licao'],
+];
+
+/**
+ * AS TECLAS — uma parte nova dentro de digita:estatisticas.
+ *
+ * Hoje digita:estatisticas guarda SÓ os erros (`errosPorTecla`), e só as
+ * lições escrevem nela. Sem os acertos não há taxa de erro, e sem taxa não
+ * há mapa de calor nem precisão por dedo. Formato proposto:
+ *
+ *   digita:estatisticas = {
+ *     errosPorTecla: { a: 45, … },              // já existe; fica como está
+ *     porTecla: {                               // novo
+ *       a:   { acertos: 3751, erros: 45 },
+ *       'ç': { acertos: 366,  erros: 54 },
+ *       ' ': { acertos: 6058, erros: 42 },
+ *       …
+ *     },
+ *   }
+ *
+ * `porTecla` começa do zero, em vez de completar o `errosPorTecla` que já
+ * existe: os erros antigos não têm os acertos que os acompanharam, e
+ * misturá-los daria uma taxa de erro inventada. O `errosPorTecla` continua
+ * alimentando o Adaptativo e o painel "teclas que mais escapam".
+ *
+ * A chave é o CARACTERE, como já é hoje, e não a tecla física: assim a
+ * estatística sobrevive a uma troca de teclado. Quem traduz caractere em
+ * tecla é a tela, com o layout do momento — e uma letra acentuada conta
+ * para as DUAS teclas do gesto (a do acento e a da letra).
+ *
+ * Lições, treino livre e jogos alimentam esta parte.
+ *
+ * Aqui, [acertos, erros] por caractere.
+ */
+const TECLAS_DE_EXEMPLO = {
+  a: [3751, 45], e: [3203, 73], o: [2688, 94], s: [1992, 36], r: [1631, 59],
+  i: [1579, 33], n: [1265, 35], d: [1274, 26], m: [1171, 51], u: [1160, 36],
+  t: [1089, 29], c: [976, 38], l: [714, 14], p: [597, 53], v: [419, 23],
+  g: [329, 9], h: [327, 11], q: [278, 34], b: [243, 17], f: [256, 4],
+  z: [117, 13], j: [103, 1], x: [58, 7], w: [36, 3], k: [30, 1],
+  y: [6, 0], ' ': [6058, 42], 'ç': [366, 54], 'á': [232, 28], 'é': [216, 24],
+  'í': [108, 12], 'ó': [79, 11], 'ú': [54, 6], 'â': [34, 6], 'ê': [62, 8],
+  'ô': [26, 4], 'ã': [267, 43], 'õ': [50, 10], 'à': [20, 5], '1': [75, 5],
+  '2': [70, 5], '3': [65, 5], '4': [60, 5], '5': [64, 6], '6': [52, 8],
+  '7': [49, 6], '8': [54, 6], '9': [50, 5], '0': [79, 6], ',': [198, 12],
+  '.': [174, 6], '-': [36, 4], '?': [21, 4], 'A': [85, 5], 'E': [66, 4],
+  'O': [56, 4], 'M': [27, 3], 'S': [38, 2],
+};
+
+/** Com pouco dado: só a fileira base e o espaço, de duas lições. */
+const TECLAS_POUCAS = {
+  a: [96, 2], s: [88, 3], d: [84, 1], f: [112, 2], g: [30, 2],
+  h: [28, 1], j: [110, 3], k: [80, 4], l: [90, 2], ' ': [150, 1],
+};
+
+/* --------------------------------------------------------------------------
+   AS REGRAS DA TELA, em números.
+   -------------------------------------------------------------------------- */
+
+/** Abaixo disto, a curva de evolução não é desenhada: dois pontos não dizem nada. */
+const SESSOES_PARA_A_CURVA = 3;
+
+/**
+ * A taxa de erro que deixa a tecla SÓLIDA no mapa de calor. Abaixo dela, a
+ * cor sobe em linha reta a partir de quase transparente. É uma escala fixa,
+ * e não relativa à pior tecla: quem erra pouco vê um teclado claro, e isso
+ * é informação também.
+ */
+const TAXA_SOLIDA = 0.12;
+
+/** A opacidade de uma tecla com dados e sem erro nenhum: quase transparente. */
+const CALOR_MINIMO = 0.08;
+
+/**
+ * Com menos toques que isto, a taxa não é calculada: uma tecla apertada
+ * duas vezes, com um erro, teria "50% de erro" — e não quer dizer nada.
+ * Ela fica neutra, e a linha de baixo diz que ainda é pouco.
+ */
+const TOQUES_MINIMOS = 10;
+
+/* --------------------------------------------------------------------------
+   Lendo o endereço
+   -------------------------------------------------------------------------- */
+
+const parametros = new URLSearchParams(window.location.search);
+const ESTADO = ['vazio', 'pouco', 'cheio'].includes(parametros.get('dados')) ? parametros.get('dados') : 'cheio';
+const LAYOUT = parametros.get('teclado') === 'us' ? 'us' : 'abnt2';
+const SISTEMA = ['windows', 'mac'].includes(parametros.get('sistema'))
+  ? parametros.get('sistema')
+  : /Mac|iPhone|iPad/.test(navigator.userAgent) ? 'mac' : 'windows';
+
+/** Transforma as linhas curtas do exemplo no formato proposto. */
+function montarHistorico(linhas) {
+  const hoje = new Date();
+
+  return {
+    sessoes: linhas.map(([diasAtras, hora, ppm, precisao, origem]) => {
+      const data = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - diasAtras, hora, 10);
+      return { data: data.toISOString(), ppm, precisao, origem };
+    }),
+  };
+}
+
+function montarPorTecla(pares) {
+  const porTecla = {};
+  for (const [caractere, [acertos, erros]] of Object.entries(pares)) {
+    porTecla[caractere] = { acertos, erros };
+  }
+  return porTecla;
+}
+
+const DADOS = {
+  vazio: { historico: { sessoes: [] }, porTecla: {} },
+  pouco: { historico: montarHistorico(SESSOES_POUCAS), porTecla: montarPorTecla(TECLAS_POUCAS) },
+  cheio: { historico: montarHistorico(SESSOES_DE_EXEMPLO), porTecla: montarPorTecla(TECLAS_DE_EXEMPLO) },
+}[ESTADO];
+
+/* ==========================================================================
+   O TECLADO DO SITE — os arquivos de verdade, colados aqui sem mudar uma
+   linha (só os import/export saíram, porque este arquivo é um só):
+   dados/layouts/abnt2.js, dados/layouts/us.js, dados/layouts/dedos.js e
+   js/teclado.js.
+   ========================================================================== */
+
+/** O teclado.js pede o texto da barra de espaço às traduções. */
+const t = (chave) => ({ 'teclas.espaco': 'espaço' })[chave] ?? chave;
+
+/* ---- dados/layouts/abnt2.js ---------------------------------------------------- */
+
+/* ==========================================================================
+   abnt2.js — o desenho do teclado brasileiro (ABNT2).
+
+   Cada tecla tem:
+     codigo    o código físico (KeyboardEvent.code) — a identidade da tecla
+     rotulo    o que está escrito nela
+     sup       o segundo símbolo, o que sai com Shift (fica menor, em cima)
+     largura   quantas teclas normais ela ocupa (1 = tecla comum)
+     especial  nome interno das teclas de comando (Tab, Enter…), cujo texto
+               muda conforme o sistema ser Windows ou Mac
+     alta      só o Enter do ABNT2: ele é aquele "L" deitado, de duas alturas
+
+   A última fileira (Ctrl, Alt, espaço…) NÃO está aqui: ela muda conforme o
+   sistema, não conforme o layout, e é montada pelo js/teclado.js.
+
+   As diferenças que importam para quem escreve em português:
+     - a tecla à direita do L é o Ç (no americano, é o ;)
+     - existe uma tecla só para o acento agudo (´) e a crase (`)
+     - existe uma tecla só para o til (~) e o circunflexo (^)
+   ========================================================================== */
+
+const abnt2 = {
+  id: 'abnt2',
+  nome: 'Brasileiro ABNT2',
+
+  fileiras: [
+    // Fileira dos números
+    [
+      { codigo: 'Backquote', rotulo: "'", sup: '"' },
+      { codigo: 'Digit1', rotulo: '1', sup: '!' },
+      { codigo: 'Digit2', rotulo: '2', sup: '@' },
+      { codigo: 'Digit3', rotulo: '3', sup: '#' },
+      { codigo: 'Digit4', rotulo: '4', sup: '$' },
+      { codigo: 'Digit5', rotulo: '5', sup: '%' },
+      { codigo: 'Digit6', rotulo: '6', sup: '¨' },
+      { codigo: 'Digit7', rotulo: '7', sup: '&' },
+      { codigo: 'Digit8', rotulo: '8', sup: '*' },
+      { codigo: 'Digit9', rotulo: '9', sup: '(' },
+      { codigo: 'Digit0', rotulo: '0', sup: ')' },
+      { codigo: 'Minus', rotulo: '-', sup: '_' },
+      { codigo: 'Equal', rotulo: '=', sup: '+' },
+      { codigo: 'Backspace', especial: 'backspace', largura: 2 },
+    ],
+
+    // Fileira de cima
+    [
+      { codigo: 'Tab', especial: 'tab', largura: 1.5 },
+      { codigo: 'KeyQ', rotulo: 'Q' },
+      { codigo: 'KeyW', rotulo: 'W' },
+      { codigo: 'KeyE', rotulo: 'E' },
+      { codigo: 'KeyR', rotulo: 'R' },
+      { codigo: 'KeyT', rotulo: 'T' },
+      { codigo: 'KeyY', rotulo: 'Y' },
+      { codigo: 'KeyU', rotulo: 'U' },
+      { codigo: 'KeyI', rotulo: 'I' },
+      { codigo: 'KeyO', rotulo: 'O' },
+      { codigo: 'KeyP', rotulo: 'P' },
+      { codigo: 'BracketLeft', rotulo: '´', sup: '`' },
+      { codigo: 'BracketRight', rotulo: '[', sup: '{' },
+    ],
+
+    // Fileira base — a posição de descanso das mãos
+    [
+      { codigo: 'CapsLock', especial: 'capsLock', largura: 1.75 },
+      { codigo: 'KeyA', rotulo: 'A' },
+      { codigo: 'KeyS', rotulo: 'S' },
+      { codigo: 'KeyD', rotulo: 'D' },
+      { codigo: 'KeyF', rotulo: 'F' },
+      { codigo: 'KeyG', rotulo: 'G' },
+      { codigo: 'KeyH', rotulo: 'H' },
+      { codigo: 'KeyJ', rotulo: 'J' },
+      { codigo: 'KeyK', rotulo: 'K' },
+      { codigo: 'KeyL', rotulo: 'L' },
+      { codigo: 'Semicolon', rotulo: 'Ç' },
+      { codigo: 'Quote', rotulo: '~', sup: '^' },
+      { codigo: 'Backslash', rotulo: ']', sup: '}' },
+      { codigo: 'Enter', especial: 'enter', largura: 1.25, alta: true },
+    ],
+
+    // Fileira de baixo
+    [
+      { codigo: 'ShiftLeft', especial: 'shift', largura: 1.25 },
+      { codigo: 'IntlBackslash', rotulo: '\\', sup: '|' },
+      { codigo: 'KeyZ', rotulo: 'Z' },
+      { codigo: 'KeyX', rotulo: 'X' },
+      { codigo: 'KeyC', rotulo: 'C' },
+      { codigo: 'KeyV', rotulo: 'V' },
+      { codigo: 'KeyB', rotulo: 'B' },
+      { codigo: 'KeyN', rotulo: 'N' },
+      { codigo: 'KeyM', rotulo: 'M' },
+      { codigo: 'Comma', rotulo: ',', sup: '<' },
+      { codigo: 'Period', rotulo: '.', sup: '>' },
+      { codigo: 'Slash', rotulo: ';', sup: ':' },
+      { codigo: 'IntlRo', rotulo: '/', sup: '?' },
+      { codigo: 'ShiftRight', especial: 'shift', largura: 1.75 },
+    ],
+  ],
+};
+
+/* ---- dados/layouts/us.js ---------------------------------------------------- */
+
+/* ==========================================================================
+   us.js — o desenho do teclado americano (US, padrão ANSI).
+
+   Mesmas regras do abnt2.js. As diferenças que mais importam:
+     - a tecla à direita do L é o ; (no brasileiro, é o Ç)
+     - NÃO existe tecla de acento: acentos saem por combinações
+       (Mac: Option + E depois E = é · Windows: layout US Internacional)
+     - o Enter é uma barra deitada, de uma altura só
+     - tem uma tecla a menos em cada fileira de letras
+   ========================================================================== */
+
+const us = {
+  id: 'us',
+  nome: 'Americano US',
+
+  fileiras: [
+    // Fileira dos números
+    [
+      { codigo: 'Backquote', rotulo: '`', sup: '~' },
+      { codigo: 'Digit1', rotulo: '1', sup: '!' },
+      { codigo: 'Digit2', rotulo: '2', sup: '@' },
+      { codigo: 'Digit3', rotulo: '3', sup: '#' },
+      { codigo: 'Digit4', rotulo: '4', sup: '$' },
+      { codigo: 'Digit5', rotulo: '5', sup: '%' },
+      { codigo: 'Digit6', rotulo: '6', sup: '^' },
+      { codigo: 'Digit7', rotulo: '7', sup: '&' },
+      { codigo: 'Digit8', rotulo: '8', sup: '*' },
+      { codigo: 'Digit9', rotulo: '9', sup: '(' },
+      { codigo: 'Digit0', rotulo: '0', sup: ')' },
+      { codigo: 'Minus', rotulo: '-', sup: '_' },
+      { codigo: 'Equal', rotulo: '=', sup: '+' },
+      { codigo: 'Backspace', especial: 'backspace', largura: 2 },
+    ],
+
+    // Fileira de cima
+    [
+      { codigo: 'Tab', especial: 'tab', largura: 1.5 },
+      { codigo: 'KeyQ', rotulo: 'Q' },
+      { codigo: 'KeyW', rotulo: 'W' },
+      { codigo: 'KeyE', rotulo: 'E' },
+      { codigo: 'KeyR', rotulo: 'R' },
+      { codigo: 'KeyT', rotulo: 'T' },
+      { codigo: 'KeyY', rotulo: 'Y' },
+      { codigo: 'KeyU', rotulo: 'U' },
+      { codigo: 'KeyI', rotulo: 'I' },
+      { codigo: 'KeyO', rotulo: 'O' },
+      { codigo: 'KeyP', rotulo: 'P' },
+      { codigo: 'BracketLeft', rotulo: '[', sup: '{' },
+      { codigo: 'BracketRight', rotulo: ']', sup: '}' },
+      { codigo: 'Backslash', rotulo: '\\', sup: '|', largura: 1.5 },
+    ],
+
+    // Fileira base — a posição de descanso das mãos
+    [
+      { codigo: 'CapsLock', especial: 'capsLock', largura: 1.75 },
+      { codigo: 'KeyA', rotulo: 'A' },
+      { codigo: 'KeyS', rotulo: 'S' },
+      { codigo: 'KeyD', rotulo: 'D' },
+      { codigo: 'KeyF', rotulo: 'F' },
+      { codigo: 'KeyG', rotulo: 'G' },
+      { codigo: 'KeyH', rotulo: 'H' },
+      { codigo: 'KeyJ', rotulo: 'J' },
+      { codigo: 'KeyK', rotulo: 'K' },
+      { codigo: 'KeyL', rotulo: 'L' },
+      { codigo: 'Semicolon', rotulo: ';', sup: ':' },
+      { codigo: 'Quote', rotulo: "'", sup: '"' },
+      { codigo: 'Enter', especial: 'enter', largura: 2.25 },
+    ],
+
+    // Fileira de baixo
+    [
+      { codigo: 'ShiftLeft', especial: 'shift', largura: 2.25 },
+      { codigo: 'KeyZ', rotulo: 'Z' },
+      { codigo: 'KeyX', rotulo: 'X' },
+      { codigo: 'KeyC', rotulo: 'C' },
+      { codigo: 'KeyV', rotulo: 'V' },
+      { codigo: 'KeyB', rotulo: 'B' },
+      { codigo: 'KeyN', rotulo: 'N' },
+      { codigo: 'KeyM', rotulo: 'M' },
+      { codigo: 'Comma', rotulo: ',', sup: '<' },
+      { codigo: 'Period', rotulo: '.', sup: '>' },
+      { codigo: 'Slash', rotulo: '/', sup: '?' },
+      { codigo: 'ShiftRight', especial: 'shift', largura: 2.75 },
+    ],
+  ],
+};
+
+/* ---- dados/layouts/dedos.js ---------------------------------------------------- */
+
+/* ==========================================================================
+   dedos.js — qual dedo aperta cada tecla.
+
+   As teclas são identificadas pelo CÓDIGO FÍSICO (KeyboardEvent.code), não
+   pela letra. "KeyA" é sempre a tecla à esquerda do S, em qualquer teclado do
+   mundo — no ABNT2 ela escreve "a" e no francês AZERTY escreveria "q".
+   É por isso que o mesmo mapa de dedos serve para os dois layouts.
+
+   A divisão é a do método de datilografia tradicional: cada dedo cuida de
+   uma coluna do teclado, e os dois polegares dividem a barra de espaço.
+   ========================================================================== */
+
+/** Nomes dos dedos, iguais aos usados nas cores do tema.css. */
+const DEDOS = ['minimo', 'anelar', 'medio', 'indicador', 'polegar'];
+
+/**
+ * Código físico da tecla → mão e dedo.
+ * Teclas que não aparecem aqui (Alt, Command, setas…) são "neutras": ficam
+ * cinza e nenhuma lição pede que sejam apertadas.
+ */
+const MAPA = {
+  // --- Mão esquerda ------------------------------------------------------
+  // Mínimo: a coluna do A, mais tudo que fica à esquerda dele.
+  Backquote: ['esquerda', 'minimo'],
+  Digit1: ['esquerda', 'minimo'],
+  KeyQ: ['esquerda', 'minimo'],
+  KeyA: ['esquerda', 'minimo'],
+  KeyZ: ['esquerda', 'minimo'],
+  Tab: ['esquerda', 'minimo'],
+  CapsLock: ['esquerda', 'minimo'],
+  ShiftLeft: ['esquerda', 'minimo'],
+  ControlLeft: ['esquerda', 'minimo'],
+  IntlBackslash: ['esquerda', 'minimo'], // tecla \ | à esquerda do Z (ABNT2)
+
+  // Anelar: a coluna do S.
+  Digit2: ['esquerda', 'anelar'],
+  KeyW: ['esquerda', 'anelar'],
+  KeyS: ['esquerda', 'anelar'],
+  KeyX: ['esquerda', 'anelar'],
+
+  // Médio: a coluna do D.
+  Digit3: ['esquerda', 'medio'],
+  KeyE: ['esquerda', 'medio'],
+  KeyD: ['esquerda', 'medio'],
+  KeyC: ['esquerda', 'medio'],
+
+  // Indicador: duas colunas, a do F e a do G.
+  Digit4: ['esquerda', 'indicador'],
+  Digit5: ['esquerda', 'indicador'],
+  KeyR: ['esquerda', 'indicador'],
+  KeyT: ['esquerda', 'indicador'],
+  KeyF: ['esquerda', 'indicador'],
+  KeyG: ['esquerda', 'indicador'],
+  KeyV: ['esquerda', 'indicador'],
+  KeyB: ['esquerda', 'indicador'],
+
+  // --- Mão direita -------------------------------------------------------
+  // Indicador: as colunas do J e do H.
+  Digit6: ['direita', 'indicador'],
+  Digit7: ['direita', 'indicador'],
+  KeyY: ['direita', 'indicador'],
+  KeyU: ['direita', 'indicador'],
+  KeyH: ['direita', 'indicador'],
+  KeyJ: ['direita', 'indicador'],
+  KeyN: ['direita', 'indicador'],
+  KeyM: ['direita', 'indicador'],
+
+  // Médio: a coluna do K.
+  Digit8: ['direita', 'medio'],
+  KeyI: ['direita', 'medio'],
+  KeyK: ['direita', 'medio'],
+  Comma: ['direita', 'medio'],
+
+  // Anelar: a coluna do L.
+  Digit9: ['direita', 'anelar'],
+  KeyO: ['direita', 'anelar'],
+  KeyL: ['direita', 'anelar'],
+  Period: ['direita', 'anelar'],
+
+  // Mínimo: a tecla à direita do L (Ç no ABNT2, ; no americano) e tudo que
+  // vem depois dela.
+  Digit0: ['direita', 'minimo'],
+  Minus: ['direita', 'minimo'],
+  Equal: ['direita', 'minimo'],
+  KeyP: ['direita', 'minimo'],
+  BracketLeft: ['direita', 'minimo'],
+  BracketRight: ['direita', 'minimo'],
+  Backslash: ['direita', 'minimo'],
+  Semicolon: ['direita', 'minimo'],
+  Quote: ['direita', 'minimo'],
+  Slash: ['direita', 'minimo'],
+  IntlRo: ['direita', 'minimo'], // tecla / ? à direita do ; (ABNT2)
+  Enter: ['direita', 'minimo'],
+  Backspace: ['direita', 'minimo'],
+  ShiftRight: ['direita', 'minimo'],
+
+  // --- Polegares ---------------------------------------------------------
+  Space: ['ambas', 'polegar'],
+};
+
+/**
+ * Descobre a mão e o dedo de uma tecla.
+ * @param {string} codigo  ex.: 'KeyF'
+ * @returns {{ mao: string, dedo: string } | null}  null = tecla neutra
+ */
+function dedoDaTecla(codigo) {
+  const encontrado = MAPA[codigo];
+  if (!encontrado) return null;
+
+  return { mao: encontrado[0], dedo: encontrado[1] };
+}
+
+/**
+ * As teclas onde os indicadores descansam. Elas têm um risquinho em relevo no
+ * teclado de verdade, para você achar a posição inicial sem olhar — e por isso
+ * ganham uma marca também no teclado da tela.
+ */
+const TECLAS_DE_REFERENCIA = ['KeyF', 'KeyJ'];
+
+/* ---- js/teclado.js ---------------------------------------------------- */
+
+/* ==========================================================================
+   teclado.js — desenha o teclado na tela e acende a próxima tecla.
+
+   Este arquivo é usado em dois lugares diferentes:
+     - na tela de entrada, como PRÉVIA: todas as teclas coloridas pelo dedo,
+       para você reconhecer o seu teclado e ver as cores do método;
+     - na tela de lição, em modo CINZA: tudo apagado, só a próxima tecla
+       acesa na cor do dedo certo.
+
+   Ele não decide nada sozinho: recebe o layout (abnt2/us) e o sistema
+   (windows/mac) e desenha. Quem decide é a tela que o chamou.
+   ========================================================================== */
+
+
+const LAYOUTS = { abnt2, us };
+
+/* --------------------------------------------------------------------------
+   A última fileira muda conforme o SISTEMA, não conforme o layout: é a única
+   diferença entre um teclado de Windows e um de Mac.
+   -------------------------------------------------------------------------- */
+
+const ULTIMA_FILEIRA = {
+  windows: [
+    { codigo: 'ControlLeft', especial: 'ctrl', largura: 1.5 },
+    { codigo: 'MetaLeft', especial: 'win', largura: 1.25 },
+    { codigo: 'AltLeft', especial: 'alt', largura: 1.25 },
+    { codigo: 'Space', especial: 'espaco', largura: 7 },
+    { codigo: 'AltRight', especial: 'altGr', largura: 1.25 },
+    { codigo: 'MetaRight', especial: 'win', largura: 1.25 },
+    { codigo: 'ControlRight', especial: 'ctrl', largura: 1.5 },
+  ],
+  mac: [
+    { codigo: 'ControlLeft', especial: 'control', largura: 1.25 },
+    { codigo: 'AltLeft', especial: 'option', largura: 1.25 },
+    { codigo: 'MetaLeft', especial: 'command', largura: 1.75 },
+    { codigo: 'Space', especial: 'espaco', largura: 6.5 },
+    { codigo: 'MetaRight', especial: 'command', largura: 1.75 },
+    { codigo: 'AltRight', especial: 'option', largura: 1.25 },
+    { codigo: 'ControlRight', especial: 'control', largura: 1.25 },
+  ],
+};
+
+/**
+ * O que vem escrito nas teclas de comando.
+ * O Mac usa símbolos (⌘ ⌥ ⌃); o Windows usa palavras. Nenhuma delas muda
+ * entre português e inglês — a única exceção é a barra de espaço, que vem
+ * das traduções.
+ */
+const ROTULOS_ESPECIAIS = {
+  windows: {
+    tab: 'Tab',
+    capsLock: 'Caps',
+    shift: 'Shift',
+    enter: 'Enter',
+    backspace: '⌫',
+    ctrl: 'Ctrl',
+    alt: 'Alt',
+    altGr: 'AltGr',
+    win: '⊞',
+  },
+  mac: {
+    tab: '⇥',
+    capsLock: '⇪',
+    shift: '⇧',
+    enter: '⏎',
+    backspace: '⌫',
+    control: '⌃',
+    option: '⌥',
+    command: '⌘',
+  },
+};
+
+/* --------------------------------------------------------------------------
+   Desenho
+   -------------------------------------------------------------------------- */
+
+/** Guarda o que cada teclado da página está mostrando, para poder redesenhar. */
+const teclados = new Map();
+
+/**
+ * Desenha um teclado dentro de um elemento da página.
+ * @param {HTMLElement} destino  onde desenhar (o conteúdo anterior é apagado)
+ * @param {object} opcoes
+ * @param {'abnt2'|'us'} opcoes.layout
+ * @param {'windows'|'mac'} opcoes.sistema
+ * @param {'cores'|'cinza'} [opcoes.modo]  'cores' pinta tudo; 'cinza' apaga tudo
+ */
+function desenharTeclado(destino, opcoes) {
+  const { layout = 'abnt2', sistema = 'windows', modo = 'cores' } = opcoes;
+  const desenho = LAYOUTS[layout] ?? LAYOUTS.abnt2;
+
+  teclados.set(destino, { layout, sistema, modo });
+
+  destino.replaceChildren();
+  destino.classList.add('teclado');
+  destino.dataset.modo = modo;
+
+  // O teclado é um apoio visual. Para quem usa leitor de tela, ouvir 70
+  // letras soltas atrapalha mais do que ajuda: a informação de qual tecla
+  // apertar vem escrita na legenda da lição, em texto.
+  destino.setAttribute('aria-hidden', 'true');
+
+  const fileiras = [...desenho.fileiras, ULTIMA_FILEIRA[sistema] ?? ULTIMA_FILEIRA.windows];
+
+  for (const teclas of fileiras) {
+    const fileira = document.createElement('div');
+    fileira.className = 'teclado-fileira';
+
+    for (const tecla of teclas) {
+      fileira.append(criarTecla(tecla, sistema, modo));
+    }
+
+    destino.append(fileira);
+  }
+}
+
+/** Monta uma tecla. */
+function criarTecla(tecla, sistema, modo) {
+  const elemento = document.createElement('div');
+  elemento.className = 'tecla';
+  elemento.dataset.codigo = tecla.codigo;
+  elemento.style.setProperty('--largura', tecla.largura ?? 1);
+
+  // Cor do dedo: no modo "cores" todas as teclas já nascem pintadas; no modo
+  // "cinza" ficam neutras e só a tecla da vez acende (ver destacarTecla).
+  const posicao = dedoDaTecla(tecla.codigo);
+  if (modo === 'cores' && posicao) {
+    elemento.classList.add(`tecla--${posicao.dedo}`);
+  } else {
+    elemento.classList.add('tecla--neutro');
+  }
+
+  // O risquinho em relevo do F e do J.
+  if (TECLAS_DE_REFERENCIA.includes(tecla.codigo)) {
+    elemento.classList.add('tecla--referencia');
+  }
+
+  if (tecla.alta) elemento.classList.add('tecla--alta');
+
+  // O segundo símbolo da tecla (o que sai com Shift) fica menor, em cima.
+  if (tecla.sup) {
+    const sup = document.createElement('span');
+    sup.className = 'tecla-sup';
+    sup.textContent = tecla.sup;
+    elemento.append(sup);
+  }
+
+  const rotulo = document.createElement('span');
+  rotulo.className = 'tecla-rotulo';
+  rotulo.textContent = textoDaTecla(tecla, sistema);
+  elemento.append(rotulo);
+
+  if (tecla.especial) elemento.classList.add('tecla--comando');
+
+  return elemento;
+}
+
+/** O texto que aparece na tecla. */
+function textoDaTecla(tecla, sistema) {
+  if (!tecla.especial) return tecla.rotulo;
+  if (tecla.especial === 'espaco') return t('teclas.espaco');
+
+  return ROTULOS_ESPECIAIS[sistema]?.[tecla.especial] ?? tecla.especial;
+}
+
+/* --------------------------------------------------------------------------
+   De uma letra para uma tecla
+
+   A lição sabe qual LETRA vem agora ("a", "ç", " "). Para acender a tecla
+   certa é preciso saber em que TECLA aquela letra mora — e isso depende do
+   layout: o ç fica numa tecla própria no brasileiro e não existe no
+   americano.
+
+   A resposta sai dos próprios arquivos de layout, e não de uma segunda
+   lista escrita à mão: assim nunca há duas verdades sobre o mesmo teclado.
+   -------------------------------------------------------------------------- */
+
+/** Um mapa "letra → tecla" por layout, montado na primeira vez que se pede. */
+const mapasDeLetras = new Map();
+
+function mapaDeLetras(layout) {
+  if (mapasDeLetras.has(layout)) return mapasDeLetras.get(layout);
+
+  const mapa = new Map();
+  const desenho = LAYOUTS[layout] ?? LAYOUTS.abnt2;
+
+  for (const fileira of desenho.fileiras) {
+    for (const tecla of fileira) {
+      // O símbolo de baixo sai direto; o de cima precisa de Shift.
+      if (tecla.rotulo) mapa.set(tecla.rotulo.toLowerCase(), {
+        codigo: tecla.codigo,
+        modificador: null,
+      });
+
+      if (tecla.sup) mapa.set(tecla.sup.toLowerCase(), {
+        codigo: tecla.codigo,
+        modificador: 'shift',
+      });
+    }
+  }
+
+  // Letras maiúsculas moram na mesma tecla, com Shift.
+  for (const [letra, onde] of [...mapa]) {
+    const maiuscula = letra.toUpperCase();
+    if (maiuscula !== letra) mapa.set(maiuscula, { ...onde, modificador: 'shift' });
+  }
+
+  mapa.set(' ', { codigo: 'Space', modificador: null });
+
+  mapasDeLetras.set(layout, mapa);
+  return mapa;
+}
+
+/**
+ * Em que tecla mora uma letra.
+ * @param {string} letra
+ * @param {'abnt2'|'us'} layout
+ * @returns {{codigo: string, modificador: string|null} | null}  null quando a
+ *          letra não sai de uma tecla só (é o caso das acentuadas, que
+ *          precisam do acento antes)
+ */
+function teclaDaLetra(letra, layout) {
+  if (!letra) return null;
+  return mapaDeLetras(layout).get(letra) ?? null;
+}
+
+/**
+ * Os acentos, pelo sinal que o Unicode usa para cada um.
+ *
+ * Uma letra acentuada é, por dentro, duas coisas: a letra e o sinal. Isto
+ * traduz o segundo para o acento que se digita.
+ *
+ * A cedilha entra na lista porque no US Internacional ela sai da mesma tecla
+ * do agudo (a aspa simples) seguida do C. No teclado brasileiro ela nunca
+ * chega aqui: lá o Ç tem tecla própria.
+ */
+const SINAL_DO_ACENTO = {
+  '\u0301': '´', // agudo
+  '\u0300': '`', // grave
+  '\u0302': '^', // circunflexo
+  '\u0303': '~', // til
+  '\u0308': '¨', // trema
+  '\u0327': '´', // cedilha
+};
+
+/**
+ * Onde mora cada acento no teclado AMERICANO.
+ *
+ * O brasileiro não precisa desta tabela: lá os acentos são teclas com
+ * rótulo, e saem do próprio desenho do layout. O americano não tem tecla de
+ * acento nenhuma — o caminho é outro em cada sistema:
+ *
+ *   Mac        ⌥ + uma letra que "significa" o acento (⌥E = agudo, ⌥N = til)
+ *   Windows    o layout US Internacional, onde ' ` ^ ~ viram teclas mortas
+ *
+ * No Windows isto pressupõe o US Internacional ligado — que é exatamente o
+ * que a dica escrita da lição manda fazer.
+ */
+const ACENTO_NO_US = {
+  mac: {
+    '´': { codigo: 'KeyE', modificador: 'option' },
+    '`': { codigo: 'Backquote', modificador: 'option' },
+    '^': { codigo: 'KeyI', modificador: 'option' },
+    '~': { codigo: 'KeyN', modificador: 'option' },
+    '¨': { codigo: 'KeyU', modificador: 'option' },
+  },
+  windows: {
+    '´': { codigo: 'Quote', modificador: null },
+    '`': { codigo: 'Backquote', modificador: null },
+    '^': { codigo: 'Digit6', modificador: 'shift' },
+    '~': { codigo: 'Backquote', modificador: 'shift' },
+    '¨': { codigo: 'Quote', modificador: 'shift' },
+  },
+};
+
+/**
+ * Os PASSOS para produzir uma letra: uma tecla, ou duas.
+ *
+ * A maioria das letras sai de uma tecla só. As acentuadas saem de duas, na
+ * ordem em que se aperta: primeiro o acento, depois a letra. É por isso que
+ * a lição consegue acender a tecla certa em cada momento — enquanto o acento
+ * está pendente, o teclado já mostra a letra que vem a seguir.
+ *
+ * Cada passo diz também se há uma tecla a SEGURAR junto (Shift, Option ou
+ * AltGr). Quem traduz isso para uma tecla física é teclaDaModificadora.
+ *
+ * @param {string} letra
+ * @param {'abnt2'|'us'} layout
+ * @param {'windows'|'mac'} sistema
+ * @returns {Array<{codigo: string, modificador: string|null, letra: string}>}
+ */
+function passosDaLetra(letra, layout, sistema = 'windows') {
+  const direta = teclaDaLetra(letra, layout);
+  if (direta) return [{ ...direta, letra }];
+
+  // Separa a letra nas partes dela: "á" vira "a" mais o sinal do agudo.
+  const partes = letra.normalize('NFD');
+  if (partes.length < 2) return [];
+
+  const base = partes[0];
+  const sinal = partes[1];
+
+  /* O ç no teclado americano do Mac é a exceção da exceção: ⌥ + c produz a
+     letra pronta, de uma vez. Não é tecla morta, então não são dois passos. */
+  if (sinal === '\u0327' && layout === 'us' && sistema === 'mac') {
+    const comoEstava = base === base.toUpperCase() ? 'Ç' : 'ç';
+    return [{ codigo: 'KeyC', modificador: 'option', letra: comoEstava }];
+  }
+
+  const acento = SINAL_DO_ACENTO[sinal];
+  if (!acento) return [];
+
+  const teclaAcento = teclaDoAcento(acento, layout, sistema);
+  const teclaLetra = teclaDaLetra(base, layout);
+  if (!teclaAcento || !teclaLetra) return [];
+
+  return [
+    { ...teclaAcento, letra: acento },
+    { ...teclaLetra, letra: base },
+  ];
+}
+
+/** Em que tecla mora um acento, conforme o teclado e o sistema. */
+function teclaDoAcento(acento, layout, sistema) {
+  if (layout === 'abnt2') return teclaDaLetra(acento, 'abnt2');
+
+  return ACENTO_NO_US[sistema === 'mac' ? 'mac' : 'windows'][acento] ?? null;
+}
+
+/**
+ * Onde fica a tecla modificadora que a OUTRA mão vai segurar.
+ *
+ * É a regra de sempre da digitação: o modificador é apertado pela mão
+ * contrária à da letra. Fazer as duas coisas com a mesma mão obrigaria a
+ * torcer o pulso — e é justamente o vício que o método existe para evitar.
+ * Shift sai no mínimo; Option e AltGr saem no polegar.
+ *
+ * O AltGr é a exceção: não existe um do lado esquerdo em teclado nenhum,
+ * então ele é sempre o da direita.
+ *
+ * @param {'shift'|'option'|'altgr'} modificador
+ * @param {'esquerda'|'direita'|'ambas'} maoDaLetra
+ * @returns {{modificador: string, codigo: string, mao: string, dedo: string} | null}
+ */
+function teclaDaModificadora(modificador, maoDaLetra) {
+  const oposta = maoDaLetra === 'esquerda' ? 'direita' : 'esquerda';
+  const ladoDireito = oposta === 'direita';
+
+  if (modificador === 'shift') {
+    return {
+      modificador,
+      codigo: ladoDireito ? 'ShiftRight' : 'ShiftLeft',
+      mao: oposta,
+      dedo: 'minimo',
+    };
+  }
+
+  if (modificador === 'option') {
+    return {
+      modificador,
+      codigo: ladoDireito ? 'AltRight' : 'AltLeft',
+      mao: oposta,
+      dedo: 'polegar',
+    };
+  }
+
+  if (modificador === 'altgr') {
+    return { modificador, codigo: 'AltRight', mao: 'direita', dedo: 'polegar' };
+  }
+
+  return null;
+}
+
+/* --------------------------------------------------------------------------
+   Destaque da próxima tecla
+   -------------------------------------------------------------------------- */
+
+/**
+ * Acende uma tecla na cor do dedo que deve apertá-la.
+ * @param {HTMLElement} destino  o teclado desenhado
+ * @param {string} codigo  ex.: 'KeyF'
+ */
+function destacarTecla(destino, codigo) {
+  limparDestaque(destino);
+
+  const tecla = destino.querySelector(`[data-codigo="${codigo}"]`);
+  if (!tecla) return;
+
+  const posicao = dedoDaTecla(codigo);
+  tecla.classList.add('tecla--ativa');
+  if (posicao) tecla.classList.add(`tecla--${posicao.dedo}`);
+}
+
+/**
+ * Acende a tecla que se SEGURA numa combinação (Shift, Option, AltGr).
+ *
+ * Ela não ganha cor de fundo como a tecla da vez, de propósito: cor cheia
+ * quer dizer "aperte e solte", e não é isso que se faz com um modificador.
+ * O contorno pulsando quer dizer "fique aqui enquanto a outra mão digita".
+ *
+ * @param {HTMLElement} destino
+ * @param {string} codigo  ex.: 'ShiftRight'
+ */
+function destacarModificadora(destino, codigo) {
+  destino.querySelector(`[data-codigo="${codigo}"]`)?.classList.add('tecla--modificadora');
+}
+
+/** Apaga o destaque anterior. */
+function limparDestaque(destino) {
+  destino.querySelectorAll('.tecla--modificadora').forEach((tecla) => {
+    tecla.classList.remove('tecla--modificadora');
+  });
+
+  destino.querySelectorAll('.tecla--ativa').forEach((tecla) => {
+    tecla.classList.remove('tecla--ativa');
+
+    // No modo cinza a cor do dedo é emprestada só enquanto a tecla está
+    // acesa; no modo cores ela é permanente e não pode ser removida.
+    if (destino.dataset.modo === 'cinza') {
+      const posicao = dedoDaTecla(tecla.dataset.codigo);
+      if (posicao) tecla.classList.remove(`tecla--${posicao.dedo}`);
+    }
+  });
+}
+
+/**
+ * Faz uma tecla piscar em vermelho — usado quando o aluno erra.
+ * @param {HTMLElement} destino
+ * @param {string} codigo
+ */
+function piscarErro(destino, codigo) {
+  const tecla = destino.querySelector(`[data-codigo="${codigo}"]`);
+  if (!tecla) return;
+
+  tecla.classList.remove('tecla--erro');
+  // Forçar o navegador a recalcular reinicia a animação, caso o aluno erre
+  // duas vezes seguidas na mesma tecla.
+  void tecla.offsetWidth;
+  tecla.classList.add('tecla--erro');
+}
+
+/* --------------------------------------------------------------------------
+   Manutenção
+   -------------------------------------------------------------------------- */
+
+// A barra de espaço é a única tecla com texto traduzido. Quando o idioma
+// muda, todos os teclados da página são redesenhados.
+document.addEventListener('idioma-mudou', () => {
+  for (const [destino, opcoes] of teclados) {
+    if (destino.isConnected) desenharTeclado(destino, opcoes);
+    else teclados.delete(destino);
+  }
+});
+
+
+/* ==========================================================================
+   Formatação
+   ========================================================================== */
+
+const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+/** "18 set" */
+const formatarDia = (data) => `${data.getDate()} ${MESES[data.getMonth()]}`;
+
+/**
+ * "12,5" — com vírgula, como se escreve em português, e sempre com uma
+ * casa: numa coluna de porcentagens, "89" ao lado de "96,4" parece erro.
+ */
+const formatarDecimal = (numero) =>
+  numero.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+const formatarInteiro = (numero) => numero.toLocaleString('pt-BR');
+
+/* ==========================================================================
+   A TELA
+   ========================================================================== */
+
+const tela = document.querySelector('#tela');
+
+function mostrarEstatisticas() {
+  const { historico, porTecla } = DADOS;
+  const semNada = historico.sessoes.length === 0 && Object.keys(porTecla).length === 0;
+
+  tela.replaceChildren();
+
+  if (semNada) {
+    mostrarVazia();
+    return;
+  }
+
+  tela.insertAdjacentHTML('beforeend', `
+    <div class="estat">
+      <h1>Estatísticas</h1>
+      <p class="subtitulo">Sua evolução, ao longo dos dias.</p>
+
+      <section class="secao" data-papel="evolucao"></section>
+      <section class="secao" data-papel="calor"></section>
+      <section class="secao" data-papel="dedos"></section>
+    </div>
+  `);
+
+  const teclas = teclasDoTeclado(porTecla);
+
+  montarEvolucao(tela.querySelector('[data-papel="evolucao"]'), historico.sessoes);
+  montarCalor(tela.querySelector('[data-papel="calor"]'), teclas);
+  montarDedos(tela.querySelector('[data-papel="dedos"]'), teclas);
+}
+
+/* --------------------------------------------------------------------------
+   A tela vazia — de propósito, e não por acidente.
+
+   Quem acabou de chegar não tem nada para ver. Nada de gráfico sem linha,
+   eixo sem número ou teclado todo apagado: uma frase e o caminho para
+   treinar.
+   -------------------------------------------------------------------------- */
+
+function mostrarVazia() {
+  tela.insertAdjacentHTML('beforeend', `
+    <div class="estat">
+      <h1>Estatísticas</h1>
+      <div class="estat-vazia">
+        <p>As estatísticas aparecem depois da sua primeira lição.</p>
+        <!-- No site, leva à próxima lição — a mesma do "Continuar de onde
+             parei" da tela inicial. No rascunho, não faz nada. -->
+        <button type="button" class="botao botao--principal">Ir treinar</button>
+      </div>
+    </div>
+  `);
+}
+
+/* ==========================================================================
+   1. EVOLUÇÃO
+   ========================================================================== */
+
+const PERIODOS = [
+  { id: 7, rotulo: '7 dias' },
+  { id: 30, rotulo: '30 dias' },
+  { id: 0, rotulo: 'Tudo' },
+];
+
+let periodo = 30;
+
+function montarEvolucao(secao, sessoes) {
+  secao.insertAdjacentHTML('beforeend', '<h2>Evolução</h2>');
+
+  // Com poucas sessões, uma linha no lugar do gráfico — e mais nada.
+  if (sessoes.length < SESSOES_PARA_A_CURVA) {
+    secao.insertAdjacentHTML('beforeend', `
+      <p class="estat-aviso">
+        A curva de velocidade aparece a partir de ${SESSOES_PARA_A_CURVA} sessões —
+        até agora, você fez ${sessoes.length === 1 ? 'uma' : sessoes.length}.
+      </p>
+    `);
+    return;
+  }
+
+  // Os três números valem para o histórico inteiro, e não para o período:
+  // "melhor" e "no total" não mudam por olhar uma janela menor.
+  const melhor = Math.max(...sessoes.map((s) => s.ppm));
+  const ultimas = sessoes.slice(-10);
+  const media = Math.round(ultimas.reduce((soma, s) => soma + s.ppm, 0) / ultimas.length);
+
+  secao.insertAdjacentHTML('beforeend', `
+    <div class="estat-numeros">
+      <span><strong>${melhor}</strong>melhor PPM</span>
+      <span><strong>${media}</strong>PPM médio nas últimas ${ultimas.length} sessões</span>
+      <span><strong>${sessoes.length}</strong>${sessoes.length === 1 ? 'sessão' : 'sessões'} no total</span>
+    </div>
+
+    <div class="estat-controles">
+      <div class="estat-periodos" role="group" aria-label="Período">
+        ${PERIODOS.map((p) => `
+          <button type="button" class="estat-periodo" data-periodo="${p.id}"
+                  aria-pressed="${p.id === periodo}">${p.rotulo}</button>`).join('')}
+      </div>
+
+      <div class="estat-legenda" aria-hidden="true">
+        <span class="legenda-ppm">PPM</span>
+        <span class="legenda-precisao">precisão</span>
+      </div>
+    </div>
+
+    <div data-papel="grafico"></div>
+  `);
+
+  const lugar = secao.querySelector('[data-papel="grafico"]');
+
+  for (const botao of secao.querySelectorAll('[data-periodo]')) {
+    botao.addEventListener('click', () => {
+      periodo = Number(botao.dataset.periodo);
+      for (const outro of secao.querySelectorAll('[data-periodo]')) {
+        outro.setAttribute('aria-pressed', String(outro === botao));
+      }
+      desenharGrafico(lugar, sessoes);
+    });
+  }
+
+  desenharGrafico(lugar, sessoes);
+
+  // O desenho tem o tamanho real da tela: se a janela muda, ele é refeito.
+  window.addEventListener('resize', () => desenharGrafico(lugar, sessoes));
+}
+
+/**
+ * O gráfico de linha, em SVG desenhado à mão.
+ *
+ * Duas linhas na mesma caixa, cada uma com a sua escala:
+ *   PPM        o traço principal, com uma marquinha por sessão; escala à
+ *              esquerda, de zero até um quarto acima do melhor
+ *   precisão   um traço mais claro, sem marcas; escala à direita, de 50%
+ *              a 100%
+ *
+ * As duas escalas foram escolhidas para as linhas NÃO se cruzarem: a
+ * precisão de quem treina vive entre 85% e 100%, e na escala de 50 a 100 ela
+ * corre no terço de cima da caixa; o PPM, com a folga de um quarto, fica
+ * abaixo dela. Com as duas no mesmo andar, elas se enroscavam e nenhuma se
+ * lia.
+ *
+ * O eixo do tempo é o tempo de verdade, e não a ordem das sessões: um
+ * intervalo de uma semana sem treinar aparece como um vão na linha.
+ */
+function desenharGrafico(lugar, todas) {
+  const agora = new Date();
+  const fim = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() + 1).getTime();
+  const inicioDoPeriodo = periodo ? fim - periodo * 24 * 3600 * 1000 : null;
+
+  const sessoes = todas.filter((s) => !inicioDoPeriodo || new Date(s.data).getTime() >= inicioDoPeriodo);
+
+  lugar.replaceChildren();
+
+  if (sessoes.length < SESSOES_PARA_A_CURVA) {
+    lugar.insertAdjacentHTML('beforeend', `
+      <p class="estat-aviso estat-aviso--periodo">
+        Menos de ${SESSOES_PARA_A_CURVA} sessões nos últimos ${periodo} dias. Escolha um período maior.
+      </p>
+    `);
+    return;
+  }
+
+  // A caixa: o tamanho real, medido. As margens guardam lugar para os
+  // números dos eixos.
+  const largura = Math.max(280, lugar.clientWidth);
+  const altura = 220;
+  const margem = { esquerda: 30, direita: 40, topo: 10, base: 26 };
+  const area = {
+    x0: margem.esquerda,
+    x1: largura - margem.direita,
+    y0: altura - margem.base,
+    y1: margem.topo,
+  };
+
+  // As escalas.
+  const t0 = inicioDoPeriodo ?? new Date(sessoes[0].data).setHours(0, 0, 0, 0);
+  const t1 = fim;
+  const tetoPpm = Math.max(10, Math.ceil((Math.max(...sessoes.map((s) => s.ppm)) * 1.25) / 10) * 10);
+  const pisoPrecisao = Math.min(50, Math.floor(Math.min(...sessoes.map((s) => s.precisao)) / 10) * 10);
+
+  const x = (s) => area.x0 + ((new Date(s.data).getTime() - t0) / (t1 - t0)) * (area.x1 - area.x0);
+  const yPpm = (ppm) => area.y0 - (ppm / tetoPpm) * (area.y0 - area.y1);
+  const yPrecisao = (p) => area.y0 - ((p - pisoPrecisao) / (100 - pisoPrecisao)) * (area.y0 - area.y1);
+
+  const caminho = (pontos) => pontos.map(([px, py], i) => `${i ? 'L' : 'M'}${px.toFixed(1)} ${py.toFixed(1)}`).join('');
+
+  const linhaPpm = caminho(sessoes.map((s) => [x(s), yPpm(s.ppm)]));
+  const linhaPrecisao = caminho(sessoes.map((s) => [x(s), yPrecisao(s.precisao)]));
+
+  const primeira = sessoes[0];
+  const ultima = sessoes.at(-1);
+  const descricao =
+    `Evolução em ${sessoes.length} sessões: de ${primeira.ppm} para ${ultima.ppm} PPM, ` +
+    `e de ${primeira.precisao}% para ${ultima.precisao}% de precisão.`;
+
+  lugar.insertAdjacentHTML('beforeend', `
+    <svg class="estat-grafico" viewBox="0 0 ${largura} ${altura}" width="${largura}" height="${altura}"
+         role="img" aria-label="${descricao}">
+
+      <!-- Só a linha de base: o mínimo para o olho saber onde está o zero. -->
+      <line class="grafico-base" x1="${area.x0}" x2="${area.x1}" y1="${area.y0}" y2="${area.y0}"></line>
+
+      <!-- Escala do PPM, à esquerda: o zero e o teto. -->
+      <text class="grafico-rotulo" x="${area.x0 - 8}" y="${area.y0}" text-anchor="end" dominant-baseline="middle">0</text>
+      <text class="grafico-rotulo" x="${area.x0 - 8}" y="${area.y1}" text-anchor="end" dominant-baseline="middle">${tetoPpm}</text>
+
+      <!-- Escala da precisão, à direita: o piso e os 100%. -->
+      <text class="grafico-rotulo" x="${area.x1 + 8}" y="${area.y0}" dominant-baseline="middle">${pisoPrecisao}%</text>
+      <text class="grafico-rotulo" x="${area.x1 + 8}" y="${area.y1}" dominant-baseline="middle">100%</text>
+
+      <!-- O tempo: o primeiro e o último dia do período. -->
+      <text class="grafico-rotulo" x="${area.x0}" y="${altura - 6}">${formatarDia(new Date(t0))}</text>
+      <text class="grafico-rotulo" x="${area.x1}" y="${altura - 6}" text-anchor="end">${formatarDia(new Date(t1 - 1))}</text>
+
+      <path class="grafico-precisao" d="${linhaPrecisao}"></path>
+      <path class="grafico-ppm" d="${linhaPpm}"></path>
+
+      ${sessoes.map((s) => `<circle class="grafico-marca" cx="${x(s).toFixed(1)}" cy="${yPpm(s.ppm).toFixed(1)}" r="2"></circle>`).join('')}
+    </svg>
+  `);
+}
+
+/* ==========================================================================
+   Das letras para as teclas
+
+   A estatística é guardada por CARACTERE; o teclado é desenhado por TECLA.
+   A ponte é o passosDaLetra do teclado.js, com o layout de agora: "a" mora
+   numa tecla, "á" em duas (o acento e a letra), "A" na tecla do A. Cada
+   caractere soma os seus números em todas as teclas do seu gesto.
+   ========================================================================== */
+
+function teclasDoTeclado(porTecla) {
+  const teclas = new Map();
+
+  for (const [caractere, { acertos, erros }] of Object.entries(porTecla)) {
+    for (const passo of passosDaLetra(caractere, LAYOUT, SISTEMA)) {
+      const soma = teclas.get(passo.codigo) ?? { acertos: 0, erros: 0 };
+      soma.acertos += acertos;
+      soma.erros += erros;
+      teclas.set(passo.codigo, soma);
+    }
+  }
+
+  return teclas;
+}
+
+const toquesDe = (numeros) => numeros.acertos + numeros.erros;
+const taxaDeErro = (numeros) => numeros.erros / toquesDe(numeros);
+
+/* ==========================================================================
+   2. MAPA DE CALOR
+   ========================================================================== */
+
+function montarCalor(secao, teclas) {
+  secao.insertAdjacentHTML('beforeend', `
+    <h2>Mapa de calor</h2>
+    <p class="ajuda">
+      Quanto mais forte a cor, mais erros naquela tecla. A cor é a do dedo que a aperta.
+    </p>
+    <div data-papel="teclado"></div>
+    <p class="estat-linha-tecla" data-papel="linha" aria-hidden="true"></p>
+    <p class="apenas-leitor-de-tela" data-papel="resumo-calor"></p>
+  `);
+
+  const teclado = secao.querySelector('[data-papel="teclado"]');
+  const linha = secao.querySelector('[data-papel="linha"]');
+
+  // O teclado é um desenho, e o leitor de tela não o enxerga: para quem usa
+  // um, o mapa vira uma frase com as teclas que mais erram.
+  const piores = [...teclas]
+    .filter(([codigo, numeros]) => dedoDaTecla(codigo) && toquesDe(numeros) >= TOQUES_MINIMOS)
+    .sort((a, b) => taxaDeErro(b[1]) - taxaDeErro(a[1]))
+    .slice(0, 5)
+    .map(([codigo, numeros]) => `${nomeDaTecla(codigo) ?? codigo}, ${formatarDecimal(taxaDeErro(numeros) * 100)}%`);
+
+  secao.querySelector('[data-papel="resumo-calor"]').textContent = piores.length
+    ? `Teclas com mais erros: ${piores.join('; ')}.`
+    : 'Ainda não há teclas com toques suficientes.';
+
+  // O teclado das lições, apagado ("cinza"): as teclas sem dados ficam
+  // neutras, exatamente como no teclado normal.
+  desenharTeclado(teclado, { layout: LAYOUT, sistema: SISTEMA, modo: 'cinza' });
+  teclado.classList.add('estat-teclado');
+
+  for (const elemento of teclado.querySelectorAll('.tecla')) {
+    const numeros = teclas.get(elemento.dataset.codigo);
+    const posicao = dedoDaTecla(elemento.dataset.codigo);
+
+    if (!numeros || !posicao || toquesDe(numeros) < TOQUES_MINIMOS) continue;
+
+    const calor = CALOR_MINIMO + (1 - CALOR_MINIMO) * Math.min(1, taxaDeErro(numeros) / TAXA_SOLIDA);
+
+    elemento.classList.remove('tecla--neutro');
+    elemento.classList.add('tecla--calor', `tecla--calor-${posicao.dedo}`);
+    elemento.style.setProperty('--calor', calor.toFixed(3));
+  }
+
+  /* A linha de baixo: fixa, e só o conteúdo muda. */
+  const LINHA_PADRAO = 'Passe o mouse numa tecla para ver os números dela.';
+  linha.textContent = LINHA_PADRAO;
+
+  let apontada = null;
+
+  teclado.addEventListener('mouseover', (evento) => {
+    const elemento = evento.target.closest('.tecla');
+    if (!elemento || elemento === apontada) return;
+
+    apontada?.classList.remove('tecla--apontada');
+    apontada = elemento;
+
+    const conteudo = linhaDaTecla(elemento, teclas);
+    if (!conteudo) {
+      linha.textContent = LINHA_PADRAO;
+      return;
+    }
+
+    elemento.classList.add('tecla--apontada');
+    linha.innerHTML = conteudo;
+  });
+
+  teclado.addEventListener('mouseleave', () => {
+    apontada?.classList.remove('tecla--apontada');
+    apontada = null;
+    linha.textContent = LINHA_PADRAO;
+  });
+}
+
+/**
+ * O nome de uma tecla, como está escrito nela: "A", "1 e !", "Espaço".
+ * Devolve null para as de comando (Shift, Tab, Ctrl…), que não escrevem
+ * nada e não têm estatística.
+ */
+function nomeDaTecla(codigo) {
+  if (codigo === 'Space') return 'Espaço';
+
+  const tecla = { abnt2, us }[LAYOUT].fileiras.flat().find((t_) => t_.codigo === codigo);
+  if (!tecla?.rotulo) return null;
+
+  return tecla.sup ? `${tecla.rotulo} e ${tecla.sup}` : tecla.rotulo;
+}
+
+/** O que a linha diz sobre uma tecla — ou null, para as de comando. */
+function linhaDaTecla(elemento, teclas) {
+  const codigo = elemento.dataset.codigo;
+  const nome = nomeDaTecla(codigo);
+  if (!nome) return null;
+
+  const numeros = teclas.get(codigo);
+
+  if (!numeros || toquesDe(numeros) === 0) return `<strong>${nome}</strong> · nenhum toque ainda`;
+
+  const toques = toquesDe(numeros);
+  if (toques < TOQUES_MINIMOS) {
+    return `<strong>${nome}</strong> · <span class="num">${toques}</span> ${toques === 1 ? 'toque' : 'toques'} até agora — poucos para calcular a taxa`;
+  }
+
+  return [
+    `<strong>${nome}</strong>`,
+    `<span class="num">${formatarInteiro(numeros.acertos)}</span> acertos`,
+    `<span class="num">${formatarInteiro(numeros.erros)}</span> erros`,
+    `<span class="num">${formatarDecimal(taxaDeErro(numeros) * 100)}%</span> de erro`,
+  ].join(' · ');
+}
+
+/* ==========================================================================
+   3. PRECISÃO POR DEDO
+   ========================================================================== */
+
+const ORDEM_DOS_DEDOS = ['minimo', 'anelar', 'medio', 'indicador', 'polegar'];
+const NOME_DO_DEDO = { minimo: 'mínimo', anelar: 'anelar', medio: 'médio', indicador: 'indicador', polegar: 'polegar' };
+
+function montarDedos(secao, teclas) {
+  // Soma as teclas de cada dedo. A barra de espaço é dos dois polegares
+  // (dedos.js diz "ambas"), e conta para os dois.
+  const porDedo = new Map();
+
+  for (const [codigo, numeros] of teclas) {
+    const posicao = dedoDaTecla(codigo);
+    if (!posicao) continue;
+
+    const maos = posicao.mao === 'ambas' ? ['esquerda', 'direita'] : [posicao.mao];
+    for (const mao of maos) {
+      const chave = `${mao}-${posicao.dedo}`;
+      const soma = porDedo.get(chave) ?? { acertos: 0, erros: 0 };
+      soma.acertos += numeros.acertos;
+      soma.erros += numeros.erros;
+      porDedo.set(chave, soma);
+    }
+  }
+
+  const linhas = ['esquerda', 'direita'].flatMap((mao) =>
+    ORDEM_DOS_DEDOS.map((dedo, i) => {
+      const numeros = porDedo.get(`${mao}-${dedo}`);
+      const temDados = numeros && toquesDe(numeros) >= TOQUES_MINIMOS;
+      const precisao = temDados ? (numeros.acertos / toquesDe(numeros)) * 100 : null;
+      const classes = [
+        'estat-dedo',
+        `estat-dedo--${dedo}`,
+        temDados ? '' : 'estat-dedo--sem-dados',
+        mao === 'direita' && i === 0 ? 'estat-dedo--direita-primeiro' : '',
+      ].filter(Boolean).join(' ');
+
+      return `
+        <li class="${classes}">
+          <span class="estat-dedo-nome">${NOME_DO_DEDO[dedo]} ${mao === 'esquerda' ? 'esquerdo' : 'direito'}</span>
+          <span class="estat-dedo-trilho" aria-hidden="true">
+            <span class="estat-dedo-barra" style="width: ${temDados ? precisao.toFixed(1) : 0}%"></span>
+          </span>
+          <span class="estat-dedo-valor">${temDados ? `${formatarDecimal(precisao)}%` : '—'}</span>
+        </li>`;
+    })
+  );
+
+  const espacoTemDados = teclas.has('Space');
+
+  secao.insertAdjacentHTML('beforeend', `
+    <h2>Precisão por dedo</h2>
+    <ul class="estat-dedos">${linhas.join('')}</ul>
+    ${espacoTemDados
+      ? '<p class="ajuda estat-nota">O espaço conta para os dois polegares.</p>'
+      : ''}
+  `);
+}
+
+/* ==========================================================================
+   Cabeçalho (só o tema funciona no rascunho) e início
+   ========================================================================== */
+
+const botaoTema = document.querySelector('#botao-tema');
+
+function escreverTema() {
+  const escuro = document.documentElement.dataset.tema === 'escuro';
+  botaoTema.querySelector('use').setAttribute('href', escuro ? '#icone-sol' : '#icone-lua');
+}
+
+botaoTema.addEventListener('click', () => {
+  const escuro = document.documentElement.dataset.tema === 'escuro';
+  document.documentElement.dataset.tema = escuro ? 'claro' : 'escuro';
+  escreverTema();
+});
+
+escreverTema();
+mostrarEstatisticas();
+</script>
+
+</body>
+</html>

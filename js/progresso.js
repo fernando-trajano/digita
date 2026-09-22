@@ -1,11 +1,15 @@
 /* ==========================================================================
    progresso.js — o que a pessoa já conquistou.
 
-   Guarda três coisas, cada uma na sua gaveta do localStorage:
+   Guarda quatro coisas, cada uma na sua gaveta do localStorage:
 
      digita:progresso     como foi em cada lição (melhor PPM, estrelas…)
      digita:sequencia     quantos dias seguidos praticando
-     digita:estatisticas  quais teclas mais deram erro, somando tudo
+     digita:estatisticas  as teclas: quais mais deram erro (errosPorTecla,
+                          só das lições) e acertos e erros de cada uma
+                          (porTecla, de lições, treino livre e jogos)
+     digita:historico     uma linha por sessão de lição ou treino livre:
+                          é a curva de evolução da tela de estatísticas
 
    A regra de liberação é simples e vale para o programa inteiro: uma lição
    abre quando a anterior foi concluída. Concluir exige a precisão mínima —
@@ -41,9 +45,30 @@ export function sequencia() {
   return ler(CHAVES.sequencia, { dias: 0, ultimaData: null });
 }
 
-/** Erros acumulados por tecla, de todas as lições. */
+/**
+ * As teclas, somando tudo.
+ *
+ *   errosPorTecla  quantas vezes cada letra foi errada, só nas lições — é
+ *                  o que pesa o modo Adaptativo e o painel "teclas que mais
+ *                  escapam"
+ *   porTecla       acertos e erros de cada letra, de lições, treino livre
+ *                  e jogos — é o que dá a TAXA de erro do mapa de calor
+ *
+ * O porTecla começou a ser gravado depois do errosPorTecla, e não o
+ * completa: os erros antigos não têm os acertos que os acompanharam, e
+ * misturá-los daria uma taxa de erro inventada.
+ *
+ * As duas contam o CARACTERE ("á", " ", "A"), e não a tecla física: assim a
+ * estatística sobrevive a uma troca de teclado.
+ */
 export function estatisticas() {
-  return ler(CHAVES.estatisticas, { errosPorTecla: {} });
+  return ler(CHAVES.estatisticas, { errosPorTecla: {}, porTecla: {} });
+}
+
+/** As sessões de lição e de treino livre, da mais antiga para a mais nova. */
+export function historico() {
+  const { sessoes } = ler(CHAVES.historico, { sessoes: [] });
+  return Array.isArray(sessoes) ? sessoes : [];
 }
 
 /** O resultado do teste de nivelamento, se ele já foi feito. */
@@ -214,6 +239,14 @@ export function registrarResultado(licao, resumo) {
 
   gravar(CHAVES.progresso, tudo);
   somarEstatisticas(resumo);
+  somarTeclas(resumo.porTecla);
+  registrarSessao({
+    ppm: resumo.ppm,
+    precisao: resumo.precisao,
+    origem: 'licao',
+    id: licao.id,
+    segundos: resumo.segundos,
+  });
 
   // Só treino que valeu conta para a sequência de dias.
   if (passou) registrarDiaDePratica();
@@ -237,6 +270,61 @@ function somarEstatisticas(resumo) {
   }
 
   gravar(CHAVES.estatisticas, { ...dados, errosPorTecla: erros });
+}
+
+/**
+ * Soma acertos e erros de cada letra ao total de sempre (porTecla).
+ *
+ * Lições, treino livre e jogos chamam esta função: todos contam para o mapa
+ * de calor e para a precisão por dedo, mesmo quem não entra na curva de
+ * evolução.
+ *
+ * @param {Object<string, {acertos: number, erros: number}>} [novas]
+ */
+export function somarTeclas(novas = {}) {
+  const letras = Object.entries(novas);
+  if (!letras.length) return;
+
+  const dados = estatisticas();
+  const porTecla = { ...dados.porTecla };
+
+  for (const [letra, { acertos = 0, erros = 0 }] of letras) {
+    const antes = porTecla[letra] ?? { acertos: 0, erros: 0 };
+    porTecla[letra] = { acertos: antes.acertos + acertos, erros: antes.erros + erros };
+  }
+
+  gravar(CHAVES.estatisticas, { ...dados, porTecla });
+}
+
+/** Quantas sessões o histórico guarda. Da 201ª em diante, a mais antiga sai. */
+const SESSOES_NO_HISTORICO = 200;
+
+/**
+ * Uma sessão mais curta que isto não entra na curva: quem abre o treino
+ * livre e encerra em cinco segundos não fez uma sessão, e o PPM de cinco
+ * segundos não quer dizer nada.
+ */
+const SEGUNDOS_PARA_VALER = 15;
+
+/**
+ * Guarda uma sessão no histórico — um ponto na curva de evolução.
+ *
+ * Só lição e treino livre. Os jogos ficam de fora: na Fila o ritmo é do
+ * jogo, e na Cadeia se digita de memória — nenhum dos dois diz qual é a
+ * velocidade de quem digita.
+ *
+ * @param {{ppm: number, precisao: number, origem: 'licao'|'livre',
+ *          id: string, segundos: number}} sessao
+ */
+export function registrarSessao({ ppm, precisao, origem, id, segundos }) {
+  if (!(segundos >= SEGUNDOS_PARA_VALER) || !(ppm > 0)) return;
+
+  const sessoes = [
+    ...historico(),
+    { data: new Date().toISOString(), ppm, precisao, origem, id, segundos },
+  ];
+
+  gravar(CHAVES.historico, { sessoes: sessoes.slice(-SESSOES_NO_HISTORICO) });
 }
 
 /**

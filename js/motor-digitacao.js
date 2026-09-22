@@ -115,7 +115,7 @@ export function criarMotor({ linhas, aoAtualizar, aoErrar, aoConcluir, aoMudarFo
 
     if (letra === esperada) {
       metricas.comecar();
-      metricas.registrarAcerto();
+      metricas.registrarAcerto(esperada);
 
       posicao += 1;
       errouAqui = false;

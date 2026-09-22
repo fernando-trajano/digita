@@ -25,6 +25,7 @@ import {
   encerrarJogo,
   retraduzirJogo,
 } from './telas/jogos.js';
+import { mostrarEstatisticas, encerrarEstatisticas } from './telas/estatisticas.js';
 import { mostrarInicio } from './telas/inicio.js';
 import { mostrarNivelamento, encerrarNivelamento } from './telas/nivelamento.js';
 import { registrarResultado, licaoParaContinuar, nivelamento } from './progresso.js';
@@ -165,6 +166,7 @@ function irPara(desenhar) {
   encerrarNivelamento();
   encerrarTreinoLivre();
   encerrarJogo();
+  encerrarEstatisticas();
 
   telaAtual = desenhar;
   desenhar(tela);
@@ -174,7 +176,7 @@ function irPara(desenhar) {
  * As seções que já existem. As outras aparecem no menu marcadas como
  * "em breve"; esta lista cresce a cada passo do plano.
  */
-const SECOES_DISPONIVEIS = new Set(['inicio', 'trilha', 'treino', 'jogos']);
+const SECOES_DISPONIVEIS = new Set(['inicio', 'trilha', 'treino', 'jogos', 'estatisticas']);
 
 /** A tela de entrada, com o botão que leva ao treino. */
 function telaDeEntrada(destino) {
@@ -237,11 +239,20 @@ function telaDeJogos(destino) {
   mostrarJogos(destino);
 }
 
+/**
+ * Evolução, mapa de calor e precisão por dedo. Sem nada ainda, a tela
+ * mostra uma frase e um botão — que leva à lição de onde se parou.
+ */
+function telaDeEstatisticas(destino) {
+  mostrarEstatisticas(destino, { aoTreinar: () => abrirLicao(licaoParaContinuar()) });
+}
+
 /** Os atalhos da tela inicial. */
 function navegar(secao) {
   if (secao === 'inicio') irPara(telaDeInicio);
   if (secao === 'trilha') irPara(telaDeTrilha);
   if (secao === 'treino') irPara(telaDeTreinoLivre);
+  if (secao === 'estatisticas') irPara(telaDeEstatisticas);
 
   if (secao === 'jogos') {
     // Vindo da tela inicial, a entrada é sempre pelo menu.

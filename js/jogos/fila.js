@@ -18,6 +18,7 @@ import { dedoDaTecla } from '../../dados/layouts/dedos.js';
 import { tocarToqueDeJogo, tocarErroDeJogo } from '../som.js';
 import {
   criarRelogio,
+  criarContagemDeTeclas,
   vigiarJanela,
   prepararTecla,
   soltarFoco,
@@ -253,6 +254,9 @@ export function iniciar(destino, { nivel, aoTerminar }) {
   let combo = 0;
   let comboMaximo = 0;
 
+  // Acertos e erros de cada letra, para o mapa de calor das estatísticas.
+  const contagem = criarContagemDeTeclas();
+
   let ultimaLetra = '';
   let vezAnterior = null;
 
@@ -456,6 +460,7 @@ export function iniciar(destino, { nivel, aoTerminar }) {
 
   function acertar() {
     const peca = fila.shift();
+    contagem.acerto(peca.letra);
 
     acertos += 1;
     combo += 1;
@@ -484,6 +489,7 @@ export function iniciar(destino, { nivel, aoTerminar }) {
     combo = 0;
 
     const vez = fila[0];
+    contagem.erro(vez.letra);
     vez.elemento.classList.remove('fila-peca--erro');
     void vez.elemento.offsetWidth; // reinicia a animação
     vez.elemento.classList.add('fila-peca--erro');
@@ -550,6 +556,7 @@ export function iniciar(destino, { nivel, aoTerminar }) {
   desenhar();
 
   function encerrar() {
+    contagem.gravar();
     relogioDoJogo.parar();
     pararDeVigiar();
     window.removeEventListener('keydown', aoTeclar);

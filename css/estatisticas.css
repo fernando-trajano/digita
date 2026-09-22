@@ -1,0 +1,286 @@
+/* ==========================================================================
+   estatisticas.css — a tela de Estatísticas.
+   Só usa variáveis do tema.css. Nenhum token de cor novo: o mapa de calor
+   usa as cores de dedo que já existem, e o gráfico usa as cores de texto.
+
+   As seções são as .secao do componentes.css (separadas por linha fina),
+   e o teclado é o do teclado.css — aqui só o que é desta tela.
+   ========================================================================== */
+
+.estat > .subtitulo {
+  margin-top: var(--esp-2);
+  color: var(--cor-texto-secundario);
+}
+
+/* A primeira seção não leva linha em cima: ela vem logo depois do título. */
+.estat > .subtitulo + .secao {
+  margin-top: var(--esp-4);
+}
+
+/* --- 1. Evolução ---------------------------------------------------------- */
+
+/* Os três números de cima: em texto, com o número em monoespaçada. */
+.estat-numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-6);
+  color: var(--cor-texto-discreto);
+  font-size: 0.85rem;
+}
+
+.estat-numeros strong {
+  margin-right: var(--esp-2);
+  color: var(--cor-texto);
+  font-family: var(--fonte-mono);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* O seletor de período e a legenda, na mesma linha. */
+.estat-controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-3) var(--esp-5);
+  margin-top: var(--esp-3);
+}
+
+/* O período: as mesmas opções em texto das durações do treino livre. */
+.estat-periodos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-5);
+}
+
+.estat-periodo {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cor-texto-secundario);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.estat-periodo[aria-pressed='true'] {
+  color: var(--cor-texto);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--cor-texto);
+}
+
+/* A legenda: um traço curto de cada linha, e o nome dela. */
+.estat-legenda {
+  display: flex;
+  gap: var(--esp-5);
+  color: var(--cor-texto-discreto);
+  font-size: 0.8rem;
+}
+
+.estat-legenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+/* Cada item carrega três pistas, e não só a cor: no modo claro os dois
+   traços são escuros sobre branco, e a diferença de cor sozinha quase some.
+   O traço é comprido o bastante para ser visto, a espessura acompanha a da
+   linha no gráfico, e o rótulo "PPM" fica na cor forte enquanto o de
+   precisão fica discreto. Tudo igual nos dois temas — só as cores mudam,
+   pelas próprias variáveis. */
+.estat-legenda span::before {
+  content: '';
+  width: 2rem;
+}
+
+.estat-legenda .legenda-ppm {
+  color: var(--cor-texto);
+}
+
+.estat-legenda .legenda-ppm::before {
+  border-top: 2px solid var(--cor-texto);
+}
+
+.estat-legenda .legenda-precisao::before {
+  border-top: 1.25px solid var(--cor-texto-discreto);
+}
+
+/* O gráfico. O tamanho do desenho é o tamanho real na tela (o JS mede e
+   redesenha), para o texto dos eixos nunca esticar. */
+.estat-grafico {
+  width: 100%;
+  height: 220px;
+  margin-top: var(--esp-2);
+  overflow: visible;
+}
+
+.grafico-base {
+  stroke: var(--cor-borda);
+  stroke-width: 1;
+}
+
+.grafico-rotulo {
+  fill: var(--cor-texto-discreto);
+  font-family: var(--fonte-mono);
+  font-size: 11px;
+}
+
+.grafico-ppm {
+  fill: none;
+  stroke: var(--cor-texto);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.grafico-marca {
+  fill: var(--cor-texto);
+}
+
+.grafico-precisao {
+  fill: none;
+  stroke: var(--cor-texto-discreto);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* O aviso que fica no lugar do gráfico quando não há o que desenhar. */
+.estat-aviso {
+  color: var(--cor-texto-secundario);
+}
+
+.estat-aviso--periodo {
+  margin-top: var(--esp-4);
+}
+
+/* --- 2. Mapa de calor ---------------------------------------------------- */
+
+/* O teclado é o das lições. Cada tecla com dados recebe, por baixo do
+   rótulo, uma camada com a cor de FUNDO do seu dedo — a mesma das fichas de
+   "teclas que mais escapam" — e é a opacidade dessa camada que conta os
+   erros: quase transparente sem erro, sólida com muito erro. O rótulo fica
+   sempre na cor forte do dedo, então dá para saber de que dedo é a tecla
+   mesmo quando ela não tem erro nenhum. */
+.estat-teclado {
+  margin-top: var(--esp-2);
+}
+
+.estat-teclado .tecla--calor {
+  isolation: isolate;
+  background-color: transparent;
+  color: var(--calor-texto);
+}
+
+.estat-teclado .tecla--calor::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: var(--calor-fundo);
+  opacity: var(--calor);
+}
+
+.tecla--calor-minimo    { --calor-fundo: var(--dedo-minimo-fundo);    --calor-texto: var(--dedo-minimo-texto); }
+.tecla--calor-anelar    { --calor-fundo: var(--dedo-anelar-fundo);    --calor-texto: var(--dedo-anelar-texto); }
+.tecla--calor-medio     { --calor-fundo: var(--dedo-medio-fundo);     --calor-texto: var(--dedo-medio-texto); }
+.tecla--calor-indicador { --calor-fundo: var(--dedo-indicador-fundo); --calor-texto: var(--dedo-indicador-texto); }
+.tecla--calor-polegar   { --calor-fundo: var(--dedo-neutro-fundo);    --calor-texto: var(--dedo-neutro-texto); }
+
+/* A tecla sob o mouse: a mesma borda escura da tecla da vez na lição. */
+.estat-teclado .tecla--apontada {
+  border-color: var(--cor-texto);
+}
+
+/* A linha fixa embaixo do teclado. Sem balão, sem caixa: só o texto muda. */
+.estat-linha-tecla {
+  min-height: 1.6em;
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+.estat-linha-tecla .num {
+  color: var(--cor-texto);
+  font-family: var(--fonte-mono);
+}
+
+/* --- 3. Precisão por dedo ----------------------------------------------- */
+
+.estat-dedos {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) 3.5rem;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-4);
+  max-width: 40rem;
+  margin: var(--esp-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Cada linha é um item da lista, mas quem monta as colunas é a grade de
+   fora: o item "some" e as três partes dele viram células. */
+.estat-dedo {
+  display: contents;
+}
+
+.estat-dedo-nome {
+  color: var(--cor-texto-secundario);
+  font-size: 0.9rem;
+}
+
+/* Um respiro entre as duas mãos. */
+.estat-dedo--direita-primeiro > * {
+  margin-top: var(--esp-3);
+}
+
+/* A barra: um trilho fino, e o preenchimento na cor forte do dedo. */
+.estat-dedo-trilho {
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background-color: var(--cor-borda);
+  overflow: hidden;
+}
+
+.estat-dedo-barra {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.estat-dedo--minimo    .estat-dedo-barra { background-color: var(--dedo-minimo-texto); }
+.estat-dedo--anelar    .estat-dedo-barra { background-color: var(--dedo-anelar-texto); }
+.estat-dedo--medio     .estat-dedo-barra { background-color: var(--dedo-medio-texto); }
+.estat-dedo--indicador .estat-dedo-barra { background-color: var(--dedo-indicador-texto); }
+.estat-dedo--polegar   .estat-dedo-barra { background-color: var(--dedo-neutro-texto); }
+
+.estat-dedo-valor {
+  color: var(--cor-texto);
+  font-family: var(--fonte-mono);
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.estat-dedo--sem-dados .estat-dedo-valor {
+  color: var(--cor-texto-discreto);
+}
+
+.estat-nota {
+  margin-top: var(--esp-2);
+}
+
+/* --- A tela vazia -------------------------------------------------------- */
+
+.estat-vazia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-5);
+  padding-block: var(--esp-2);
+}
+
+.estat-vazia p {
+  color: var(--cor-texto-secundario);
+}

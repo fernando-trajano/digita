@@ -16,6 +16,7 @@ import { t, traduzirPagina } from '../i18n.js';
 import { tocarToqueDeJogo, tocarSucessoDeJogo, tocarErroDeJogo } from '../som.js';
 import {
   criarRelogio,
+  criarContagemDeTeclas,
   vigiarJanela,
   prepararTecla,
   soltarFoco,
@@ -132,6 +133,9 @@ export function iniciar(destino, { nivel, aoTerminar }) {
   let maisLonga = 0; // a maior sequência digitada inteira
   let seguidas = 0;
   let melhorSeguidas = 0;
+
+  // Acertos e erros de cada letra, para o mapa de calor das estatísticas.
+  const contagem = criarContagemDeTeclas();
 
   /** Uma sequência nova — sem a mesma letra duas vezes seguidas. */
   function sortearSequencia(n) {
@@ -270,6 +274,12 @@ export function iniciar(destino, { nivel, aoTerminar }) {
   function julgar() {
     rodadas += 1;
 
+    // Cada posição conta para a letra que DEVIA estar ali.
+    [...sequencia].forEach((letra, i) => {
+      if (digitado[i] === letra) contagem.acerto(letra);
+      else contagem.erro(letra);
+    });
+
     if (digitado === sequencia) {
       maisLonga = Math.max(maisLonga, tamanho);
       seguidas += 1;
@@ -321,6 +331,7 @@ export function iniciar(destino, { nivel, aoTerminar }) {
   comecarRodada();
 
   function encerrar() {
+    contagem.gravar();
     relogioDoJogo.parar();
     pararDeVigiar();
     window.removeEventListener('keydown', aoTeclar);

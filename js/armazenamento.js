@@ -24,6 +24,7 @@ export const CHAVES = {
   nivelamento: `${PREFIXO}nivelamento`,
   livre: `${PREFIXO}livre`,
   jogos: `${PREFIXO}jogos`,
+  historico: `${PREFIXO}historico`,
 };
 
 /**

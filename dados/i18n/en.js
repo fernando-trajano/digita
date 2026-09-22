@@ -276,6 +276,49 @@ export const en = {
     },
   },
 
+  estatisticas: {
+    titulo: 'Statistics',
+    subtitulo: 'Your progress, day by day.',
+
+    vazio: 'Statistics show up after your first lesson.',
+    irTreinar: 'Go practise',
+
+    evolucao: 'Progress',
+    poucasSessoes: 'The speed curve shows up after {minimo} sessions — so far, you have done {quantas}.',
+    uma: 'one',
+    melhorPpm: 'best WPM',
+    mediaUltimas: 'average WPM over the last {quantas} sessions',
+    sessaoNoTotal: 'session in total',
+    sessoesNoTotal: 'sessions in total',
+    periodo: 'Period',
+    dias: '{quantos} days',
+    tudo: 'All',
+    ppm: 'WPM',
+    precisao: 'accuracy',
+    poucasNoPeriodo: 'Fewer than {minimo} sessions in the last {dias} days. Pick a longer period.',
+    descricaoGrafico:
+      'Progress over {quantas} sessions: from {ppmInicio} to {ppmFim} WPM, and from {precisaoInicio}% to {precisaoFim}% accuracy.',
+    meses: 'Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec',
+    dia: '{mes} {dia}',
+
+    mapa: 'Heat map',
+    mapaAjuda: 'The stronger the colour, the more misses on that key. The colour is the one of the finger that presses it.',
+    passeOMouse: 'Hover over a key to see its numbers.',
+    espaco: 'Space',
+    duasLetras: '{a} and {b}',
+    nenhumToque: 'no presses yet',
+    umToque: '{quantos} press so far — too few to work out a rate',
+    poucosToques: '{quantos} presses so far — too few to work out a rate',
+    acertos: 'hits',
+    erros: 'misses',
+    deErro: 'missed',
+    maisErros: 'Keys with the most misses: {lista}.',
+    semTeclasSuficientes: 'No key has enough presses yet.',
+
+    dedos: 'Accuracy by finger',
+    notaPolegar: 'The space bar counts for both thumbs.',
+  },
+
   painel: {
     titulo: 'Your progress',
     dia: 'day in a row',

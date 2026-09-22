@@ -19,6 +19,7 @@ import { PALAVRAS } from '../../dados/treino-livre.js';
 import { tocarToqueDeJogo, tocarErroDeJogo, tocarFolego, tocarCaptura } from '../som.js';
 import {
   criarRelogio,
+  criarContagemDeTeclas,
   vigiarJanela,
   prepararTecla,
   soltarFoco,
@@ -338,6 +339,9 @@ export function iniciar(destino, { nivel, aoTerminar }) {
   let combo = 0;
   let comboMaximo = 0;
 
+  // Acertos e erros de cada letra, para o mapa de calor das estatísticas.
+  const contagem = criarContagemDeTeclas();
+
   /** A folga de agora, em segundos de cobra. */
   const folego = () => (jogador - cobra) / velocidade;
 
@@ -574,6 +578,7 @@ export function iniciar(destino, { nivel, aoTerminar }) {
     const span = letras[posicao];
     span.classList.remove('letra--atual', 'letra--errada');
     span.classList.add('letra--certa');
+    contagem.acerto(texto[posicao]);
 
     posicao += 1;
     if (posicao > texto.length - 60) acrescentarPalavras(20);
@@ -586,6 +591,7 @@ export function iniciar(destino, { nivel, aoTerminar }) {
     ultimaTecla = agora();
 
     jogador -= RECUO;
+    contagem.erro(texto[posicao]);
     tocarErroDeJogo();
 
     // A letra da vez fica marcada de erro até sair a tecla certa — como na
@@ -649,6 +655,7 @@ export function iniciar(destino, { nivel, aoTerminar }) {
   soltarFoco();
 
   function encerrar() {
+    contagem.gravar();
     relogioDoJogo.parar();
     pararDeVigiar();
     window.removeEventListener('keydown', aoTeclar);

@@ -6,6 +6,9 @@
    escapa ou passar um texto qualquer a limpo. Nada do que acontece aqui
    entra no progresso: sem estrelas, sem precisão mínima, sem liberar lição.
 
+   Entra só nas ESTATÍSTICAS: cada sessão vira um ponto na curva de
+   evolução, e os acertos e erros de cada tecla somam no mapa de calor.
+
    A tela tem três estados:
 
      seleção   duas colunas, como a tela de entrada: o que treinar e por
@@ -23,7 +26,7 @@
 import { t, nomeDoDedo, traduzirPagina } from '../i18n.js';
 import { config, sistemaAtual } from '../estado.js';
 import { CHAVES, ler, gravar } from '../armazenamento.js';
-import { estatisticas } from '../progresso.js';
+import { estatisticas, somarTeclas, registrarSessao } from '../progresso.js';
 import { criarMotor, desenharTexto } from '../motor-digitacao.js';
 import {
   desenharTeclado,
@@ -596,6 +599,17 @@ function mostrarSessao(destino, { aoSair }) {
   function terminar() {
     const resumo = motor.resumo();
     const tempoTotal = Math.floor((Date.now() - comecouEm) / 1000);
+
+    // Para as estatísticas: as teclas, e um ponto na curva de evolução.
+    // Uma sessão curta demais é recusada lá dentro, em registrarSessao.
+    somarTeclas(resumo.porTecla);
+    registrarSessao({
+      ppm: resumo.ppm,
+      precisao: resumo.precisao,
+      origem: 'livre',
+      id: escolha.modo,
+      segundos: resumo.segundos,
+    });
 
     encerrarTreinoLivre();
     mostrarResumo(destino, { ...resumo, tempoTotal }, { aoSair });

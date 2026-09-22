@@ -37,6 +37,10 @@ export function criarMetricas() {
   /** Quantas vezes cada letra foi errada — vira "teclas com mais erros". */
   const errosPorTecla = new Map();
 
+  /** Quantas vezes cada letra foi acertada — é o que dá a TAXA de erro de
+      cada tecla na tela de estatísticas. */
+  const acertosPorTecla = new Map();
+
   function segundos() {
     if (inicio === null) return 0;
     return ((fim ?? performance.now()) - inicio) / 1000;
@@ -67,8 +71,12 @@ export function criarMetricas() {
       if (inicio !== null && fim === null) fim = performance.now();
     },
 
-    registrarAcerto() {
+    /**
+     * @param {string} esperada  a letra que foi digitada certa
+     */
+    registrarAcerto(esperada) {
       acertos += 1;
+      acertosPorTecla.set(esperada, (acertosPorTecla.get(esperada) ?? 0) + 1);
     },
 
     /**
@@ -100,9 +108,29 @@ export function criarMetricas() {
         errosPorTecla: [...errosPorTecla.entries()]
           .map(([tecla, vezes]) => ({ tecla, vezes }))
           .sort((a, b) => b.vezes - a.vezes),
+        // Acertos e erros de cada letra, juntos — o formato que vai para
+        // digita:estatisticas.porTecla.
+        porTecla: juntarPorTecla(acertosPorTecla, errosPorTecla),
       };
     },
   };
+}
+
+/**
+ * Junta as duas contagens numa só: { a: { acertos: 12, erros: 1 }, … }.
+ * @param {Map<string, number>} acertos
+ * @param {Map<string, number>} erros
+ * @returns {Object<string, {acertos: number, erros: number}>}
+ */
+export function juntarPorTecla(acertos, erros) {
+  const porTecla = {};
+
+  for (const [letra, vezes] of acertos) porTecla[letra] = { acertos: vezes, erros: 0 };
+  for (const [letra, vezes] of erros) {
+    porTecla[letra] = { acertos: porTecla[letra]?.acertos ?? 0, erros: vezes };
+  }
+
+  return porTecla;
 }
 
 /**

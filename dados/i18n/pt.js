@@ -288,6 +288,55 @@ export const pt = {
     },
   },
 
+  estatisticas: {
+    titulo: 'Estatísticas',
+    subtitulo: 'Sua evolução, ao longo dos dias.',
+
+    // A tela vazia
+    vazio: 'As estatísticas aparecem depois da sua primeira lição.',
+    irTreinar: 'Ir treinar',
+
+    // Evolução
+    evolucao: 'Evolução',
+    poucasSessoes: 'A curva de velocidade aparece a partir de {minimo} sessões — até agora, você fez {quantas}.',
+    uma: 'uma',
+    melhorPpm: 'melhor PPM',
+    mediaUltimas: 'PPM médio nas últimas {quantas} sessões',
+    sessaoNoTotal: 'sessão no total',
+    sessoesNoTotal: 'sessões no total',
+    periodo: 'Período',
+    dias: '{quantos} dias',
+    tudo: 'Tudo',
+    ppm: 'PPM',
+    precisao: 'precisão',
+    poucasNoPeriodo: 'Menos de {minimo} sessões nos últimos {dias} dias. Escolha um período maior.',
+    // Dito só para quem usa leitor de tela, que não enxerga o gráfico.
+    descricaoGrafico:
+      'Evolução em {quantas} sessões: de {ppmInicio} para {ppmFim} PPM, e de {precisaoInicio}% para {precisaoFim}% de precisão.',
+    // Os meses do eixo do tempo, separados por vírgula, e a ordem da data.
+    meses: 'jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez',
+    dia: '{dia} {mes}',
+
+    // Mapa de calor
+    mapa: 'Mapa de calor',
+    mapaAjuda: 'Quanto mais forte a cor, mais erros naquela tecla. A cor é a do dedo que a aperta.',
+    passeOMouse: 'Passe o mouse numa tecla para ver os números dela.',
+    espaco: 'Espaço',
+    duasLetras: '{a} e {b}',
+    nenhumToque: 'nenhum toque ainda',
+    umToque: '{quantos} toque até agora — pouco para calcular a taxa',
+    poucosToques: '{quantos} toques até agora — poucos para calcular a taxa',
+    acertos: 'acertos',
+    erros: 'erros',
+    deErro: 'de erro',
+    maisErros: 'Teclas com mais erros: {lista}.',
+    semTeclasSuficientes: 'Ainda não há teclas com toques suficientes.',
+
+    // Precisão por dedo
+    dedos: 'Precisão por dedo',
+    notaPolegar: 'O espaço conta para os dois polegares.',
+  },
+
   painel: {
     titulo: 'Seu progresso',
     dia: 'dia seguido praticando',
